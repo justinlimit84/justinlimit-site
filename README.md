@@ -1,6 +1,6 @@
 # JustinLimit AI - High-Speed Anime Chat Hub
 
-A production-ready, highly scalable, and ultra-fast AI chat platform allowing concurrent users to interact in real time with dynamic anime character profiles (Goku, Naruto, Sasuke, Sakura, and Sarada). 
+A production-ready, highly scalable, ultra-fast AI chat platform that lets concurrent users interact in real time with dynamic anime character profiles such as Goku, Naruto, Sasuke, Sakura, Sara, and more.
 
 The platform is optimized for performance, security, and high concurrency by migrating from a rate-limited public chat proxy to a dedicated serverless architecture powered by Vercel and Groq.
 
@@ -8,53 +8,99 @@ The platform is optimized for performance, security, and high concurrency by mig
 
 ## 🚀 Key Features
 
-* **High Speed & Low Latency:** Utilizes Groq's high-performance hardware running the `llama-3.1-8b-instant` model to achieve near-instantaneous (sub-second) response times.
-* **Massive Concurrency:** Powered by Vercel Edge Serverless Functions, ensuring the backend can handle thousands of concurrent visits simultaneously without putting users in a queue.
-* **Robust Security Layer:** The frontend never exposes secret API tokens. Request tracking and credential validation are isolated securely within a stateless backend api route.
-* **Mobile-Responsive UI:** Featuring a custom cyberpunk dark layout with active character selection modules that scale fluidly to any mobile viewport.
+- High Speed & Low Latency: Uses Groq's high-performance hardware running the `llama-3.1-8b-instant` model to achieve near-instantaneous (sub-second) response times.
+- Massive Concurrency: Built on Vercel Edge Serverless Functions to handle thousands of concurrent visits without queuing users.
+- Robust Security: Frontend never exposes secret API tokens; credential validation and request tracking happen only in a stateless backend API route.
+- Mobile-Responsive UI: Custom cyberpunk dark layout with character selection modules that scale across viewports.
 
 ---
 
-## 🛠️ Architecture & Stack Migration
+## 🛠️ Architecture
 
-### Old Architecture (Bottlenecked)
+Old Architecture (Bottlenecked):
 
-[ User Browser ] ───> [ GitHub Pages (Static Hosting) ]
-└──> Direct Public API Request ───> [ Rate-Limited Global Proxy ] (High delays, 500 errors under load)
+[ User Browser ] → [ GitHub Pages (Static Hosting) ] → [ Public API ] → [ Rate-Limited Proxy ]
 
-### New Production Infrastructure (Scalable)
+New Production Infrastructure (Scalable):
 
-[ User Browser ] ───> [ Custom Domain: justinlimit.com ]
-└──> [ Vercel Global Edge Network ]
-└──> Serverless Function (/api/chat)
-└──> [ Secure Groq API Endpoint ]
+[ User Browser ] → [ Custom Domain: justinlimit.com ] → [ Vercel Global Edge ] → Serverless Function (`/api/chat`) → [ Groq API ]
 
 ---
 
 ## 📁 Repository Structure
 
 ```text
-├── index.html          # Frontend single-page application (UI & states)
+├── index.html          # Frontend single-page application (UI & state)
 ├── api/
 │   └── chat.js         # Serverless Node.js backend route (Groq controller)
 └── README.md           # Project documentation
+```
 
-🔧 Backend Implementation Summary (api/chat.js)
-The serverless backend handles execution routing and data protection rules:
+## ⚙️ Backend Summary (api/chat.js)
 
-Method Enforcement: Restricts access to standard POST request channels.
+- Method enforcement: accepts POST requests only.
+- Environment isolation: reads `process.env.GROQ_API_KEY` on the server; keys are not exposed to clients.
+- Payload sanitization: sanitizes conversational memory and streaming payloads before proxying to Groq.
+- Robust streaming: handles Groq streaming responses and maps them back to the client reliably.
 
-Environment Isolation: Safely reads process.env.GROQ_API_KEY entirely away from user visibility.
+---
 
-Array Sanitization: Filters conversational memory payload formats to avoid structural payload rejections before querying Groq's gateway.
+## 📦 Setup & Local Development
 
-Resilient JSON Mapping: Converts streaming headers to precise string configurations using clean, sanitized text parsing boundaries to maintain an ultra-stable connection.
+1. Clone the repo:
 
-⚙️ Configuration & Deployment History
-AI Framework Migration: Upgraded from the deprecated llama3-8b-8192 framework engine to the current stable production standard llama-3.1-8b-instant.
+   git clone https://github.com/justinlimit84/justinlimit-site.git
+2. Install dependencies (if any) and run a static server for `index.html`.
+3. Set environment variables for local development (example using Vercel locally or a .env runner):
 
-Vercel Deployment Setup: Linked GitHub repository hooks straight into the Vercel cloud container ecosystem for automatic Git-based edge routing compilations.
+   - GROQ_API_KEY — your Groq API key
 
-Secure Environment Provisioning: Saved global backend credentials safely within the Vercel Application settings pipeline.
+4. For serverless testing, run Vercel dev or your preferred serverless emulator so `/api/chat` is available locally.
 
-Custom DNS Routing: Updated GoDaddy DNS Zone settings, replacing legacy static A-Records with Vercel's multi-region anycast edge IP (76.76.21.21) and pointed the root www CNAME tracking parameters to cname.vercel-dns.com.
+---
+
+## 🔁 Deployment
+
+- Deploy to Vercel for global edge serverless functions. Link this repository to your Vercel project and set `GROQ_API_KEY` in Project Environment Variables.
+- Configure DNS (example with GoDaddy): set the apex A record to Vercel's anycast IP (76.76.21.21) or follow Vercel's recommended CNAME setup for `www`.
+
+---
+
+## 🧩 Usage
+
+- Frontend -> Calls `/api/chat` with a sanitized conversation array and chosen character profile.
+- Backend -> Validates the request, signs and forwards to Groq with `llama-3.1-8b-instant`, and streams the response back to the client.
+
+Example curl (replace with your tooling if streaming is required):
+
+```bash
+curl -X POST "https://your-deployment-url/api/chat" \
+  -H "Content-Type: application/json" \
+  -d '{"character":"Goku","messages":[{"role":"user","content":"Hi Goku!"}] }'
+```
+
+---
+
+## Environment Variables
+
+- GROQ_API_KEY — required. Store this securely in Vercel (or your deployment platform) and never commit it to source control.
+
+---
+
+## Contributing
+
+Contributions are welcome. Open an issue or submit a PR.
+
+---
+
+## License
+
+Specify your license here (e.g., MIT). If you don't have a license, add one or state the terms.
+
+---
+
+## Contact
+
+Author: JustinLimit (github.com/justinlimit84)
+
+If you'd like specific changes to the README (formatting, additional sections, or different content), tell me what to include and I will update it.
