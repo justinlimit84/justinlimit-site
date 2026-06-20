@@ -21,7 +21,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            height: -webkit-fill-available; /* Fixed iOS Safari height bugs */
+            height: -webkit-fill-available;
         }
         html {
             height: -webkit-fill-available;
@@ -48,18 +48,22 @@
             overflow: hidden;
         }
         .sidebar {
-            width: 250px;
+            width: 260px;
             background-color: #11141a;
             border-right: 1px solid #2d3748;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             overflow-y: auto;
             flex-shrink: 0;
         }
         .sidebar h3 {
             margin-top: 0;
+            border-bottom: 1px solid #2d3748;
+            padding-bottom: 10px;
+            font-size: 16px;
+            letter-spacing: 1px;
         }
         .char-card {
             background: var(--card-bg);
@@ -68,13 +72,13 @@
             padding: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-align: center;
+            text-align: left;
             flex-shrink: 0;
         }
         .char-card:hover, .char-card.active {
             border-color: var(--neon-cyan);
             box-shadow: 0 0 10px var(--neon-cyan);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
         .chat-area {
             flex: 1;
@@ -133,7 +137,7 @@
             padding: 12px;
             color: #fff;
             outline: none;
-            font-size: 16px; /* Prevents iOS auto-zoom behavior on input focus */
+            font-size: 16px;
         }
         input[type="text"]:focus { border-color: var(--neon-cyan); }
         button {
@@ -145,93 +149,41 @@
             font-weight: bold;
             cursor: pointer;
         }
-        .ad-sidebar {
-            width: 200px;
-            background-color: #11141a;
-            border-left: 1px solid #2d3748;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            overflow-y: auto;
-            flex-shrink: 0;
-        }
-        .ad-sidebar h4 {
-            margin-top: 0;
-        }
-        .ad-space {
-            background: #1f2833;
-            border: 1px dashed var(--neon-purple);
-            border-radius: 6px;
-            padding: 15px;
-            text-align: center;
-            font-size: 13px;
-        }
-        .ad-space a {
-            color: var(--neon-cyan);
-            text-decoration: none;
-            font-weight: bold;
-            display: block;
-            margin-top: 10px;
-        }
 
         /* -------------------------------------------------- */
         /* MOBILE RESPONSIVE MEDIA QUERY                      */
         /* -------------------------------------------------- */
         @media (max-width: 768px) {
             .main-container {
-                flex-direction: column; /* Stack vertically instead of horizontally */
+                flex-direction: column;
             }
-            
-            /* Character Selection becomes a horizontal bar at the top */
             .sidebar {
                 width: 100%;
                 flex-direction: row;
                 padding: 10px;
                 gap: 10px;
-                overflow-x: auto; /* Allow side scrolling for characters */
+                overflow-x: auto;
                 overflow-y: hidden;
                 border-right: none;
                 border-bottom: 1px solid #2d3748;
                 box-sizing: border-box;
             }
             .sidebar h3 {
-                display: none; /* Hide the header text to save vertical space */
+                display: none;
             }
             .char-card {
-                padding: 8px 15px;
-                min-width: 120px;
+                padding: 10px 15px;
+                min-width: 140px;
+                text-align: center;
             }
             .char-card p {
-                display: none; /* Hide character taglines on mobile screens */
+                display: none;
             }
-            
-            /* Chat Area scales out to full width */
             .chat-messages {
                 padding: 15px;
             }
             .msg {
-                max-width: 85%; /* Give message bubbles a bit more breathing space */
-            }
-            
-            /* Ad sidebar moves out of the way to the bottom */
-            .ad-sidebar {
-                width: 100%;
-                border-left: none;
-                border-top: 1px solid #2d3748;
-                padding: 15px;
-                flex-direction: row; /* Display offers side-by-side */
-                overflow-x: auto;
-                box-sizing: border-box;
-                gap: 15px;
-            }
-            .ad-sidebar h4 {
-                display: none;
-            }
-            .ad-space {
-                flex: 1;
-                min-width: 200px;
-                padding: 10px;
+                max-width: 85%;
             }
         }
     </style>
@@ -243,24 +195,32 @@
     </header>
 
     <div class="main-container">
-        <!-- Character Selector -->
+        <!-- Character Selector Sidebar -->
         <div class="sidebar">
             <h3>Select Character</h3>
             <div id="card-Goku" class="char-card active" onclick="selectCharacter('Goku')">
                 <strong>Goku</strong>
-                <p style="margin:5px 0 0; font-size:12px; color:#aaa;">The Legendary Saiyan</p>
+                <p style="margin:4px 0 0; font-size:12px; color:#aaa;">The Legendary Saiyan</p>
             </div>
             <div id="card-Naruto" class="char-card" onclick="selectCharacter('Naruto')">
                 <strong>Naruto Uzumaki</strong>
-                <p style="margin:5px 0 0; font-size:12px; color:#aaa;">The 7th Hokage</p>
+                <p style="margin:4px 0 0; font-size:12px; color:#aaa;">The 7th Hokage</p>
             </div>
-            <div class="char-card" style="border-color: #ffb703;" onclick="alert('Unlock Premium Characters by completing a short offer or joining VIP!')">
-                <strong style="color: #ffb703;">Gojo Satoru 🔒</strong>
-                <p style="margin:5px 0 0; font-size:12px; color:#ffb703;">Premium Only</p>
+            <div id="card-Sasuke" class="char-card" onclick="selectCharacter('Sasuke')">
+                <strong>Sasuke Uchiha</strong>
+                <p style="margin:4px 0 0; font-size:12px; color:#aaa;">The Supporting Kage</p>
+            </div>
+            <div id="card-Sakura" class="char-card" onclick="selectCharacter('Sakura')">
+                <strong>Sakura Haruno</strong>
+                <p style="margin:4px 0 0; font-size:12px; color:#aaa;">Head Medical Ninja</p>
+            </div>
+            <div id="card-Sarada" class="char-card" onclick="selectCharacter('Sarada')">
+                <strong>Sarada Uchiha</strong>
+                <p style="margin:4px 0 0; font-size:12px; color:#aaa;">Next Gen Uchiha</p>
             </div>
         </div>
 
-        <!-- Central Chat Interface -->
+        <!-- Full Width Chat Workspace -->
         <div class="chat-area">
             <div class="chat-messages" id="chat-box">
                 <div class="msg bot">Yo! I'm Goku. Let's train together, or just talk! What's on your mind?</div>
@@ -270,27 +230,37 @@
                 <button onclick="sendMessage()">Send</button>
             </div>
         </div>
-
-        <!-- Earning/Affiliate Column -->
-        <div class="ad-sidebar">
-            <h4>Epic Loot Drop 🎒</h4>
-            <div class="ad-space">
-                <p>Get Goku's Premium Cosplay Hoodie - 20% Off!</p>
-                <a href="YOUR_AFFILIATE_LINK_HERE" target="_blank">Shop Now →</a>
-            </div>
-            <div class="ad-space">
-                <p>Want Unlimited Premium AI Chat? Unlock VIP Status.</p>
-                <a href="YOUR_UPGRADE_OR_AD_LINK" target="_blank">Go Premium →</a>
-            </div>
-        </div>
     </div>
 
     <script>
         let currentCharacter = "Goku";
         
-        let conversationHistory = [
-            { role: "system", content: "You are Goku from Dragon Ball Z. Respond enthusiastically, love martial arts, speak in a simple friendly way, and keep responses concise (1-3 sentences max)." }
-        ];
+        // Profiles Mapping System for LLM Instructions
+        const charProfiles = {
+            Goku: {
+                system: "You are Goku from Dragon Ball Z. Respond enthusiastically, love martial arts, talk about getting stronger, speak in a simple friendly way, and keep responses concise (1-3 sentences max).",
+                greeting: "Yo! I'm Goku. Let's train together, or just talk! What's on your mind?"
+            },
+            Naruto: {
+                system: "You are Naruto Uzumaki from Naruto Shippuden. You want to be Hokage, frequently say 'Believe it!', love Ichiraku Ramen, talk about bonds/friendship, and keep responses concise (1-3 sentences max).",
+                greeting: "Hey! Naruto Uzumaki here, future Hokage! What's up? Believe it!"
+            },
+            Sasuke: {
+                system: "You are Sasuke Uchiha. You are calm, stoic, analytical, and deeply serious. Speak with cool confidence, avoid overly cheerful words, mention protecting the world from the shadows if relevant, and keep responses concise (1-3 sentences max).",
+                greeting: "...Sasuke here. Speak your mind, but don't waste my time."
+            },
+            Sakura: {
+                system: "You are Sakura Haruno. You are a brilliant medical ninja, strong-willed, compassionate, and sharp. You care deeply for your friends, take things seriously but kindly, and keep responses concise (1-3 sentences max).",
+                greeting: "Hi there! Sakura here. Hope you are keeping yourself healthy and ready for anything! What can I do for you?"
+            },
+            Sarada: {
+                system: "You are Sarada Uchiha from Boruto. You are smart, logical, determined, and your goal is to become Hokage. You wear glasses, look up to Naruto, work hard, and keep responses concise (1-3 sentences max).",
+                greeting: "Hello! I'm Sarada Uchiha. I'm busy working towards becoming Hokage, but I always have time for a strategic chat. What's on your radar?"
+            }
+        };
+
+        // Track active conversation history
+        let conversationHistory = [{ role: "system", content: charProfiles[currentCharacter].system }];
 
         function selectCharacter(name) {
             currentCharacter = name;
@@ -299,17 +269,9 @@
             
             const chatBox = document.getElementById('chat-box');
             
-            if (name === "Goku") {
-                conversationHistory = [
-                    { role: "system", content: "You are Goku from Dragon Ball Z. Respond enthusiastically, love martial arts, speak in a simple friendly way, and keep responses concise (1-3 sentences max)." }
-                ];
-                chatBox.innerHTML = `<div class="msg bot">Yo! I'm Goku. Let's train together, or just talk! What's on your mind?</div>`;
-            } else if (name === "Naruto") {
-                conversationHistory = [
-                    { role: "system", content: "You are Naruto Uzumaki from Naruto Shippuden. You want to be Hokage, frequently say 'Believe it!', love Ichiraku Ramen, and keep responses concise (1-3 sentences max)." }
-                ];
-                chatBox.innerHTML = `<div class="msg bot">Hey! Naruto Uzumaki here, future Hokage! What's up? Believe it!</div>`;
-            }
+            // Re-initialize conversational memory context
+            conversationHistory = [{ role: "system", content: charProfiles[name].system }];
+            chatBox.innerHTML = `<div class="msg bot">${charProfiles[name].greeting}</div>`;
         }
 
         async function sendMessage() {
@@ -319,7 +281,7 @@
 
             const chatBox = document.getElementById('chat-box');
 
-            // 1. Show user message
+            // Render User Text
             const userMsg = document.createElement('div');
             userMsg.className = 'msg user';
             userMsg.textContent = messageText;
@@ -327,7 +289,7 @@
             
             input.value = '';
             
-            // 2. Add placeholder status message
+            // Render Status Wait Layout
             const typingStatus = document.createElement('div');
             typingStatus.className = 'msg system-status';
             typingStatus.textContent = `${currentCharacter} is thinking...`;
@@ -347,14 +309,12 @@
                     })
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                 const replyText = await response.text();
                 typingStatus.remove();
 
-                // 4. Render output
+                // Render Bot Text Output
                 const botMsg = document.createElement('div');
                 botMsg.className = 'msg bot';
                 botMsg.textContent = replyText;
@@ -364,7 +324,7 @@
 
             } catch (error) {
                 console.error(error);
-                typingStatus.textContent = `❌ Lost connection to ${currentCharacter}'s power level. Try again!`;
+                typingStatus.textContent = `❌ Lost connection to ${currentCharacter}'s chakra networks. Try again!`;
             }
 
             chatBox.scrollTop = chatBox.scrollHeight;
