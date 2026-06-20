@@ -232,63 +232,68 @@
         }
 
         async function sendMessage() {
-            const input = document.getElementById('user-input');
-            const messageText = input.value.trim();
-            if (!messageText) return;
+    const input = document.getElementById('user-input');
+    const messageText = input.value.trim();
+    if (!messageText) return;
 
-            const chatBox = document.getElementById('chat-box');
+    const chatBox = document.getElementById('chat-box');
 
-            // 1. Show user message
-            const userMsg = document.createElement('div');
-            userMsg.className = 'msg user';
-            userMsg.textContent = messageText;
-            chatBox.appendChild(userMsg);
-            
-            // Clear input box immediately
-            input.value = '';
-            
-            // 2. Add placeholder status message while LLM processes
-            const typingStatus = document.createElement('div');
-            typingStatus.className = 'msg system-status';
-            typingStatus.textContent = `${currentCharacter} is thinking...`;
-            chatBox.appendChild(typingStatus);
-            chatBox.scrollTop = chatBox.scrollHeight;
+    // 1. Show user message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'msg user';
+    userMsg.textContent = messageText;
+    chatBox.appendChild(userMsg);
+    
+    // Clear input box immediately
+    input.value = '';
+    
+    // 2. Add placeholder status message while LLM processes
+    const typingStatus = document.createElement('div');
+    typingStatus.className = 'msg system-status';
+    typingStatus.textContent = `${currentCharacter} is thinking...`;
+    chatBox.appendChild(typingStatus);
+    chatBox.scrollTop = chatBox.scrollHeight;
 
-            // 3. Keep track of memory
-            conversationHistory.push({ role: "user", content: messageText });
+    // 3. Keep track of memory
+    conversationHistory.push({ role: "user", content: messageText });
 
-            try {
-                // Fetch direct from an open-access unauthenticated LLM route
-                const response = await fetch(`https://text.pollinations.ai/`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        messages: conversationHistory,
-                        model: 'openai-large', // Clean, snappy modern LLM backend
-                        seed: Math.floor(Math.random() * 100000)
-                    })
-                });
+    try {
+        // Fetch from the open endpoint
+        const response = await fetch(`https://text.pollinations.ai/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                messages: conversationHistory,
+                model: 'openai', // Updated to valid current model token
+                seed: Math.floor(Math.random() * 100000)
+            })
+        });
 
-                const replyText = await response.text();
-                
-                // Remove the "thinking..." indicator
-                typingStatus.remove();
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-                // 4. Render actual LLM text response
-                const botMsg = document.createElement('div');
-                botMsg.className = 'msg bot';
-                botMsg.textContent = replyText;
-                chatBox.appendChild(botMsg);
-                
-                // Keep background context building
-                conversationHistory.push({ role: "assistant", content: replyText });
+        const replyText = await response.text();
+        
+        // Remove the "thinking..." indicator
+        typingStatus.remove();
 
-            } catch (error) {
-                console.error(error);
-                typingStatus.textContent = `❌ Lost connection to ${currentCharacter}'s power level. Try again!`;
-            }
+        // 4. Render actual LLM text response
+        const botMsg = document.createElement('div');
+        botMsg.className = 'msg bot';
+        botMsg.textContent = replyText;
+        chatBox.appendChild(botMsg);
+        
+        // Keep background context building
+        conversationHistory.push({ role: "assistant", content: replyText });
 
-            chatBox.scrollTop = chatBox.scrollHeight;
+    } catch (error) {
+        console.error(error);
+        typingStatus.textContent = `❌ Lost connection to ${currentCharacter}'s power level. Try again!`;
+    }
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
         }
     </script>
 </body>
