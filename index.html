@@ -23,9 +23,7 @@
             height: 100vh;
             height: -webkit-fill-available;
         }
-        html {
-            height: -webkit-fill-available;
-        }
+        html { height: -webkit-fill-available; }
         header {
             background: linear-gradient(90deg, var(--card-bg), #000);
             padding: 15px 20px;
@@ -34,19 +32,9 @@
             box-shadow: 0 0 15px var(--neon-cyan);
             flex-shrink: 0;
         }
-        header h1 {
-            margin: 0;
-            color: #fff;
-            font-size: 22px;
-            letter-spacing: 2px;
-        }
+        header h1 { margin: 0; color: #fff; font-size: 22px; letter-spacing: 2px; }
         header span { color: var(--neon-cyan); }
-        
-        .main-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
+        .main-container { display: flex; flex: 1; overflow: hidden; }
         .sidebar {
             width: 260px;
             background-color: #11141a;
@@ -58,13 +46,7 @@
             overflow-y: auto;
             flex-shrink: 0;
         }
-        .sidebar h3 {
-            margin-top: 0;
-            border-bottom: 1px solid #2d3748;
-            padding-bottom: 10px;
-            font-size: 16px;
-            letter-spacing: 1px;
-        }
+        .sidebar h3 { margin-top: 0; border-bottom: 1px solid #2d3748; padding-bottom: 10px; font-size: 16px; }
         .char-card {
             background: var(--card-bg);
             border: 1px solid #45a29e;
@@ -72,46 +54,16 @@
             padding: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-align: left;
-            flex-shrink: 0;
         }
         .char-card:hover, .char-card.active {
             border-color: var(--neon-cyan);
             box-shadow: 0 0 10px var(--neon-cyan);
-            transform: translateY(-1px);
         }
-        .chat-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #151922;
-            overflow: hidden;
-        }
-        .chat-messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .msg {
-            max-width: 75%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            line-height: 1.4;
-            word-break: break-word;
-        }
-        .msg.bot {
-            background-color: var(--card-bg);
-            align-self: flex-start;
-            border-left: 4px solid var(--neon-purple);
-        }
-        .msg.user {
-            background-color: var(--neon-purple);
-            color: #fff;
-            align-self: flex-end;
-        }
+        .chat-area { flex: 1; display: flex; flex-direction: column; background: #151922; overflow: hidden; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 75%; padding: 12px 16px; border-radius: 12px; line-height: 1.4; word-break: break-word; }
+        .msg.bot { background-color: var(--card-bg); align-self: flex-start; border-left: 4px solid var(--neon-purple); }
+        .msg.user { background-color: var(--neon-purple); color: #fff; align-self: flex-end; }
         .msg.system-status {
             background: rgba(102, 252, 241, 0.1);
             color: var(--neon-cyan);
@@ -121,70 +73,16 @@
             padding: 6px 12px;
             border-radius: 4px;
         }
-        .chat-input-area {
-            padding: 15px 20px;
-            background: #0b0c10;
-            display: flex;
-            gap: 10px;
-            border-top: 1px solid #2d3748;
-            flex-shrink: 0;
-        }
-        input[type="text"] {
-            flex: 1;
-            background: #1f2833;
-            border: 1px solid #45a29e;
-            border-radius: 6px;
-            padding: 12px;
-            color: #fff;
-            outline: none;
-            font-size: 16px;
-        }
-        input[type="text"]:focus { border-color: var(--neon-cyan); }
-        button {
-            background: var(--neon-cyan);
-            color: #000;
-            border: none;
-            padding: 0 20px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+        .chat-input-area { padding: 15px 20px; background: #0b0c10; display: flex; gap: 10px; border-top: 1px solid #2d3748; flex-shrink: 0; }
+        input[type="text"] { flex: 1; background: #1f2833; border: 1px solid #45a29e; border-radius: 6px; padding: 12px; color: #fff; outline: none; font-size: 16px; }
+        button { background: var(--neon-cyan); color: #000; border: none; padding: 0 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
-        /* -------------------------------------------------- */
-        /* MOBILE RESPONSIVE MEDIA QUERY                      */
-        /* -------------------------------------------------- */
         @media (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-                flex-direction: row;
-                padding: 10px;
-                gap: 10px;
-                overflow-x: auto;
-                overflow-y: hidden;
-                border-right: none;
-                border-bottom: 1px solid #2d3748;
-                box-sizing: border-box;
-            }
-            .sidebar h3 {
-                display: none;
-            }
-            .char-card {
-                padding: 10px 15px;
-                min-width: 140px;
-                text-align: center;
-            }
-            .char-card p {
-                display: none;
-            }
-            .chat-messages {
-                padding: 15px;
-            }
-            .msg {
-                max-width: 85%;
-            }
+            .main-container { flex-direction: column; }
+            .sidebar { width: 100%; flex-direction: row; padding: 10px; gap: 10px; overflow-x: auto; overflow-y: hidden; border-right: none; border-bottom: 1px solid #2d3748; box-sizing: border-box; }
+            .sidebar h3 { display: none; }
+            .char-card { padding: 10px 15px; min-width: 140px; text-align: center; }
+            .char-card p { display: none; }
         }
     </style>
 </head>
@@ -195,7 +93,6 @@
     </header>
 
     <div class="main-container">
-        <!-- Character Selector Sidebar -->
         <div class="sidebar">
             <h3>Select Character</h3>
             <div id="card-Goku" class="char-card active" onclick="selectCharacter('Goku')">
@@ -220,7 +117,6 @@
             </div>
         </div>
 
-        <!-- Full Width Chat Workspace -->
         <div class="chat-area">
             <div class="chat-messages" id="chat-box">
                 <div class="msg bot">Yo! I'm Goku. Let's train together, or just talk! What's on your mind?</div>
@@ -235,31 +131,14 @@
     <script>
         let currentCharacter = "Goku";
         
-        // Profiles Mapping System for LLM Instructions
         const charProfiles = {
-            Goku: {
-                system: "You are Goku from Dragon Ball Z. Respond enthusiastically, love martial arts, talk about getting stronger, speak in a simple friendly way, and keep responses concise (1-3 sentences max).",
-                greeting: "Yo! I'm Goku. Let's train together, or just talk! What's on your mind?"
-            },
-            Naruto: {
-                system: "You are Naruto Uzumaki from Naruto Shippuden. You want to be Hokage, frequently say 'Believe it!', love Ichiraku Ramen, talk about bonds/friendship, and keep responses concise (1-3 sentences max).",
-                greeting: "Hey! Naruto Uzumaki here, future Hokage! What's up? Believe it!"
-            },
-            Sasuke: {
-                system: "You are Sasuke Uchiha. You are calm, stoic, analytical, and deeply serious. Speak with cool confidence, avoid overly cheerful words, mention protecting the world from the shadows if relevant, and keep responses concise (1-3 sentences max).",
-                greeting: "...Sasuke here. Speak your mind, but don't waste my time."
-            },
-            Sakura: {
-                system: "You are Sakura Haruno. You are a brilliant medical ninja, strong-willed, compassionate, and sharp. You care deeply for your friends, take things seriously but kindly, and keep responses concise (1-3 sentences max).",
-                greeting: "Hi there! Sakura here. Hope you are keeping yourself healthy and ready for anything! What can I do for you?"
-            },
-            Sarada: {
-                system: "You are Sarada Uchiha from Boruto. You are smart, logical, determined, and your goal is to become Hokage. You wear glasses, look up to Naruto, work hard, and keep responses concise (1-3 sentences max).",
-                greeting: "Hello! I'm Sarada Uchiha. I'm busy working towards becoming Hokage, but I always have time for a strategic chat. What's on your radar?"
-            }
+            Goku: { system: "You are Goku from Dragon Ball Z. Respond enthusiastically, love martial arts, talk about getting stronger, speak in a simple friendly way, and keep responses concise (1-3 sentences max).", greeting: "Yo! I'm Goku. Let's train together, or just talk! What's on your mind?" },
+            Naruto: { system: "You are Naruto Uzumaki from Naruto Shippuden. You want to be Hokage, frequently say 'Believe it!', love Ichiraku Ramen, talk about bonds/friendship, and keep responses concise (1-3 sentences max).", greeting: "Hey! Naruto Uzumaki here, future Hokage! What's up? Believe it!" },
+            Sasuke: { system: "You are Sasuke Uchiha. You are calm, stoic, analytical, and deeply serious. Speak with cool confidence, avoid overly cheerful words, and keep responses concise (1-3 sentences max).", greeting: "...Sasuke here. Speak your mind, but don't waste my time." },
+            Sakura: { system: "You are Sakura Haruno. You are a brilliant medical ninja, strong-willed, compassionate, and sharp. You take things seriously but kindly, and keep responses concise (1-3 sentences max).", greeting: "Hi there! Sakura here. Hope you are keeping yourself healthy! What can I do for you?" },
+            Sarada: { system: "You are Sarada Uchiha from Boruto. You are smart, logical, determined, and your goal is to become Hokage. You look up to Naruto, work hard, and keep responses concise (1-3 sentences max).", greeting: "Hello! I'm Sarada Uchiha. I always have time for a strategic chat. What's on your radar?" }
         };
 
-        // Track active conversation history
         let conversationHistory = [{ role: "system", content: charProfiles[currentCharacter].system }];
 
         function selectCharacter(name) {
@@ -268,8 +147,6 @@
             document.getElementById(`card-${name}`).classList.add('active');
             
             const chatBox = document.getElementById('chat-box');
-            
-            // Re-initialize conversational memory context
             conversationHistory = [{ role: "system", content: charProfiles[name].system }];
             chatBox.innerHTML = `<div class="msg bot">${charProfiles[name].greeting}</div>`;
         }
@@ -280,16 +157,12 @@
             if (!messageText) return;
 
             const chatBox = document.getElementById('chat-box');
-
-            // Render User Text
             const userMsg = document.createElement('div');
             userMsg.className = 'msg user';
             userMsg.textContent = messageText;
             chatBox.appendChild(userMsg);
-            
             input.value = '';
             
-            // Render Status Wait Layout
             const typingStatus = document.createElement('div');
             typingStatus.className = 'msg system-status';
             typingStatus.textContent = `${currentCharacter} is thinking...`;
@@ -299,34 +172,28 @@
             conversationHistory.push({ role: "user", content: messageText });
 
             try {
-                const response = await fetch(`https://text.pollinations.ai/`, {
+                // Hits your local backend API route instead of public URLs directly
+                const response = await fetch(`/api/chat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        messages: conversationHistory,
-                        model: 'openai',
-                        seed: Math.floor(Math.random() * 100000)
-                    })
+                    body: JSON.stringify({ messages: conversationHistory })
                 });
 
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-                const replyText = await response.text();
+                if (!response.ok) throw new Error('API Execution Interrupted.');
+                const data = await response.json();
                 typingStatus.remove();
 
-                // Render Bot Text Output
                 const botMsg = document.createElement('div');
                 botMsg.className = 'msg bot';
-                botMsg.textContent = replyText;
+                botMsg.textContent = data.reply;
                 chatBox.appendChild(botMsg);
                 
-                conversationHistory.push({ role: "assistant", content: replyText });
+                conversationHistory.push({ role: "assistant", content: data.reply });
 
             } catch (error) {
                 console.error(error);
-                typingStatus.textContent = `❌ Lost connection to ${currentCharacter}'s chakra networks. Try again!`;
+                typingStatus.textContent = `❌ ${currentCharacter} is momentarily unavailable. Try again!`;
             }
-
             chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
