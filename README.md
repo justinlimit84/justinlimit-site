@@ -62,7 +62,7 @@ New Production Infrastructure (Scalable):
 ## 🔁 Deployment
 
 - Deploy to Vercel for global edge serverless functions. Link this repository to your Vercel project and set `GROQ_API_KEY` in Project Environment Variables.
-- Configure DNS (example with GoDaddy): set the apex A record to Vercel's anycast IP (76.76.21.21) or follow Vercel's recommended CNAME setup for `www`.
+- Configure DNS (example with GoDaddy): set the apex A record to Vercel's anycast IP (216.198.79.1) or follow Vercel's recommended CNAME setup for `www`.
 
 ---
 
