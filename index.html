@@ -157,6 +157,7 @@
     </header>
 
     <div class="main-container">
+        <!-- Character Selector -->
         <div class="sidebar">
             <h3>Select Character</h3>
             <div class="char-card active" onclick="selectCharacter('Goku')">
@@ -167,22 +168,25 @@
                 <strong>Naruto Uzumaki</strong>
                 <p style="margin:5px 0 0; font-size:12px; color:#aaa;">The 7th Hokage</p>
             </div>
-            <div class="char-card" style="border-color: #ffb703;" onclick="alert('Unlock Premium Characters by completing a short offer!')">
+            <div class="char-card" style="border-color: #ffb703;" onclick="alert('Unlock Premium Characters by completing a short offer or joining VIP!')">
                 <strong style="color: #ffb703;">Gojo Satoru 🔒</strong>
                 <p style="margin:5px 0 0; font-size:12px; color:#ffb703;">Premium Only</p>
             </div>
         </div>
 
+        <!-- Central Chat Interface -->
         <div class="chat-area">
             <div class="chat-messages" id="chat-box">
-                <div class="msg bot">Hey there! I am Goku. Let's train together, or just chat! What's on your mind?</div>
+                <div class="msg bot">Yo! I'm Goku. Let's train together, or just talk! What's on your mind?</div>
             </div>
             <div class="chat-input-area">
-                <input type="text" id="user-input" placeholder="Type your message to the character...">
+                <!-- Added onkeydown listener below to capture the Enter key -->
+                <input type="text" id="user-input" placeholder="Type your message and press Enter..." onkeydown="if(event.key === 'Enter') sendMessage()">
                 <button onclick="sendMessage()">Send</button>
             </div>
         </div>
 
+        <!-- Earning/Affiliate Column -->
         <div class="ad-sidebar">
             <h4>Epic Loot Drop 🎒</h4>
             <div class="ad-space">
@@ -199,13 +203,36 @@
     <script>
         let currentCharacter = "Goku";
 
+        // Balanced local dialogue banks for immediate interactive gameplay
+        const characterResponses = {
+            Goku: [
+                "That sounds like a tough challenge! But remember, power comes in response to a need, not a desire. You have to create that need!",
+                "Haha, outstanding! Hearing that makes me want to hit the gym immediately. Have you seen my training gear on the right menu panel yet?",
+                "Kamehameha! Don't look down on your own potential. Work hard, eat a massive meal, and keep pushing your limits!",
+                "I am getting incredibly excited just thinking about how strong we can get. Let's keep training!"
+            ],
+            Naruto: [
+                "Believe it! No matter how hard things get, I never go back on my word. That's my ninja way!",
+                "Heh, you've got some fire in you! Want to grab some ramen at Ichiraku later? Also, make sure to look at that sweet ninja gear on the sidebar!",
+                "If you don't like your destiny, don't accept it. Instead, have the courage to change it the way you want it to be!",
+                "Do not hide behind excuses! True power comes when you protect something precious to you."
+            ]
+        };
+
         function selectCharacter(name) {
             currentCharacter = name;
             document.querySelectorAll('.char-card').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            
+            // Find the clicked card cleanly
+            const clickedCard = Array.from(document.querySelectorAll('.char-card')).find(el => el.innerHTML.includes(name));
+            if (clickedCard) clickedCard.classList.add('active');
             
             const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML = `<div class="msg bot">Yo! I'm ${name}. Ready to talk? Ask me anything!</div>`;
+            const initialGreeting = name === "Goku" 
+                ? "Yo! I'm Goku. Let's train together, or just talk! What's on your mind?" 
+                : "Hey! Naruto Uzumaki here, future Hokage! What's up? Believe it!";
+            
+            chatBox.innerHTML = `<div class="msg bot">${initialGreeting}</div>`;
         }
 
         async function sendMessage() {
@@ -215,7 +242,7 @@
 
             const chatBox = document.getElementById('chat-box');
 
-            // Append user message
+            // Append user message bubble
             const userMsg = document.createElement('div');
             userMsg.className = 'msg user';
             userMsg.textContent = messageText;
@@ -223,14 +250,18 @@
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Simulated AI Response (Can easily connect to free AI APIs like Hugging Face, Pollinations, or Gemini API)
+            // Delayed response engine using the randomized character pools
             setTimeout(() => {
                 const botMsg = document.createElement('div');
                 botMsg.className = 'msg bot';
-                botMsg.textContent = `[${currentCharacter} AI Engine]: That sounds awesome! As an anime warrior, I totally agree. Make sure to check out the epic gear on the right side of the screen!`;
+                
+                const responsePool = characterResponses[currentCharacter];
+                const randomReply = responsePool[Math.floor(Math.random() * responsePool.length)];
+                
+                botMsg.textContent = randomReply;
                 chatBox.appendChild(botMsg);
                 chatBox.scrollTop = chatBox.scrollHeight;
-            }, 1000);
+            }, 800);
         }
     </script>
 </body>
