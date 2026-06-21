@@ -42,15 +42,41 @@ export default async function handler(req, res) {
             const replyText = data.choices[0].message.content;
 
             // 📊 THE TRACKING LOG MAGIC:
-            // Extract usage specs sent back from Groq and log it directly to your live Vercel Console
             if (data.usage) {
                 const currentUser = username || 'Anonymous User';
+                const promptTokens = data.usage.prompt_tokens;
+                const completionTokens = data.usage.completion_tokens;
+                const totalTokens = data.usage.total_tokens;
+
+                // 1. Keep your existing Vercel terminal logs running
                 console.log(`\n=================== AI USAGE TRACKER ===================`);
                 console.log(`👤 USER ID: ${currentUser}`);
-                console.log(`🎟️ PROMPT TOKENS: ${data.usage.prompt_tokens}`);
-                console.log(`✍️ COMPLETION TOKENS: ${data.usage.completion_tokens}`);
-                console.log(`📈 TOTAL TOKENS: ${data.usage.total_tokens}`);
+                console.log(`🎟️ PROMPT TOKENS: ${promptTokens}`);
+                console.log(`✍️ COMPLETION TOKENS: ${completionTokens}`);
+                console.log(`📈 TOTAL TOKENS: ${totalTokens}`);
                 console.log(`========================================================\n`);
+
+                // 2. Stream log data straight out to Supabase database Rest API
+                const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+                const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+                if (supabaseUrl && supabaseKey) {
+                    fetch(`${supabaseUrl}/rest/v1/token_logs`, {
+                        method: 'POST',
+                        headers: {
+                            'apikey': supabaseKey,
+                            'Authorization': `Bearer ${supabaseKey}`,
+                            'Content-Type': 'application/json',
+                            'Prefer': 'return=minimal'
+                        },
+                        body: JSON.stringify({
+                            user_id: currentUser,
+                            prompt_tokens: promptTokens,
+                            completion_tokens: completionTokens,
+                            total_tokens: totalTokens
+                        })
+                    }).catch(err => console.error("Error writing to Supabase logs:", err));
+                }
             }
 
             return res.status(200).json({ reply: replyText });
