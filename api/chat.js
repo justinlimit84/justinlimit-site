@@ -69,6 +69,7 @@ export default async function handler(req, res) {
                     try {
                         const targetUrl = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/rpc/log_tokens`;
                         
+                        // 🚀 Keeping the critical 'await' here so the serverless function stays active until the DB sync finishes
                         const dbResponse = await fetch(targetUrl, {
                             method: 'POST',
                             headers: {
