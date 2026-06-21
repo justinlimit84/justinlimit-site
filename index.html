@@ -416,7 +416,6 @@
             conversationHistory.push({ role: "user", content: messageText });
 
             try {
-                // Fetch the saved nickname from localStorage so it's always up to date
                 const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
 
                 const response = await fetch(`/api/chat`, {
@@ -428,25 +427,51 @@
                     })
                 });
 
-                if (!response.ok) throw new Error('API Execution Interrupted.');
                 const data = await response.json();
                 typingStatus.remove();
 
-                const botMsg = document.createElement('div');
-                botMsg.className = 'msg bot';
-                botMsg.textContent = data.reply;
-                chatBox.appendChild(botMsg);
-                
-                conversationHistory.push({ role: "assistant", content: data.reply });
+                if (!response.ok) {
+                    // Render the specialized quota limit message returned directly from the backend API status 403
+                    const errorMessage = data.error || `${currentCharacter} is momentarily unavailable. Try again!`;
+                    
+                    const errBlock = document.createElement('div');
+                    errBlock.className = 'msg system-status';
+                    errBlock.style.borderColor = '#d62828';
+                    errBlock.style.color = '#d62828';
+                    errBlock.style.background = 'rgba(214, 40, 40, 0.1)';
+                    errBlock.textContent = `❌ ${errorMessage}`;
+                    
+                    chatBox.appendChild(errBlock);
+                    
+                    // Drop the last sent message from local array history since the AI endpoint didn't acknowledge it
+                    conversationHistory.pop();
+                } else {
+                    const botMsg = document.createElement('div');
+                    botMsg.className = 'msg bot';
+                    botMsg.textContent = data.reply;
+                    chatBox.appendChild(botMsg);
+                    
+                    conversationHistory.push({ role: "assistant", content: data.reply });
+                }
 
             } catch (error) {
                 console.error(error);
-                typingStatus.textContent = `❌ ${currentCharacter} is momentarily unavailable. Try again!`;
+                typingStatus.remove();
+                
+                const networkErrBlock = document.createElement('div');
+                networkErrBlock.className = 'msg system-status';
+                networkErrBlock.style.borderColor = '#d62828';
+                networkErrBlock.style.color = '#d62828';
+                networkErrBlock.style.background = 'rgba(214, 40, 40, 0.1)';
+                networkErrBlock.textContent = `❌ ${currentCharacter} is momentarily unavailable. Try again!`;
+                
+                chatBox.appendChild(networkErrBlock);
+                conversationHistory.pop();
             }
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // 🌟 LOGIN JAVASCRIPT MECHANICS LINKED HERE 🌟
+        // LOGIN JAVASCRIPT MECHANICS LINKED HERE
         document.addEventListener("DOMContentLoaded", () => {
             const overlay = document.getElementById('login-overlay');
             const loginBtn = document.getElementById('login-btn');
