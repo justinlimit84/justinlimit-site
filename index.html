@@ -37,9 +37,32 @@
             flex-shrink: 0;
             transition: all 0.4s ease;
             z-index: 10;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        header h1 { margin: 0; color: #fff; font-size: 22px; letter-spacing: 2px; }
+        header h1 { margin: 0 auto; color: #fff; font-size: 22px; letter-spacing: 2px; }
         header span { color: var(--neon-cyan); transition: all 0.4s ease; }
+        
+        /* Audio Control Button Layout */
+        #music-toggle {
+            position: absolute;
+            right: 20px;
+            padding: 8px 14px;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #music-toggle:hover {
+            box-shadow: 0 0 10px var(--neon-cyan);
+            background: rgba(255, 255, 255, 0.1);
+        }
         
         .main-container { display: flex; flex: 1; overflow: hidden; }
         
@@ -132,6 +155,9 @@
             .char-card { padding: 10px 15px; min-width: 140px; text-align: center; }
             .char-card p { display: none; }
             .chat-messages { padding: 15px; }
+            #music-toggle { position: static; margin-left: auto; right: auto; }
+            header { padding: 10px 15px; flex-direction: row; justify-content: space-between; }
+            header h1 { margin: 0; font-size: 16px; }
         }
     </style>
 </head>
@@ -139,6 +165,7 @@
 
     <header>
         <h1>JUSTIN<span>LIMIT</span>.COM // AI ANIME HUB</h1>
+        <button id="music-toggle" onclick="toggleMusic()">🎵 Play Theme</button>
     </header>
 
     <div class="main-container">
@@ -209,38 +236,92 @@
             Goku: {
                 '--neon-cyan': '#FF6600',       // Saiyan Orange
                 '--neon-purple': '#ffb703',     // Gold
-                '--bubble-bg': 'rgba(255, 102, 0, 0.15)'
+                '--bubble-bg': 'rgba(255, 102, 0, 0.15)',
+                bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
             },
             Naruto: {
                 '--neon-cyan': '#FFA500',       // Uzumaki Orange
                 '--neon-purple': '#d62828',     // Sage Red
-                '--bubble-bg': 'rgba(255, 165, 0, 0.15)'
+                '--bubble-bg': 'rgba(255, 165, 0, 0.15)',
+                bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
             },
             Sasuke: {
                 '--neon-cyan': '#00E5FF',       // Chidori Blue
                 '--neon-purple': '#8a2be2',     // Susanoo Purple
-                '--bubble-bg': 'rgba(0, 229, 255, 0.12)'
+                '--bubble-bg': 'rgba(0, 229, 255, 0.12)',
+                bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
             },
             Sakura: {
                 '--neon-cyan': '#FFB7C5',       // Sakura Pink
                 '--neon-purple': '#ff4d6d',     // Crimson
-                '--bubble-bg': 'rgba(255, 183, 197, 0.15)'
+                '--bubble-bg': 'rgba(255, 183, 197, 0.15)',
+                bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
             },
             Sarada: {
                 '--neon-cyan': '#E53935',       // Sharingan Red
                 '--neon-purple': '#6a1b9a',     // Dark Purple
-                '--bubble-bg': 'rgba(229, 57, 53, 0.15)'
+                '--bubble-bg': 'rgba(229, 57, 53, 0.15)',
+                bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'
             }
         };
 
         let conversationHistory = [{ role: "system", content: charProfiles[currentCharacter].system }];
+        
+        // Global HTML5 Audio Engine Variables
+        let bgAudio = new Audio();
+        bgAudio.loop = true;
+        bgAudio.volume = 0.20; // Soft 20% background balance
+        let isMusicPlaying = false;
+
+        function toggleMusic() {
+            const btn = document.getElementById('music-toggle');
+            if (isMusicPlaying) {
+                bgAudio.pause();
+                isMusicPlaying = false;
+                btn.textContent = "📁 Muted";
+                btn.style.background = "rgba(255,255,255,0.05)";
+            } else {
+                playCurrentCharacterTrack();
+            }
+        }
+
+        function playCurrentCharacterTrack() {
+            const theme = characterThemes[currentCharacter];
+            if (!theme || !theme.bgm) return;
+            
+            const btn = document.getElementById('music-toggle');
+            
+            if (bgAudio.src !== theme.bgm) {
+                bgAudio.src = theme.bgm;
+                bgAudio.load();
+            }
+            
+            bgAudio.play()
+                .then(() => {
+                    isMusicPlaying = true;
+                    btn.textContent = "🔊 Playing Theme";
+                    btn.style.background = "var(--bubble-bg)";
+                })
+                .catch(err => {
+                    console.log("Audio playback blocked. Awaiting user interaction execution.");
+                    isMusicPlaying = false;
+                    btn.textContent = "🎵 Play Theme";
+                });
+        }
 
         function applyCharacterTheme(name) {
             const theme = characterThemes[name];
             if (!theme) return;
             Object.keys(theme).forEach(property => {
-                document.documentElement.style.setProperty(property, theme[property]);
+                if (property !== 'bgm') {
+                    document.documentElement.style.setProperty(property, theme[property]);
+                }
             });
+
+            // Dynamically switch track if music engine is unmuted
+            if (isMusicPlaying) {
+                playCurrentCharacterTrack();
+            }
         }
 
         function selectCharacter(name) {
@@ -300,7 +381,6 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // Initialize theme configuration correctly on page load
         window.onload = () => {
             applyCharacterTheme(currentCharacter);
         };
