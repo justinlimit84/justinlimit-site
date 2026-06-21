@@ -27,6 +27,7 @@
             height: -webkit-fill-available;
         }
         html { height: -webkit-fill-available; }
+        
         header {
             background: linear-gradient(90deg, var(--card-bg), #000);
             padding: 15px 20px;
@@ -35,10 +36,14 @@
             box-shadow: 0 0 15px var(--neon-cyan);
             flex-shrink: 0;
             transition: all 0.4s ease;
+            z-index: 10;
         }
         header h1 { margin: 0; color: #fff; font-size: 22px; letter-spacing: 2px; }
         header span { color: var(--neon-cyan); transition: all 0.4s ease; }
+        
         .main-container { display: flex; flex: 1; overflow: hidden; }
+        
+        /* Sidebar layout styling */
         .sidebar {
             width: 260px;
             background-color: #11141a;
@@ -51,67 +56,82 @@
             flex-shrink: 0;
         }
         .sidebar h3 { margin-top: 0; border-bottom: 1px solid #2d3748; padding-bottom: 10px; font-size: 16px; }
+        
         .char-card {
             background: var(--card-bg);
-            border: 1px solid #45a29e;
+            border: 1px solid #2d3748;
             border-radius: 8px;
             padding: 12px;
             cursor: pointer;
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
         }
-        /* Updated Active State with Ambient Energy Aura Animation */
-        .char-card:hover, .char-card.active {
+        .char-card:hover {
             border-color: var(--neon-cyan);
-            box-shadow: 0 0 10px var(--neon-cyan);
+            box-shadow: 0 0 8px var(--bubble-bg);
         }
-        
         .char-card.active {
+            border-color: var(--neon-cyan) !important;
             animation: auraPulse 2s infinite ease-in-out;
         }
 
-        /* Ambient Energy Keyframe Animation */
         @keyframes auraPulse {
-            0% {
-                box-shadow: 0 0 8px var(--bubble-bg), inset 0 0 4px rgba(255,255,255,0.05);
-                border-color: var(--neon-cyan);
-            }
-            50% {
-                box-shadow: 0 0 18px var(--neon-cyan), inset 0 0 8px var(--bubble-bg);
-                border-color: #fff; /* Micro-flash at peak energy */
-            }
-            100% {
-                box-shadow: 0 0 8px var(--bubble-bg), inset 0 0 4px rgba(255,255,255,0.05);
-                border-color: var(--neon-cyan);
-            }
-        
+            0% { box-shadow: 0 0 8px var(--bubble-bg), inset 0 0 4px rgba(255,255,255,0.05); border-color: var(--neon-cyan); }
+            50% { box-shadow: 0 0 18px var(--neon-cyan), inset 0 0 8px var(--bubble-bg); border-color: #fff; }
+            100% { box-shadow: 0 0 8px var(--bubble-bg), inset 0 0 4px rgba(255,255,255,0.05); border-color: var(--neon-cyan); }
         }
+
+        /* Centralized Chat Container Layout */
         .chat-area { flex: 1; display: flex; flex-direction: column; background: #151922; overflow: hidden; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .msg { max-width: 75%; padding: 12px 16px; border-radius: 12px; line-height: 1.4; word-break: break-word; transition: background-color 0.4s ease; }
-        .msg.bot { background-color: var(--card-bg); align-self: flex-start; border-left: 4px solid var(--neon-cyan); }
-        .msg.user { background-color: var(--neon-purple); color: #fff; align-self: flex-end; box-shadow: 0 2px 8px var(--bubble-bg); }
+        
+        /* Fixed wide layout by using a centralized column container */
+        .chat-messages { 
+            flex: 1; 
+            padding: 20px 30px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 18px; 
+            max-width: 850px; 
+            width: 100%; 
+            margin: 0 auto; 
+            box-sizing: border-box;
+            padding-bottom: 40px; /* Gives padding over text bar */
+        }
+        
+        .msg { max-width: 80%; padding: 14px 18px; border-radius: 12px; line-height: 1.5; word-break: break-word; font-size: 15px; }
+        .msg.bot { background-color: var(--card-bg); align-self: flex-start; border-left: 4px solid var(--neon-cyan); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .msg.user { background-color: var(--neon-purple); color: #fff; align-self: flex-end; box-shadow: 0 4px 12px var(--bubble-bg); }
+        
         .msg.system-status {
             background: var(--bubble-bg);
             color: var(--neon-cyan);
             align-self: center;
             font-size: 12px;
             border: 1px dashed var(--neon-cyan);
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 4px;
-            transition: all 0.4s ease;
+            letter-spacing: 0.5px;
         }
-        .chat-input-area { padding: 15px 20px; background: #0b0c10; display: flex; gap: 10px; border-top: 1px solid #2d3748; flex-shrink: 0; }
-        input[type="text"] { flex: 1; background: #1f2833; border: 1px solid #45a29e; border-radius: 6px; padding: 12px; color: #fff; outline: none; font-size: 16px; transition: all 0.4s ease; }
-        input[type="text"]:focus { border-color: var(--neon-cyan); box-shadow: 0 0 8px var(--bubble-bg); }
-        button { background: var(--neon-cyan); color: #000; border: none; padding: 0 20px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.4s ease; }
-        button:hover { box-shadow: 0 0 12px var(--neon-cyan); }
+        
+        /* Centralized Lower Input Bar Layout */
+        .chat-input-wrapper { background: #0b0c10; border-top: 1px solid #2d3748; flex-shrink: 0; }
+        .chat-input-area { max-width: 850px; margin: 0 auto; padding: 15px 20px; display: flex; gap: 12px; box-sizing: border-box; }
+        
+        input[type="text"] { flex: 1; background: #1f2833; border: 1px solid #2d3748; border-radius: 6px; padding: 14px; color: #fff; outline: none; font-size: 16px; transition: all 0.3s ease; }
+        input[type="text"]:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px var(--bubble-bg); background: #232d3a; }
+        
+        button { background: var(--neon-cyan); color: #000; border: none; padding: 0 24px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; transition: all 0.3s ease; }
+        button:hover { box-shadow: 0 0 15px var(--neon-cyan); transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
 
+        /* Responsive Breakpoints */
         @media (max-width: 768px) {
             .main-container { flex-direction: column; }
             .sidebar { width: 100%; flex-direction: row; padding: 10px; gap: 10px; overflow-x: auto; overflow-y: hidden; border-right: none; border-bottom: 1px solid #2d3748; box-sizing: border-box; }
             .sidebar h3 { display: none; }
             .char-card { padding: 10px 15px; min-width: 140px; text-align: center; }
             .char-card p { display: none; }
+            .chat-messages { padding: 15px; }
         }
     </style>
 </head>
@@ -150,9 +170,11 @@
             <div class="chat-messages" id="chat-box">
                 <div class="msg bot">Yo! I'm Goku. Let's train together, or just talk! What's on your mind? 😁</div>
             </div>
-            <div class="chat-input-area">
-                <input type="text" id="user-input" placeholder="Type message & press Enter..." onkeydown="if(event.key === 'Enter') sendMessage()">
-                <button onclick="sendMessage()">Send</button>
+            <div class="chat-input-wrapper">
+                <div class="chat-input-area">
+                    <input type="text" id="user-input" placeholder="Type message & press Enter..." onkeydown="if(event.key === 'Enter') sendMessage()">
+                    <button onclick="sendMessage()">Send</button>
+                </div>
             </div>
         </div>
     </div>
@@ -160,7 +182,6 @@
     <script>
         let currentCharacter = "Goku";
         
-        // Character Configuration Profiles
         const charProfiles = {
             Goku: { 
                 system: "You are Goku from Dragon Ball Z. Respond enthusiastically, love martial arts, and talk about getting stronger. Speak in a simple friendly way. Use actual emojis (like 😁, 💪, 💥) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
@@ -184,32 +205,31 @@
             }
         };
 
-        // Character UI Theme Palette Mapping
         const characterThemes = {
             Goku: {
                 '--neon-cyan': '#FF6600',       // Saiyan Orange
-                '--neon-purple': '#ffb703',     // Secondary gold
-                '--bubble-bg': 'rgba(255, 102, 0, 0.2)'
+                '--neon-purple': '#ffb703',     // Gold
+                '--bubble-bg': 'rgba(255, 102, 0, 0.15)'
             },
             Naruto: {
-                '--neon-cyan': '#FFA500',       // Kyuubi Orange
+                '--neon-cyan': '#FFA500',       // Uzumaki Orange
                 '--neon-purple': '#d62828',     // Sage Red
-                '--bubble-bg': 'rgba(255, 165, 0, 0.2)'
+                '--bubble-bg': 'rgba(255, 165, 0, 0.15)'
             },
             Sasuke: {
-                '--neon-cyan': '#00E5FF',       // Chidori Cyan Blue
-                '--neon-purple': '#3a0ca3',     // Rinnegan Purple
-                '--bubble-bg': 'rgba(0, 229, 255, 0.15)'
+                '--neon-cyan': '#00E5FF',       // Chidori Blue
+                '--neon-purple': '#8a2be2',     // Susanoo Purple
+                '--bubble-bg': 'rgba(0, 229, 255, 0.12)'
             },
             Sakura: {
-                '--neon-cyan': '#FFB7C5',       // Cherry Blossom Pink
-                '--neon-purple': '#ff4d6d',     // Medical Chakra Crimson
-                '--bubble-bg': 'rgba(255, 183, 197, 0.2)'
+                '--neon-cyan': '#FFB7C5',       // Sakura Pink
+                '--neon-purple': '#ff4d6d',     // Crimson
+                '--bubble-bg': 'rgba(255, 183, 197, 0.15)'
             },
             Sarada: {
-                '--neon-cyan': '#E53935',       // Sharingan Crimson Red
-                '--neon-purple': '#4a148c',     // Shadow Orchid Purple
-                '--bubble-bg': 'rgba(229, 57, 53, 0.18)'
+                '--neon-cyan': '#E53935',       // Sharingan Red
+                '--neon-purple': '#6a1b9a',     // Dark Purple
+                '--bubble-bg': 'rgba(229, 57, 53, 0.15)'
             }
         };
 
@@ -228,7 +248,6 @@
             document.querySelectorAll('.char-card').forEach(el => el.classList.remove('active'));
             document.getElementById(`card-${name}`).classList.add('active');
             
-            // Fire the dynamic theme override updates
             applyCharacterTheme(name);
             
             const chatBox = document.getElementById('chat-box');
@@ -280,6 +299,11 @@
             }
             chatBox.scrollTop = chatBox.scrollHeight;
         }
-    </style>
+
+        // Initialize theme configuration correctly on page load
+        window.onload = () => {
+            applyCharacterTheme(currentCharacter);
+        };
+    </script>
 </body>
 </html>
