@@ -1,6 +1,18 @@
 export default async function handler(req, res) {
-    // Set explicit JSON headers to prevent content-type mismatches
+    // 1. Set explicit JSON and CORS headers to handle cross-origin calls
     res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    );
+
+    // 2. Safely resolve browser preflight requests immediately
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
 
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -61,6 +73,7 @@ export default async function handler(req, res) {
                 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
                 if (supabaseUrl && supabaseKey) {
+                    // We remove await so it logs smoothly in the background without holding up the user's chat response latency!
                     fetch(`${supabaseUrl}/rest/v1/token_logs`, {
                         method: 'POST',
                         headers: {
