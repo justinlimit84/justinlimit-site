@@ -381,9 +381,9 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        window.onload = () => {
-            applyCharacterTheme(currentCharacter);
-        };
+        document.addEventListener("DOMContentLoaded", () => {
+        selectCharacter(currentCharacter);
+    });
     </script>
 </body>
 </html>
