@@ -17,8 +17,11 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { messages, username } = req.body;
-        const currentUser = username || 'Anonymous User';
+        const { messages } = req.body;
+
+        // 🌐 SECURE IP EXTRACTION FROM VERCEL HEADERS
+        const forwarded = req.headers['x-forwarded-for'];
+        const clientIp = forwarded ? forwarded.split(',')[0].trim() : req.socket.remoteAddress;
 
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -29,7 +32,7 @@ export default async function handler(req, res) {
 
         const cleanUrl = supabaseUrl.replace(/\/$/, '');
 
-        // 🛑 GATEKEEPER GUARD: Verify user limit before touching Groq
+        // 🛑 GATEKEEPER GUARD: Verify IP limit before touching Groq
         try {
             const limitCheckResponse = await fetch(`${cleanUrl}/rest/v1/rpc/check_user_message_limit`, {
                 method: 'POST',
@@ -38,13 +41,13 @@ export default async function handler(req, res) {
                     'Authorization': `Bearer ${supabaseKey}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ p_user_id: String(currentUser) })
+                // 🔄 passing the client IP directly into the Postgres RPC check
+                body: JSON.stringify({ p_user_id: String(clientIp) })
             });
 
             const isAllowed = await limitCheckResponse.json();
 
             if (!isAllowed) {
-                // 🚀 UPDATED ERROR MESSAGE FOR THE 30-MIN LOCKOUT SYSTEM
                 return res.status(403).json({ 
                     error: "You have reached the limit of chat. Please come back again after 30 mins." 
                 });
@@ -86,7 +89,7 @@ export default async function handler(req, res) {
                 const totalTokens = data.usage.total_tokens;
 
                 console.log(`\n=================== AI USAGE TRACKER ===================`);
-                console.log(`👤 USER ID: ${currentUser}`);
+                console.log(`🌐 CLIENT IP: ${clientIp}`);
                 console.log(`🎟️ PROMPT TOKENS: ${promptTokens}`);
                 console.log(`✍️ COMPLETION TOKENS: ${completionTokens}`);
                 console.log(`📈 TOTAL TOKENS: ${totalTokens}`);
@@ -102,8 +105,9 @@ export default async function handler(req, res) {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json'
                         },
+                        // 🔄 Logging data directly against the unique client IP
                         body: JSON.stringify({
-                            p_user_id: String(currentUser),
+                            p_user_id: String(clientIp),
                             p_prompt_tokens: Number(promptTokens) || 0,
                             p_completion_tokens: Number(completionTokens) || 0,
                             p_total_tokens: Number(totalTokens) || 0
