@@ -59,9 +59,31 @@
             cursor: pointer;
             transition: all 0.4s ease;
         }
+        /* Updated Active State with Ambient Energy Aura Animation */
         .char-card:hover, .char-card.active {
             border-color: var(--neon-cyan);
             box-shadow: 0 0 10px var(--neon-cyan);
+        }
+        
+        .char-card.active {
+            animation: auraPulse 2s infinite ease-in-out;
+        }
+
+        /* Ambient Energy Keyframe Animation */
+        @keyframes auraPulse {
+            0% {
+                box-shadow: 0 0 8px var(--bubble-bg), inset 0 0 4px rgba(255,255,255,0.05);
+                border-color: var(--neon-cyan);
+            }
+            50% {
+                box-shadow: 0 0 18px var(--neon-cyan), inset 0 0 8px var(--bubble-bg);
+                border-color: #fff; /* Micro-flash at peak energy */
+            }
+            100% {
+                box-shadow: 0 0 8px var(--bubble-bg), inset 0 0 4px rgba(255,255,255,0.05);
+                border-color: var(--neon-cyan);
+            }
+        
         }
         .chat-area { flex: 1; display: flex; flex-direction: column; background: #151922; overflow: hidden; }
         .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
