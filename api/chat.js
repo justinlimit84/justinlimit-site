@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        // 🔥 FIX: Destructure both messages AND username from the request body
+        // Extract messages along with the username sent from your login prompt frontend
         const { messages, username } = req.body;
 
         if (!process.env.GROQ_API_KEY) {
