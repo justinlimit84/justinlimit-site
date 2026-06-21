@@ -44,8 +44,9 @@ export default async function handler(req, res) {
             const isAllowed = await limitCheckResponse.json();
 
             if (!isAllowed) {
+                // 🚀 UPDATED ERROR MESSAGE FOR THE 30-MIN LOCKOUT SYSTEM
                 return res.status(403).json({ 
-                    error: `Limit Reached: ${currentUser} has used up their maximum allotment of 10 messages to protect system tokens.` 
+                    error: "You have reached the limit of chat. Please come back again after 30 mins." 
                 });
             }
         } catch (gateErr) {
