@@ -191,6 +191,15 @@
 </head>
 <body>
 
+    <div id="login-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(11,12,16,0.96); z-index:9999; display:flex; justify-content:center; align-items:center;">
+        <div style="background:#1f2833; padding:40px; border-radius:10px; border:2px solid #FF6600; text-align:center; box-shadow: 0 0 20px rgba(255,102,0,0.3); width: 320px;">
+            <h2 style="color:#fff; margin-bottom:10px; font-size: 1.6rem; letter-spacing: 1px;">ANIME HUB LOGIN</h2>
+            <p style="color:#c5c6c7; font-size:0.9rem; margin-bottom:25px;">Enter a unique User ID to begin chatting</p>
+            <input type="text" id="username-input" placeholder="e.g. GokuFan99" style="width:100%; padding:12px; margin-bottom:20px; border-radius:6px; border:1px solid #2d3748; background:#0b0c10; color:#fff; font-size:1rem; outline:none; box-sizing: border-box;">
+            <button id="login-btn" style="background:#FF6600; color:#000; border:none; padding:12px 20px; font-weight:bold; border-radius:6px; cursor:pointer; width:100%; font-size:1rem;">Enter Hub</button>
+        </div>
+    </div>
+
     <header>
         <h1>JUSTIN<span>LIMIT</span>.COM // AI ANIME HUB</h1>
         <button id="music-toggle" onclick="toggleMusic()">🎵 Play Theme</button>
@@ -386,59 +395,83 @@
             chatBox.innerHTML = `<div class="msg bot">${charProfiles[name].greeting}</div>`;
         }
 
-async function sendMessage() {
-    const input = document.getElementById('user-input');
-    const messageText = input.value.trim();
-    if (!messageText) return;
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const messageText = input.value.trim();
+            if (!messageText) return;
 
-    const chatBox = document.getElementById('chat-box');
-    const userMsg = document.createElement('div');
-    userMsg.className = 'msg user';
-    userMsg.textContent = messageText;
-    chatBox.appendChild(userMsg);
-    input.value = '';
-    
-    const typingStatus = document.createElement('div');
-    typingStatus.className = 'msg system-status';
-    typingStatus.textContent = `${currentCharacter} is thinking...`;
-    chatBox.appendChild(typingStatus);
-    chatBox.scrollTop = chatBox.scrollHeight;
+            const chatBox = document.getElementById('chat-box');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'msg user';
+            userMsg.textContent = messageText;
+            chatBox.appendChild(userMsg);
+            input.value = '';
+            
+            const typingStatus = document.createElement('div');
+            typingStatus.className = 'msg system-status';
+            typingStatus.textContent = `${currentCharacter} is thinking...`;
+            chatBox.appendChild(typingStatus);
+            chatBox.scrollTop = chatBox.scrollHeight;
 
-    conversationHistory.push({ role: "user", content: messageText });
+            conversationHistory.push({ role: "user", content: messageText });
 
-    try {
-        // Fetch the saved nickname from localStorage so it's always up to date
-        const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
+            try {
+                // Fetch the saved nickname from localStorage so it's always up to date
+                const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
 
-        const response = await fetch(`/api/chat`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            // Include username in the body payload right alongside the messages array
-            body: JSON.stringify({ 
-                username: storedUsername,
-                messages: conversationHistory 
-            })
-        });
+                const response = await fetch(`/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        username: storedUsername,
+                        messages: conversationHistory 
+                    })
+                });
 
-        if (!response.ok) throw new Error('API Execution Interrupted.');
-        const data = await response.json();
-        typingStatus.remove();
+                if (!response.ok) throw new Error('API Execution Interrupted.');
+                const data = await response.json();
+                typingStatus.remove();
 
-        const botMsg = document.createElement('div');
-        botMsg.className = 'msg bot';
-        botMsg.textContent = data.reply;
-        chatBox.appendChild(botMsg);
-        
-        conversationHistory.push({ role: "assistant", content: data.reply });
+                const botMsg = document.createElement('div');
+                botMsg.className = 'msg bot';
+                botMsg.textContent = data.reply;
+                chatBox.appendChild(botMsg);
+                
+                conversationHistory.push({ role: "assistant", content: data.reply });
 
-    } catch (error) {
-        console.error(error);
-        typingStatus.textContent = `❌ ${currentCharacter} is momentarily unavailable. Try again!`;
-    }
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
+            } catch (error) {
+                console.error(error);
+                typingStatus.textContent = `❌ ${currentCharacter} is momentarily unavailable. Try again!`;
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
 
+        // 🌟 LOGIN JAVASCRIPT MECHANICS LINKED HERE 🌟
         document.addEventListener("DOMContentLoaded", () => {
+            const overlay = document.getElementById('login-overlay');
+            const loginBtn = document.getElementById('login-btn');
+            const usernameInput = document.getElementById('username-input');
+
+            // Quick check: If user already has a saved name, hide the login box instantly
+            const savedUser = localStorage.getItem('anime_hub_user');
+            if (savedUser) {
+                overlay.style.display = 'none';
+            }
+
+            // Save user selection and remove overlay block on click
+            loginBtn.addEventListener('click', () => {
+                const enteredName = usernameInput.value.trim();
+                if (enteredName) {
+                    localStorage.setItem('anime_hub_user', enteredName);
+                    overlay.style.display = 'none';
+                }
+            });
+
+            // Also allow pressing "Enter" inside login input box
+            usernameInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') loginBtn.click();
+            });
+
             selectCharacter(currentCharacter);
         });
     </script>
