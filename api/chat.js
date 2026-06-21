@@ -18,11 +18,41 @@ export default async function handler(req, res) {
 
     try {
         const { messages, username } = req.body;
+        const currentUser = username || 'Anonymous User';
 
-        if (!process.env.GROQ_API_KEY) {
-            return res.status(500).json({ error: 'Server configuration error: Missing API Key.' });
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+        if (!process.env.GROQ_API_KEY || !supabaseUrl || !supabaseKey) {
+            return res.status(500).json({ error: 'Server configuration error: Missing infrastructure keys.' });
         }
 
+        const cleanUrl = supabaseUrl.replace(/\/$/, '');
+
+        // 🛑 GATEKEEPER GUARD: Verify user limit before touching Groq
+        try {
+            const limitCheckResponse = await fetch(`${cleanUrl}/rest/v1/rpc/check_user_message_limit`, {
+                method: 'POST',
+                headers: {
+                    'apikey': supabaseKey,
+                    'Authorization': `Bearer ${supabaseKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ p_user_id: String(currentUser) })
+            });
+
+            const isAllowed = await limitCheckResponse.json();
+
+            if (!isAllowed) {
+                return res.status(403).json({ 
+                    error: `Limit Reached: ${currentUser} has used up their maximum allotment of 10 messages to protect system tokens.` 
+                });
+            }
+        } catch (gateErr) {
+            console.error("Gatekeeper failed to verify user profile, bypassing check safely:", gateErr);
+        }
+
+        // 🤖 PROCEED TO GROQ (Only executed if user passed the check above)
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -50,7 +80,6 @@ export default async function handler(req, res) {
             const replyText = data.choices[0].message.content;
 
             if (data.usage) {
-                const currentUser = username || 'Anonymous User';
                 const promptTokens = data.usage.prompt_tokens;
                 const completionTokens = data.usage.completion_tokens;
                 const totalTokens = data.usage.total_tokens;
@@ -62,41 +91,34 @@ export default async function handler(req, res) {
                 console.log(`📈 TOTAL TOKENS: ${totalTokens}`);
                 console.log(`========================================================\n`);
 
-                const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-                const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+                try {
+                    const targetUrl = `${cleanUrl}/rest/v1/rpc/log_tokens`;
+                    const dbResponse = await fetch(targetUrl, {
+                        method: 'POST',
+                        headers: {
+                            'apikey': supabaseKey,
+                            'Authorization': `Bearer ${supabaseKey}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            p_user_id: String(currentUser),
+                            p_prompt_tokens: Number(promptTokens) || 0,
+                            p_completion_tokens: Number(completionTokens) || 0,
+                            p_total_tokens: Number(totalTokens) || 0
+                        })
+                    });
 
-                if (supabaseUrl && supabaseKey) {
-                    try {
-                        const targetUrl = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/rpc/log_tokens`;
-                        
-                        // 🚀 Keeping the critical 'await' here so the serverless function stays active until the DB sync finishes
-                        const dbResponse = await fetch(targetUrl, {
-                            method: 'POST',
-                            headers: {
-                                'apikey': supabaseKey,
-                                'Authorization': `Bearer ${supabaseKey}`,
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                p_user_id: String(currentUser),
-                                p_prompt_tokens: Number(promptTokens) || 0,
-                                p_completion_tokens: Number(completionTokens) || 0,
-                                p_total_tokens: Number(totalTokens) || 0
-                            })
-                        });
-
-                        const dbText = await dbResponse.text();
-                        console.log(`Supabase Response Status: ${dbResponse.status}`);
-                        
-                        if (!dbResponse.ok) {
-                            console.error(`Supabase Sync Rejection Payload: ${dbText}`);
-                        } else {
-                            console.log(`Supabase DB Sync Completed Successfully.`);
-                        }
-                    } catch (dbErr) {
-                        console.error("Database network pipe failed entirely:", dbErr);
+                    const dbText = await dbResponse.text();
+                    console.log(`Supabase Response Status: ${dbResponse.status}`);
+                    
+                    if (!dbResponse.ok) {
+                        console.error(`Supabase Sync Rejection Payload: ${dbText}`);
+                    } else {
+                        console.log(`Supabase DB Sync Completed Successfully.`);
                     }
+                } catch (dbErr) {
+                    console.error("Database network pipe failed entirely:", dbErr);
                 }
             }
 
