@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Extract messages along with the username sent from your login prompt frontend
+        // 🔥 FIX: Destructure both messages AND username from the request body
         const { messages, username } = req.body;
 
         if (!process.env.GROQ_API_KEY) {
@@ -41,7 +41,7 @@ export default async function handler(req, res) {
         if (data && data.choices && data.choices[0] && data.choices[0].message) {
             const replyText = data.choices[0].message.content;
 
-            // 📊 THE TRACKING LOG MAGIC:
+            // 📊 THE TRACKING LOG & DATABASE SYNC MAGIC:
             if (data.usage) {
                 const currentUser = username || 'Anonymous User';
                 const promptTokens = data.usage.prompt_tokens;
