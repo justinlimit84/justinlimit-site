@@ -73,22 +73,26 @@ export default async function handler(req, res) {
                 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
                 if (supabaseUrl && supabaseKey) {
-                    // We remove await so it logs smoothly in the background without holding up the user's chat response latency!
-                    fetch(`${supabaseUrl}/rest/v1/token_logs`, {
-                        method: 'POST',
-                        headers: {
-                            'apikey': supabaseKey,
-                            'Authorization': `Bearer ${supabaseKey}`,
-                            'Content-Type': 'application/json',
-                            'Prefer': 'return=minimal'
-                        },
-                        body: JSON.stringify({
-                            user_id: currentUser,
-                            prompt_tokens: promptTokens,
-                            completion_tokens: completionTokens,
-                            total_tokens: totalTokens
-                        })
-                    }).catch(err => console.error("Error writing to Supabase logs:", err));
+                    try {
+                        // Added 'await' here to prevent Vercel from cutting the connection short
+                        await fetch(`${supabaseUrl}/rest/v1/token_logs`, {
+                            method: 'POST',
+                            headers: {
+                                'apikey': supabaseKey,
+                                'Authorization': `Bearer ${supabaseKey}`,
+                                'Content-Type': 'application/json',
+                                'Prefer': 'return=minimal'
+                            },
+                            body: JSON.stringify({
+                                user_id: currentUser,
+                                prompt_tokens: promptTokens,
+                                completion_tokens: completionTokens,
+                                total_tokens: totalTokens
+                            })
+                        });
+                    } catch (dbErr) {
+                        console.error("Error writing to Supabase logs:", dbErr);
+                    }
                 }
             }
 
