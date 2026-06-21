@@ -234,6 +234,12 @@ Contributions are welcome!
 3. Commit changes: `git commit -m "feat: description"`.
 4. Push and open a pull request describing the change.
 
+## 📧 Contact
+
+- Author: JustinLimit
+- GitHub: github.com/justinlimit84
+
+## Email: beyond@justinlimit.com
 ---
 
 If you'd like further edits to the README (add screenshots, code samples, or more deployment tips), tell me what you'd like included and I'll update it.
