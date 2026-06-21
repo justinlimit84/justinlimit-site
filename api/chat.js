@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-    // 1. Set explicit JSON and CORS headers to handle cross-origin calls
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -9,7 +8,6 @@ export default async function handler(req, res) {
         'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
     );
 
-    // 2. Safely resolve browser preflight requests immediately
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
@@ -19,7 +17,6 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Extract messages along with the username sent from your login prompt frontend
         const { messages, username } = req.body;
 
         if (!process.env.GROQ_API_KEY) {
@@ -40,7 +37,6 @@ export default async function handler(req, res) {
             })
         });
 
-        // Parse the response text first to prevent JSON crashes
         const responseText = await response.text();
 
         if (!response.ok) {
@@ -53,14 +49,12 @@ export default async function handler(req, res) {
         if (data && data.choices && data.choices[0] && data.choices[0].message) {
             const replyText = data.choices[0].message.content;
 
-            // 📊 THE TRACKING LOG & DATABASE SYNC MAGIC:
             if (data.usage) {
                 const currentUser = username || 'Anonymous User';
                 const promptTokens = data.usage.prompt_tokens;
                 const completionTokens = data.usage.completion_tokens;
                 const totalTokens = data.usage.total_tokens;
 
-                // 1. Keep your existing Vercel terminal logs running
                 console.log(`\n=================== AI USAGE TRACKER ===================`);
                 console.log(`👤 USER ID: ${currentUser}`);
                 console.log(`🎟️ PROMPT TOKENS: ${promptTokens}`);
@@ -68,30 +62,28 @@ export default async function handler(req, res) {
                 console.log(`📈 TOTAL TOKENS: ${totalTokens}`);
                 console.log(`========================================================\n`);
 
-                // 2. Stream log data straight out to Supabase database Rest API
                 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
                 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
                 if (supabaseUrl && supabaseKey) {
                     try {
-                        // Added 'await' here to prevent Vercel from cutting the connection short
-                        await fetch(`${supabaseUrl}/rest/v1/token_logs`, {
+                        // ⚡ Switch path to /rest/v1/rpc/log_tokens for direct internal stream execution
+                        await fetch(`${supabaseUrl.replace(/\/$/, '')}/rest/v1/rpc/log_tokens`, {
                             method: 'POST',
                             headers: {
                                 'apikey': supabaseKey,
                                 'Authorization': `Bearer ${supabaseKey}`,
-                                'Content-Type': 'application/json',
-                                'Prefer': 'return=minimal'
+                                'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                user_id: currentUser,
-                                prompt_tokens: promptTokens,
-                                completion_tokens: completionTokens,
-                                total_tokens: totalTokens
+                                p_user_id: currentUser,
+                                p_prompt_tokens: parseInt(promptTokens, 10),
+                                p_completion_tokens: parseInt(completionTokens, 10),
+                                p_total_tokens: parseInt(totalTokens, 10)
                             })
                         });
                     } catch (dbErr) {
-                        console.error("Error writing to Supabase logs:", dbErr);
+                        console.error("Database sync pipe failed:", dbErr);
                     }
                 }
             }
