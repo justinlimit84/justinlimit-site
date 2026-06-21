@@ -106,6 +106,31 @@
         /* Centralized Chat Container Layout */
         .chat-area { flex: 1; display: flex; flex-direction: column; background: #151922; overflow: hidden; }
         
+        /* Chat Window Header Styling */
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 30px;
+            background: #1a1f29;
+            border-bottom: 1px solid #2d3748;
+            flex-shrink: 0;
+        }
+        .chat-header img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-cyan);
+            background: #11141a;
+            object-fit: cover;
+            transition: border-color 0.4s ease;
+        }
+        .chat-header h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #fff;
+        }
+
         /* Fixed wide layout by using a centralized column container */
         .chat-messages { 
             flex: 1; 
@@ -158,6 +183,9 @@
             #music-toggle { position: static; margin-left: auto; right: auto; }
             header { padding: 10px 15px; flex-direction: row; justify-content: space-between; }
             header h1 { margin: 0; font-size: 16px; }
+            .chat-header { padding: 10px 15px; gap: 10px; }
+            .chat-header img { width: 35px; height: 35px; }
+            .chat-header h2 { font-size: 16px; }
         }
     </style>
 </head>
@@ -194,6 +222,11 @@
         </div>
 
         <div class="chat-area">
+            <div class="chat-header">
+                <img id="chat-avatar" src="" alt="Character Artwork">
+                <h2 id="chat-char-name">Goku</h2>
+            </div>
+
             <div class="chat-messages" id="chat-box">
                 <div class="msg bot">Yo! I'm Goku. Let's train together, or just talk! What's on your mind? 😁</div>
             </div>
@@ -212,24 +245,37 @@
         const charProfiles = {
             Goku: { 
                 system: "You are Goku from Dragon Ball Z. Respond enthusiastically, love martial arts, and talk about getting stronger. Speak in a simple friendly way. Use actual emojis (like 😁, 💪, 💥) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
-                greeting: "Yo! I'm Goku. Let's train together, or just talk! What's on your mind? 😁" 
+                greeting: "Yo! I'm Goku. Let's train together, or just talk! What's on your mind? 😁",
+                image: "https://api.dicebear.com/7.x/bottts/svg?seed=Goku"
             },
             Naruto: { 
                 system: "You are Naruto Uzumaki from Naruto Shippuden. You want to be Hokage, frequently say 'Believe it!', and love ramen. Use actual emojis (like 🦊, 🍜, 😎) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
-                greeting: "Hey! Naruto Uzumaki here, future Hokage! What's up? Believe it! 🍜" 
+                greeting: "Hey! Naruto Uzumaki here, future Hokage! What's up? Believe it! 🍜",
+                image: "https://api.dicebear.com/7.x/bottts/svg?seed=Naruto"
             },
             Sasuke: { 
                 system: "You are Sasuke Uchiha. You are calm, stoic, and serious. Speak with cool confidence. Use sparse, subtle emojis (like 👁️, ⚡, 👤) to express mood instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
-                greeting: "...Sasuke here. Speak your mind, but don't waste my time." 
+                greeting: "...Sasuke here. Speak your mind, but don't waste my time.",
+                image: "https://api.dicebear.com/7.x/bottts/svg?seed=Sasuke"
             },
             Sakura: { 
                 system: "You are Sakura Haruno. You are a brilliant medical ninja, strong-willed, and sharp. Use actual emojis (like 🌸, 👊, 🩺) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
-                greeting: "Hi there! Sakura here. Hope you are keeping yourself healthy! What can I do for you? 🌸" 
+                greeting: "Hi there! Sakura here. Hope you are keeping yourself healthy! What can I do for you? 🌸",
+                image: "https://api.dicebear.com/7.x/bottts/svg?seed=Sakura"
             },
             Sarada: { 
                 system: "You are Sarada Uchiha from Boruto. You are smart, logical, and want to become Hokage. Use actual emojis (like 👓, 🎯, 🔥) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
-                greeting: "Hello! I'm Sarada Uchiha. I always have time for a strategic chat. What's on your radar? 👓" 
+                greeting: "Hello! I'm Sarada Uchiha. I always have time for a strategic chat. What's on your radar? 👓",
+                image: "https://api.dicebear.com/7.x/bottts/svg?seed=Sarada"
             }
+        };
+
+        const characterNames = {
+            Goku: "Goku",
+            Naruto: "Naruto Uzumaki",
+            Sasuke: "Sasuke Uchiha",
+            Sakura: "Sakura Haruno",
+            Sarada: "Sarada Uchiha"
         };
 
         const characterThemes = {
@@ -331,6 +377,10 @@
             
             applyCharacterTheme(name);
             
+            // Dynamic Header Info Update
+            document.getElementById('chat-char-name').textContent = characterNames[name];
+            document.getElementById('chat-avatar').src = charProfiles[name].image;
+            
             const chatBox = document.getElementById('chat-box');
             conversationHistory = [{ role: "system", content: charProfiles[name].system }];
             chatBox.innerHTML = `<div class="msg bot">${charProfiles[name].greeting}</div>`;
@@ -382,8 +432,8 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-        selectCharacter(currentCharacter);
-    });
+            selectCharacter(currentCharacter);
+        });
     </script>
 </body>
 </html>
