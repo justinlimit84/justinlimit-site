@@ -67,23 +67,34 @@ export default async function handler(req, res) {
 
                 if (supabaseUrl && supabaseKey) {
                     try {
-                        // ⚡ Switch path to /rest/v1/rpc/log_tokens for direct internal stream execution
-                        await fetch(`${supabaseUrl.replace(/\/$/, '')}/rest/v1/rpc/log_tokens`, {
+                        const targetUrl = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/rpc/log_tokens`;
+                        
+                        const dbResponse = await fetch(targetUrl, {
                             method: 'POST',
                             headers: {
                                 'apikey': supabaseKey,
                                 'Authorization': `Bearer ${supabaseKey}`,
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
                             },
                             body: JSON.stringify({
-                                p_user_id: currentUser,
-                                p_prompt_tokens: parseInt(promptTokens, 10),
-                                p_completion_tokens: parseInt(completionTokens, 10),
-                                p_total_tokens: parseInt(totalTokens, 10)
+                                p_user_id: String(currentUser),
+                                p_prompt_tokens: Number(promptTokens) || 0,
+                                p_completion_tokens: Number(completionTokens) || 0,
+                                p_total_tokens: Number(totalTokens) || 0
                             })
                         });
+
+                        const dbText = await dbResponse.text();
+                        console.log(`Supabase Response Status: ${dbResponse.status}`);
+                        
+                        if (!dbResponse.ok) {
+                            console.error(`Supabase Sync Rejection Payload: ${dbText}`);
+                        } else {
+                            console.log(`Supabase DB Sync Completed Successfully.`);
+                        }
                     } catch (dbErr) {
-                        console.error("Database sync pipe failed:", dbErr);
+                        console.error("Database network pipe failed entirely:", dbErr);
                     }
                 }
             }
