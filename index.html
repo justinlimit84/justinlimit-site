@@ -386,50 +386,57 @@
             chatBox.innerHTML = `<div class="msg bot">${charProfiles[name].greeting}</div>`;
         }
 
-        async function sendMessage() {
-            const input = document.getElementById('user-input');
-            const messageText = input.value.trim();
-            if (!messageText) return;
+async function sendMessage() {
+    const input = document.getElementById('user-input');
+    const messageText = input.value.trim();
+    if (!messageText) return;
 
-            const chatBox = document.getElementById('chat-box');
-            const userMsg = document.createElement('div');
-            userMsg.className = 'msg user';
-            userMsg.textContent = messageText;
-            chatBox.appendChild(userMsg);
-            input.value = '';
-            
-            const typingStatus = document.createElement('div');
-            typingStatus.className = 'msg system-status';
-            typingStatus.textContent = `${currentCharacter} is thinking...`;
-            chatBox.appendChild(typingStatus);
-            chatBox.scrollTop = chatBox.scrollHeight;
+    const chatBox = document.getElementById('chat-box');
+    const userMsg = document.createElement('div');
+    userMsg.className = 'msg user';
+    userMsg.textContent = messageText;
+    chatBox.appendChild(userMsg);
+    input.value = '';
+    
+    const typingStatus = document.createElement('div');
+    typingStatus.className = 'msg system-status';
+    typingStatus.textContent = `${currentCharacter} is thinking...`;
+    chatBox.appendChild(typingStatus);
+    chatBox.scrollTop = chatBox.scrollHeight;
 
-            conversationHistory.push({ role: "user", content: messageText });
+    conversationHistory.push({ role: "user", content: messageText });
 
-            try {
-                const response = await fetch(`/api/chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messages: conversationHistory })
-                });
+    try {
+        // Fetch the saved nickname from localStorage so it's always up to date
+        const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
 
-                if (!response.ok) throw new Error('API Execution Interrupted.');
-                const data = await response.json();
-                typingStatus.remove();
+        const response = await fetch(`/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            // Include username in the body payload right alongside the messages array
+            body: JSON.stringify({ 
+                username: storedUsername,
+                messages: conversationHistory 
+            })
+        });
 
-                const botMsg = document.createElement('div');
-                botMsg.className = 'msg bot';
-                botMsg.textContent = data.reply;
-                chatBox.appendChild(botMsg);
-                
-                conversationHistory.push({ role: "assistant", content: data.reply });
+        if (!response.ok) throw new Error('API Execution Interrupted.');
+        const data = await response.json();
+        typingStatus.remove();
 
-            } catch (error) {
-                console.error(error);
-                typingStatus.textContent = `❌ ${currentCharacter} is momentarily unavailable. Try again!`;
-            }
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+        const botMsg = document.createElement('div');
+        botMsg.className = 'msg bot';
+        botMsg.textContent = data.reply;
+        chatBox.appendChild(botMsg);
+        
+        conversationHistory.push({ role: "assistant", content: data.reply });
+
+    } catch (error) {
+        console.error(error);
+        typingStatus.textContent = `❌ ${currentCharacter} is momentarily unavailable. Try again!`;
+    }
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
 
         document.addEventListener("DOMContentLoaded", () => {
             selectCharacter(currentCharacter);
