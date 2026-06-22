@@ -463,7 +463,7 @@
                 networkErrBlock.style.borderColor = '#d62828';
                 networkErrBlock.style.color = '#d62828';
                 networkErrBlock.style.background = 'rgba(214, 40, 40, 0.1)';
-                networkErrBlock.textContent = `❌ ${currentCharacter} is momentarily unavailable. Try again!`;
+                networkErrBlock.textContent = `❌ ${currentCharacter} has consumed the quota of messages. Try again after 30 mins`;
                 
                 chatBox.appendChild(networkErrBlock);
                 conversationHistory.pop();
