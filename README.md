@@ -78,7 +78,8 @@ CREATE TABLE IF NOT EXISTS public.token_logs (
   user_id text NOT NULL,
   prompt_tokens integer,
   completion_tokens integer,
-  total_tokens integer
+  total_tokens integer,
+  username text DEFAULT NULL -- Added in the comprehensive upgrade to track user handles
 );
 ```
 
@@ -115,12 +116,15 @@ $$;
 
 3) Token logging function: `log_tokens`
 
+We updated this procedure with an optional `p_username` parameter to log user handles while maintaining backwards-compatible defaults.
+
 ```sql
 CREATE OR REPLACE FUNCTION public.log_tokens(
     p_user_id text,
     p_prompt_tokens integer,
     p_completion_tokens integer,
-    p_total_tokens integer
+    p_total_tokens integer,
+    p_username text DEFAULT NULL
 )
 RETURNS void
 LANGUAGE plpgsql
@@ -132,17 +136,28 @@ BEGIN
         prompt_tokens,
         completion_tokens,
         total_tokens,
-        created_at
+        created_at,
+        username
     ) VALUES (
         p_user_id,
         p_prompt_tokens,
         p_completion_tokens,
         p_total_tokens,
-        NOW()
+        NOW(),
+        p_username
     );
 END;
 $$;
 ```
+
+*(Optional Upgrade Migration)*: If you already have `token_logs` set up and want to upgrade it to track usernames, run the following SQL statements in your Supabase SQL Editor:
+```sql
+-- 1. Add the column
+ALTER TABLE public.token_logs ADD COLUMN IF NOT EXISTS username text DEFAULT NULL;
+
+-- 2. Re-create the log_tokens procedure using the definition above
+```
+Once run, you can append `"p_username": String(cleanUsername)` directly inside the `dbPayload` object in `api/chat.js` to begin logging handles to Supabase.
 
 Notes:
 - Adjust the 30-minute window or limit count as needed for your deployment.

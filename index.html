@@ -87,6 +87,23 @@
             padding: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-cyan);
+            object-fit: cover;
+            transition: border-color 0.4s ease;
+            flex-shrink: 0;
+        }
+        .sidebar-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
         .char-card:hover {
             border-color: var(--neon-cyan);
@@ -177,8 +194,9 @@
             .main-container { flex-direction: column; }
             .sidebar { width: 100%; flex-direction: row; padding: 10px; gap: 10px; overflow-x: auto; overflow-y: hidden; border-right: none; border-bottom: 1px solid #2d3748; box-sizing: border-box; }
             .sidebar h3 { display: none; }
-            .char-card { padding: 10px 15px; min-width: 140px; text-align: center; }
-            .char-card p { display: none; }
+            .char-card { padding: 8px 12px; min-width: 130px; justify-content: center; gap: 8px; }
+            .sidebar-avatar { width: 28px; height: 28px; }
+            .sidebar-info p { display: none; }
             .chat-messages { padding: 15px; }
             #music-toggle { position: static; margin-left: auto; right: auto; }
             header { padding: 10px 15px; flex-direction: row; justify-content: space-between; }
@@ -209,30 +227,45 @@
         <div class="sidebar">
             <h3>Select Character</h3>
             <div id="card-Goku" class="char-card active" onclick="selectCharacter('Goku')">
-                <strong>Goku</strong>
-                <p style="margin:4px 0 0; font-size:12px; color:#aaa;">The Legendary Saiyan</p>
+                <img src="images/Goku.jpg" alt="Goku" class="sidebar-avatar">
+                <div class="sidebar-info">
+                    <strong>Goku</strong>
+                    <p style="margin:2px 0 0; font-size:12px; color:#aaa;">The Legendary Saiyan</p>
+                </div>
             </div>
             <div id="card-Naruto" class="char-card" onclick="selectCharacter('Naruto')">
-                <strong>Naruto Uzumaki</strong>
-                <p style="margin:4px 0 0; font-size:12px; color:#aaa;">The 7th Hokage</p>
+                <img src="images/Naruto.jpg" alt="Naruto Uzumaki" class="sidebar-avatar">
+                <div class="sidebar-info">
+                    <strong>Naruto Uzumaki</strong>
+                    <p style="margin:2px 0 0; font-size:12px; color:#aaa;">The 7th Hokage</p>
+                </div>
             </div>
             <div id="card-Sasuke" class="char-card" onclick="selectCharacter('Sasuke')">
-                <strong>Sasuke Uchiha</strong>
-                <p style="margin:4px 0 0; font-size:12px; color:#aaa;">The Supporting Kage</p>
+                <img src="images/Sasuke.jpg" alt="Sasuke Uchiha" class="sidebar-avatar">
+                <div class="sidebar-info">
+                    <strong>Sasuke Uchiha</strong>
+                    <p style="margin:2px 0 0; font-size:12px; color:#aaa;">The Supporting Kage</p>
+                </div>
             </div>
             <div id="card-Sakura" class="char-card" onclick="selectCharacter('Sakura')">
-                <strong>Sakura Haruno</strong>
-                <p style="margin:4px 0 0; font-size:12px; color:#aaa;">Head Medical Ninja</p>
+                <img src="images/Sakura-Haruno.jpg" alt="Sakura Haruno" class="sidebar-avatar">
+                <div class="sidebar-info">
+                    <strong>Sakura Haruno</strong>
+                    <p style="margin:2px 0 0; font-size:12px; color:#aaa;">Head Medical Ninja</p>
+                </div>
             </div>
             <div id="card-Sarada" class="char-card" onclick="selectCharacter('Sarada')">
-                <strong>Sarada Uchiha</strong>
-                <p style="margin:4px 0 0; font-size:12px; color:#aaa;">Next Gen Uchiha</p>
+                <img src="images/Sarada-Uchiha.jpg" alt="Sarada Uchiha" class="sidebar-avatar">
+                <div class="sidebar-info">
+                    <strong>Sarada Uchiha</strong>
+                    <p style="margin:2px 0 0; font-size:12px; color:#aaa;">Next Gen Uchiha</p>
+                </div>
             </div>
         </div>
 
         <div class="chat-area">
             <div class="chat-header">
-                <img id="chat-avatar" src="" alt="Character Artwork">
+                <img id="chat-avatar" src="images/Goku.jpg" alt="Goku">
                 <h2 id="chat-char-name">Goku</h2>
             </div>
 
@@ -321,6 +354,30 @@
         };
 
         let conversationHistory = [{ role: "system", content: charProfiles[currentCharacter].system }];
+        let isGenerating = false; // Prevents duplicate submissions and spamming
+
+        function scrollToBottom(smooth = true) {
+            const chatBox = document.getElementById('chat-box');
+            if (!chatBox) return;
+            if (smooth) {
+                chatBox.scrollTo({
+                    top: chatBox.scrollHeight,
+                    behavior: 'smooth'
+                });
+            } else {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        function getPrunedHistory() {
+            const MAX_MESSAGES = 10; // Maintain at most 10 messages (5 rounds) + the system instruction message
+            if (conversationHistory.length <= MAX_MESSAGES + 1) {
+                return conversationHistory;
+            }
+            const systemMessage = conversationHistory[0];
+            const recentMessages = conversationHistory.slice(-MAX_MESSAGES);
+            return [systemMessage, ...recentMessages];
+        }
         
         // Global HTML5 Audio Engine Variables
         let bgAudio = new Audio();
@@ -380,6 +437,7 @@
         }
 
         function selectCharacter(name) {
+            if (isGenerating) return; // Prevent switching characters while response is in progress
             currentCharacter = name;
             document.querySelectorAll('.char-card').forEach(el => el.classList.remove('active'));
             document.getElementById(`card-${name}`).classList.add('active');
@@ -393,12 +451,21 @@
             const chatBox = document.getElementById('chat-box');
             conversationHistory = [{ role: "system", content: charProfiles[name].system }];
             chatBox.innerHTML = `<div class="msg bot">${charProfiles[name].greeting}</div>`;
+            scrollToBottom(false); // Instant jump on character select
         }
 
         async function sendMessage() {
+            if (isGenerating) return;
+
             const input = document.getElementById('user-input');
             const messageText = input.value.trim();
             if (!messageText) return;
+
+            // Lock input controls to prevent spamming/double-submissions
+            isGenerating = true;
+            input.disabled = true;
+            const sendButton = document.querySelector('.chat-input-area button');
+            if (sendButton) sendButton.disabled = true;
 
             const chatBox = document.getElementById('chat-box');
             const userMsg = document.createElement('div');
@@ -411,19 +478,20 @@
             typingStatus.className = 'msg system-status';
             typingStatus.textContent = `${currentCharacter} is thinking...`;
             chatBox.appendChild(typingStatus);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            scrollToBottom(true);
 
             conversationHistory.push({ role: "user", content: messageText });
 
             try {
                 const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
 
+                // Send the pruned conversation history (system prompt + sliding window) to reduce token consumption
                 const response = await fetch(`/api/chat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         username: storedUsername,
-                        messages: conversationHistory 
+                        messages: getPrunedHistory() 
                     })
                 });
 
@@ -467,8 +535,14 @@
                 
                 chatBox.appendChild(networkErrBlock);
                 conversationHistory.pop();
+            } finally {
+                // Re-enable input controls and restore focus
+                isGenerating = false;
+                input.disabled = false;
+                if (sendButton) sendButton.disabled = false;
+                input.focus();
             }
-            chatBox.scrollTop = chatBox.scrollHeight;
+            scrollToBottom(true);
         }
 
         // LOGIN JAVASCRIPT MECHANICS LINKED HERE
