@@ -296,73 +296,48 @@
         let currentCharacter = "Goku";
         
         // Trigger trivia immediately on every message for testing (1.0 = 100% chance)
-        function assessTriviaTrigger() {
-            console.log("Assessing trivia trigger for character:", currentCharacter);
-            setTimeout(() => { triggerCharacterTrivia(); }, 1000); 
-        }
-
-        function triggerCharacterTrivia() {
-            // Standardize naming (e.g., "Naruto Uzumaki" -> "naruto")
-            const searchName = String(currentCharacter).toLowerCase();
-
-            const fallbackTrivia = [
-                { character: 'goku', question: 'If I eat 4 bowls of ramen and Naruto eats 5, how many did we eat altogether?', options: ['7', '8', '9', '10'], correct: 2 },
-                { character: 'naruto', question: 'Which ninja rank comes right after Academy Student?', options: ['Genin', 'Chunin', 'Jonin', 'Hokage'], correct: 0 },
-                { character: 'sakura', question: 'What is 15 plus 12? Help me calculate this medical inventory!', options: ['25', '27', '28', '30'], correct: 1 }
-            ];
-            
-            // Find trivia where the database key is included in the current character's name
-            const contextTrivia = fallbackTrivia.find(t => searchName.includes(t.character)) || fallbackTrivia[0];
-            
-            // Set text contents
-            document.getElementById('trivia-character-title').textContent = `⚡ ${contextTrivia.character.toUpperCase()}'S CHALLENGE!`;
-            document.getElementById('trivia-question-text').textContent = contextTrivia.question;
-            
-            const container = document.getElementById('trivia-options-container');
-            container.innerHTML = '';
-            document.getElementById('trivia-feedback').textContent = '';
-            
-            contextTrivia.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.textContent = opt;
-                btn.style.width = '100%';
-                btn.style.padding = '12px';
-                btn.style.background = '#11141a';
-                btn.style.color = '#fff';
-                btn.style.border = '1px solid var(--neon-cyan)';
-                btn.style.borderRadius = '6px';
-                btn.style.cursor = 'pointer';
-                btn.style.fontSize = '1rem';
-                btn.style.transition = 'all 0.2s ease';
+        function triggerLLMTrivia(triviaData) {
+    // triviaData is expected to look like: { question: "...", options: ["A", "B", "C", "D"], correct: 0 }
+    
+    document.getElementById('trivia-character-title').textContent = `⚡ ${currentCharacter.toUpperCase()}'S CHALLENGE!`;
+    document.getElementById('trivia-question-text').textContent = triviaData.question;
+    
+    const container = document.getElementById('trivia-options-container');
+    container.innerHTML = '';
+    document.getElementById('trivia-feedback').textContent = '';
+    
+    triviaData.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.style.width = '100%';
+        btn.style.padding = '12px';
+        btn.style.background = '#11141a';
+        btn.style.color = '#fff';
+        btn.style.border = '1px solid var(--neon-cyan)';
+        btn.style.borderRadius = '6px';
+        btn.style.cursor = 'pointer';
+        btn.style.fontSize = '1rem';
+        btn.style.transition = 'all 0.2s ease';
+        
+        btn.onclick = () => {
+            const feedback = document.getElementById('trivia-feedback');
+            if (idx === parseInt(triviaData.correct)) {
+                feedback.style.color = '#4caf50';
+                feedback.textContent = '🎉 Awesome Job! +50 Power Levels! 💪';
                 
-                btn.onclick = () => {
-                    const feedback = document.getElementById('trivia-feedback');
-                    if (idx === contextTrivia.correct) {
-                        feedback.style.color = '#4caf50';
-                        feedback.textContent = '🎉 Awesome Job! +50 Power Levels! 💪';
-                        
-                        setTimeout(() => { 
-                            document.getElementById('trivia-modal').style.display = 'none'; 
-                        }, 2000);
-                    } else {
-                        feedback.style.color = '#f44336';
-                        feedback.textContent = '❌ Try again! You can do it! 💥';
-                    }
-                };
-                container.appendChild(btn);
-            });
-            
-            // Unhide the element layout
-            document.getElementById('trivia-modal').style.display = 'flex';
-        }
-
-        // Modify your existing login function to capture lowercase clean usernames
-        document.getElementById('login-btn').onclick = function() {
-            const enteredUser = document.getElementById('username-input').value.trim();
-            if(enteredUser) {
-                localStorage.setItem('anime_hub_user', enteredUser);
-                document.getElementById('login-overlay').style.display = 'none';
+                setTimeout(() => { 
+                    document.getElementById('trivia-modal').style.display = 'none'; 
+                }, 2000);
+            } else {
+                feedback.style.color = '#f44336';
+                feedback.textContent = '❌ Try again! You can do it! 💥';
             }
+        };
+        container.appendChild(btn);
+    });
+    
+    document.getElementById('trivia-modal').style.display = 'flex';
+}
         };
         
         const charProfiles = {
