@@ -500,101 +500,104 @@
         scrollToBottom(false); 
     }
 
-    async function sendMessage() {
-        if (isGenerating) return;
+async function sendMessage() {
+    if (isGenerating) return;
 
-        const input = document.getElementById('user-input');
-        const messageText = input.value.trim();
-        if (!messageText) return;
+    const input = document.getElementById('user-input');
+    const messageText = input.value.trim();
+    if (!messageText) return;
 
-        isGenerating = true;
-        input.disabled = true;
-        const sendButton = document.querySelector('.chat-input-area button');
-        if (sendButton) sendButton.disabled = true;
+    isGenerating = true;
+    input.disabled = true;
+    const sendButton = document.querySelector('.chat-input-area button');
+    if (sendButton) sendButton.disabled = true;
 
-        const chatBox = document.getElementById('chat-box');
-        const userMsg = document.createElement('div');
-        userMsg.className = 'msg user';
-        userMsg.textContent = messageText;
-        chatBox.appendChild(userMsg);
-        input.value = '';
-        
-        const typingStatus = document.createElement('div');
-        typingStatus.className = 'msg system-status';
-        typingStatus.textContent = `${currentCharacter} is thinking...`;
-        chatBox.appendChild(typingStatus);
-        scrollToBottom(true);
+    const chatBox = document.getElementById('chat-box');
+    const userMsg = document.createElement('div');
+    userMsg.className = 'msg user';
+    userMsg.textContent = messageText;
+    chatBox.appendChild(userMsg);
+    input.value = '';
+    
+    const typingStatus = document.createElement('div');
+    typingStatus.className = 'msg system-status';
+    typingStatus.textContent = `${currentCharacter} is thinking...`;
+    chatBox.appendChild(typingStatus);
+    scrollToBottom(true);
 
-        conversationHistory.push({ role: "user", content: messageText });
+    conversationHistory.push({ role: "user", content: messageText });
 
-        try {
-            const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
+    // Determine randomly if we want to request a dynamic trivia question this turn (~25% chance)
+    const shouldRollForTrivia = Math.random() < 0.25;
 
-            const response = await fetch(`/api/chat`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    username: storedUsername,
-                    character: currentCharacter,
-                    messages: getPrunedHistory(),
-                    generateTrivia: true 
-                })
-            });
+    try {
+        const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
 
-            const data = await response.json();
-            typingStatus.remove();
+        const response = await fetch(`/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                username: storedUsername,
+                character: currentCharacter,
+                messages: getPrunedHistory(),
+                generateTrivia: shouldRollForTrivia // Sends true dynamically only sometimes
+            })
+        });
 
-            if (!response.ok) {
-                const errorMessage = data.error || `${currentCharacter} is momentarily unavailable. Try again!`;
-                
-                const errBlock = document.createElement('div');
-                errBlock.className = 'msg system-status';
-                errBlock.style.borderColor = '#d62828';
-                errBlock.style.color = '#d62828';
-                errBlock.style.background = 'rgba(214, 40, 40, 0.1)';
-                errBlock.textContent = `❌ ${errorMessage}`;
-                
-                chatBox.appendChild(errBlock);
-                conversationHistory.pop();
-            } else {
-                const botMsg = document.createElement('div');
-                botMsg.className = 'msg bot';
-                botMsg.textContent = data.reply;
-                chatBox.appendChild(botMsg);
-                
-                conversationHistory.push({ role: "assistant", content: data.reply });
+        const data = await response.json();
+        typingStatus.remove();
 
-                // STRICT VALIDATION: Verify structured object arrival before displaying modal
-                if (data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
-                    setTimeout(() => {
-                        triggerLLMTrivia(data.trivia);
-                    }, 1200);
-                } else {
-                    const modal = document.getElementById('trivia-modal');
-                    if (modal) modal.style.display = 'none';
-                }
-            }
-        } catch (error) {
-            console.error("Communication error:", error);
-            if (typingStatus.parentNode) typingStatus.remove();
+        if (!response.ok) {
+            const errorMessage = data.error || `${currentCharacter} is momentarily unavailable. Try again!`;
             
-            const networkErrBlock = document.createElement('div');
-            networkErrBlock.className = 'msg system-status';
-            networkErrBlock.style.borderColor = '#d62828';
-            networkErrBlock.style.color = '#d62828';
-            networkErrBlock.style.background = 'rgba(214, 40, 40, 0.1)';
-            networkErrBlock.textContent = `❌ ${currentCharacter} has consumed the quota of messages. Try again after 30 mins`;
+            const errBlock = document.createElement('div');
+            errBlock.className = 'msg system-status';
+            errBlock.style.borderColor = '#d62828';
+            errBlock.style.color = '#d62828';
+            errBlock.style.background = 'rgba(214, 40, 40, 0.1)';
+            errBlock.textContent = `❌ ${errorMessage}`;
             
-            chatBox.appendChild(networkErrBlock);
+            chatBox.appendChild(errBlock);
             conversationHistory.pop();
-        } finally {
-            isGenerating = false;
-            input.disabled = false;
-            if (sendButton) sendButton.disabled = false;
-            input.focus();
-            scrollToBottom(true);
+        } else {
+            const botMsg = document.createElement('div');
+            botMsg.className = 'msg bot';
+            botMsg.textContent = data.reply;
+            chatBox.appendChild(botMsg);
+            
+            conversationHistory.push({ role: "assistant", content: data.reply });
+
+            // ONLY show trivia if it was rolled, and the LLM successfully generated a dynamic object
+            if (shouldRollForTrivia && data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
+                setTimeout(() => {
+                    triggerLLMTrivia(data.trivia);
+                }, 1200);
+            } else {
+                const modal = document.getElementById('trivia-modal');
+                if (modal) modal.style.display = 'none';
+            }
         }
+    } catch (error) {
+        console.error("Communication error:", error);
+        if (typingStatus.parentNode) typingStatus.remove();
+        
+        const networkErrBlock = document.createElement('div');
+        networkErrBlock.className = 'msg system-status';
+        networkErrBlock.style.borderColor = '#d62828';
+        networkErrBlock.style.color = '#d62828';
+        networkErrBlock.style.background = 'rgba(214, 40, 40, 0.1)';
+        networkErrBlock.textContent = `❌ ${currentCharacter} has consumed the quota of messages. Try again after 30 mins`;
+        
+        chatBox.appendChild(networkErrBlock);
+        conversationHistory.pop();
+    } finally {
+        isGenerating = false;
+        input.disabled = false;
+        if (sendButton) sendButton.disabled = false;
+        input.focus();
+        scrollToBottom(true);
     }
+}
 
     document.addEventListener("DOMContentLoaded", () => {
         const overlay = document.getElementById('login-overlay');
