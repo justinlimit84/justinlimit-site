@@ -1047,11 +1047,11 @@
                             triggerLLMTrivia(dynamicTriviaData);
                         }, 800);
                     })
-                    .catch(err => {
-                        console.error("Error loading dynamic LLM trivia:", err);
-                        // Fallback message to prevent terminal lock if backend route is down
-                        triviaTriggeredInCurrentWindow = false; 
-                    });
+                   .catch(err => {
+                       console.error("Error loading dynamic LLM trivia:", err);
+    // Keep this true so it stops spamming a failing endpoint on every message
+                       triviaTriggeredInCurrentWindow = true; 
+                   });
             }
 
         }, 1200);
