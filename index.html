@@ -292,6 +292,68 @@
     </div>
 
     <script>
+        // Trigger a 15% random chance of a trivia pop-up after the character replies
+function assessTriviaTrigger() {
+    if (Math.random() < 0.15) { 
+        setTimeout(() => { triggerCharacterTrivia(); }, 1500);
+    }
+}
+
+// Simulated static client array for now, or fetch directly from your new public Supabase endpoint
+const fallbackTrivia = [
+    { character: 'Goku', question: 'If I eat 4 bowls of ramen and Naruto eats 5, how many did we eat altogether?', options: ['7', '8', '9', '10'], correct: 2 },
+    { character: 'Naruto', question: 'Which ninja rank comes right after Academy Student?', options: ['Genin', 'Chunin', 'Jonin', 'Hokage'], correct: 0 }
+];
+
+function triggerCharacterTrivia() {
+    // Find trivia matching the active conversational companion
+    const contextTrivia = fallbackTrivia.find(t => t.character === currentCharacter) || fallbackTrivia[0];
+    
+    document.getElementById('trivia-character-title').textContent = `⚡ ${contextTrivia.character.toUpperCase()}'S CHALLENGE!`;
+    document.getElementById('trivia-question-text').textContent = contextTrivia.question;
+    
+    const container = document.getElementById('trivia-options-container');
+    container.innerHTML = '';
+    document.getElementById('trivia-feedback').textContent = '';
+    
+    contextTrivia.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.style.width = '100%';
+        btn.style.padding = '12px';
+        btn.style.background = '#11141a';
+        btn.style.color = '#fff';
+        btn.style.border = '1px solid var(--neon-cyan)';
+        btn.style.borderRadius = '6px';
+        btn.style.cursor = 'pointer';
+        btn.style.fontSize = '1rem';
+        
+        btn.onclick = () => {
+            const feedback = document.getElementById('trivia-feedback');
+            if (idx === contextTrivia.correct) {
+                feedback.style.color = '#4caf50';
+                feedback.textContent = '🎉 Awesome Job! +50 Power Levels! 💪';
+                // Optional: Fire fetch execution targeting database balance here
+                setTimeout(() => { document.getElementById('trivia-modal').style.display = 'none'; }, 2000);
+            } else {
+                feedback.style.color = '#f44336';
+                feedback.textContent = '❌ Try again! You can do it! 💥';
+            }
+        };
+        container.appendChild(btn);
+    });
+    
+    document.getElementById('trivia-modal').style.display = 'flex';
+}
+
+// Modify your existing login function to capture lowercase clean usernames
+document.getElementById('login-btn').onclick = function() {
+    const enteredUser = document.getElementById('username-input').value.trim();
+    if(enteredUser) {
+        localStorage.setItem('anime_hub_user', enteredUser);
+        document.getElementById('login-overlay').style.display = 'none';
+    }
+};
         let currentCharacter = "Goku";
         
         const charProfiles = {
