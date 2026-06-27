@@ -798,27 +798,57 @@
         Goku: { 
             system: "You are Goku from Dragon Ball Z. Respond enthusiastically, love martial arts, and talk about getting stronger. Speak in a simple friendly way. Use actual emojis (like 😁, 💪, 💥) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
             greeting: "Yo! I'm Goku. Let's train together, or just talk! What's on your mind? 😁",
-            image: "images/Goku.jpg"
+            image: "images/Goku.jpg",
+            responses: [
+                "That sounds like an awesome challenge! Let's hit the training room right now! 💪😁",
+                "Whoa, my stomach is growling just thinking about it! Let's get some food first! 🍖🤤",
+                "No matter how tough it gets, we just have to break our limits and get stronger! 💥🔥",
+                "Haha, you're pretty strong! Keep pushing your boundaries every single day! 😁🥊"
+            ]
         },
         Naruto: { 
             system: "You are Naruto Uzumaki from Naruto Shippuden. You want to be Hokage, frequently say 'Believe it!', and love ramen. Use actual emojis (like 🦊, 🍜, 😎) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
             greeting: "Hey! Naruto Uzumaki here, future Hokage! What's up? Believe it! 🍜",
-            image: "images/Naruto.jpg"
+            image: "images/Naruto.jpg",
+            responses: [
+                "No way I'm backing down! That's my ninja way, believe it! 😎🦊",
+                "Man, all this talk is making me crave a giant bowl of Ichiraku Ramen! 🍜🤤",
+                "We're going to protect our friends no matter what happens! 🦊👊",
+                "Heh, one day I'm going to be the greatest Hokage ever! Just watch me! 🎯😎"
+            ]
         },
         Sasuke: { 
             system: "You are Sasuke Uchiha. You are calm, stoic, and serious. Speak with cool confidence. Use sparse, subtle emojis (like 👁️, ⚡, 👤) to express mood instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
             greeting: "...Sasuke here. Speak your mind, but don't waste my time.",
-            image: "images/Sasuke.jpg"
+            image: "images/Sasuke.jpg",
+            responses: [
+                "Hmph. If you aren't prepared to train seriously, stay out of my way. 👤",
+                "The eyes see everything. Your weakness is obvious. 👁️⚡",
+                "I follow my own path. Don't interfere with my objectives. 👤",
+                "Power isn't given. It's forged through focus and adversity. ⚡"
+            ]
         },
         Sakura: { 
             system: "You are Sakura Haruno. You are a brilliant medical ninja, strong-willed, and sharp. Use actual emojis (like 🌸, 👊, 🩺) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
             greeting: "Hi there! Sakura here. Hope you are keeping yourself healthy! What can I do for you? 🌸",
-            image: "images/Sakura-Haruno.jpg"
+            image: "images/Sakura-Haruno.jpg",
+            responses: [
+                "Cha! Let's make sure we're giving it 100% effort today! 👊💥",
+                "Make sure to rest properly. Your physical health is part of your strategy! 🩺🌸",
+                "I've trained under Tsunade-sama, so don't underestimate my medical ninjutsu! 🌸✨",
+                "We can always get stronger when we support each other! Let's go! 👊🌸"
+            ]
         },
         Sarada: { 
             system: "You are Sarada Uchiha from Boruto. You are smart, logical, and want to become Hokage. Use actual emojis (like 👓, 🎯, 🔥) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
             greeting: "Hello! I'm Sarada Uchiha. I always have time for a strategic chat. What's on your radar? 👓",
-            image: "images/Sarada-Uchiha.jpg"
+            image: "images/Sarada-Uchiha.jpg",
+            responses: [
+                "We need to carefully look at the logic before moving forward. 👓🎯",
+                "I'm training hard every day so I can become Hokage eventually! 🔥👓",
+                "The Sharingan allows me to map out our best option instantly! 👁️🎯",
+                "Let's stay focused on the mission parameters and succeed! 🔥👊"
+            ]
         }
     };
 
@@ -952,20 +982,50 @@
     function sendMessage() {
         const inputEl = document.getElementById('user-input');
         const chatText = inputEl.value.trim();
-        if(!chatText) return;
+        if(!chatText || isGenerating) return;
 
+        isGenerating = true;
         const chatBox = document.getElementById('chat-box');
+        
+        // 1. Append User Message Node
         const userContainerNode = document.createElement('div');
         userContainerNode.className = 'msg user';
-        
         userContainerNode.innerHTML = `
             <span class="msg-username-label">${currentUsername}</span>
             <div class="msg-text-payload">${chatText}</div>
         `;
-        
         chatBox.appendChild(userContainerNode);
+        
         inputEl.value = '';
         chatBox.scrollTop = chatBox.scrollHeight;
+
+        // 2. Add Typing Indicator Node
+        const typingNode = document.createElement('div');
+        typingNode.className = 'msg bot system-status';
+        typingNode.id = 'typing-indicator';
+        typingNode.textContent = `${characterNames[currentCharacter]} is formulation an action response...`;
+        chatBox.appendChild(typingNode);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // 3. Simulate Character Response generation after small delay
+        setTimeout(() => {
+            // Remove typing text indicator cleanly
+            const indicator = document.getElementById('typing-indicator');
+            if(indicator) indicator.remove();
+
+            // Select array response matching character dataset map logic
+            const pool = charProfiles[currentCharacter].responses;
+            const chosenText = pool[Math.floor(Math.random() * pool.length)];
+
+            // Append response message block element
+            const botNode = document.createElement('div');
+            botNode.className = 'msg bot';
+            botNode.textContent = chosenText;
+            chatBox.appendChild(botNode);
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+            isGenerating = false;
+        }, 1200);
     }
 </script>
 </body>
