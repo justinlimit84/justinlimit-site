@@ -160,7 +160,7 @@
             width: 100%; 
             margin: 0 auto; 
             box-sizing: border-box;
-            padding-bottom: 40px; /* Gives padding over text bar */
+            padding-bottom: 40px;
         }
         
         .msg { max-width: 80%; padding: 14px 18px; border-radius: 12px; line-height: 1.5; word-break: break-word; font-size: 15px; }
@@ -292,52 +292,10 @@
         </div>
     </div>
 
- <script>
+<script>
     let currentCharacter = "Goku";
-    
-    // Trigger trivia immediately on every message for testing (1.0 = 100% chance)
-    function triggerLLMTrivia(triviaData) {
-        // triviaData is expected to look like: { question: "...", options: ["A", "B", "C", "D"], correct: 0 }
-        
-        document.getElementById('trivia-character-title').textContent = `⚡ ${currentCharacter.toUpperCase()}'S CHALLENGE!`;
-        document.getElementById('trivia-question-text').textContent = triviaData.question;
-        
-        const container = document.getElementById('trivia-options-container');
-        container.innerHTML = '';
-        document.getElementById('trivia-feedback').textContent = '';
-        
-        triviaData.options.forEach((opt, idx) => {
-            const btn = document.createElement('button');
-            btn.textContent = opt;
-            btn.style.width = '100%';
-            btn.style.padding = '12px';
-            btn.style.background = '#11141a';
-            btn.style.color = '#fff';
-            btn.style.border = '1px solid var(--neon-cyan)';
-            btn.style.borderRadius = '6px';
-            btn.style.cursor = 'pointer';
-            btn.style.fontSize = '1rem';
-            btn.style.transition = 'all 0.2s ease';
-            
-            btn.onclick = () => {
-                const feedback = document.getElementById('trivia-feedback');
-                if (idx === parseInt(triviaData.correct)) {
-                    feedback.style.color = '#4caf50';
-                    feedback.textContent = '🎉 Awesome Job! +50 Power Levels! 💪';
-                    
-                    setTimeout(() => { 
-                        document.getElementById('trivia-modal').style.display = 'none'; 
-                    }, 2000);
-                } else {
-                    feedback.style.color = '#f44336';
-                    feedback.textContent = '❌ Try again! You can do it! 💥';
-                }
-            };
-            container.appendChild(btn);
-        });
-        
-        document.getElementById('trivia-modal').style.display = 'flex';
-    } // Fixed the extra trailing bracket here
+    let conversationHistory = [];
+    let isGenerating = false; 
     
     const charProfiles = {
         Goku: { 
@@ -408,17 +366,52 @@
         }
     };
 
-    let conversationHistory = [{ role: "system", content: charProfiles[currentCharacter].system }];
-    let isGenerating = false; 
+    function triggerLLMTrivia(triviaData) {
+        document.getElementById('trivia-character-title').textContent = `⚡ ${currentCharacter.toUpperCase()}'S CHALLENGE!`;
+        document.getElementById('trivia-question-text').textContent = triviaData.question;
+        
+        const container = document.getElementById('trivia-options-container');
+        container.innerHTML = '';
+        document.getElementById('trivia-feedback').textContent = '';
+        
+        triviaData.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.textContent = opt;
+            btn.style.width = '100%';
+            btn.style.padding = '12px';
+            btn.style.background = '#11141a';
+            btn.style.color = '#fff';
+            btn.style.border = '1px solid var(--neon-cyan)';
+            btn.style.borderRadius = '6px';
+            btn.style.cursor = 'pointer';
+            btn.style.fontSize = '1rem';
+            btn.style.transition = 'all 0.2s ease';
+            
+            btn.onclick = () => {
+                const feedback = document.getElementById('trivia-feedback');
+                if (idx === parseInt(triviaData.correct)) {
+                    feedback.style.color = '#4caf50';
+                    feedback.textContent = '🎉 Awesome Job! +50 Power Levels! 💪';
+                    
+                    setTimeout(() => { 
+                        document.getElementById('trivia-modal').style.display = 'none'; 
+                    }, 2000);
+                } else {
+                    feedback.style.color = '#f44336';
+                    feedback.textContent = '❌ Try again! You can do it! 💥';
+                }
+            };
+            container.appendChild(btn);
+        });
+        
+        document.getElementById('trivia-modal').style.display = 'flex';
+    }
 
     function scrollToBottom(smooth = true) {
         const chatBox = document.getElementById('chat-box');
         if (!chatBox) return;
         if (smooth) {
-            chatBox.scrollTo({
-                top: chatBox.scrollHeight,
-                behavior: 'smooth'
-            });
+            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
         } else {
             chatBox.scrollTop = chatBox.scrollHeight;
         }
@@ -493,7 +486,8 @@
         if (isGenerating) return; 
         currentCharacter = name;
         document.querySelectorAll('.char-card').forEach(el => el.classList.remove('active'));
-        document.getElementById(`card-${name}`).classList.add('active');
+        const activeCard = document.getElementById(`card-${name}`);
+        if (activeCard) activeCard.classList.add('active');
         
         applyCharacterTheme(name);
         
@@ -506,99 +500,83 @@
         scrollToBottom(false); 
     }
 
-async function sendMessage() {
-    if (isGenerating) return;
+    async function sendMessage() {
+        if (isGenerating) return;
 
-    const input = document.getElementById('user-input');
-    const messageText = input.value.trim();
-    if (!messageText) return;
+        const input = document.getElementById('user-input');
+        const messageText = input.value.trim();
+        if (!messageText) return;
 
-    isGenerating = true;
-    input.disabled = true;
-    const sendButton = document.querySelector('.chat-input-area button');
-    if (sendButton) sendButton.disabled = true;
+        isGenerating = true;
+        input.disabled = true;
+        const sendButton = document.querySelector('.chat-input-area button');
+        if (sendButton) sendButton.disabled = true;
 
-    const chatBox = document.getElementById('chat-box');
-    const userMsg = document.createElement('div');
-    userMsg.className = 'msg user';
-    userMsg.textContent = messageText;
-    chatBox.appendChild(userMsg);
-    input.value = '';
-    
-    const typingStatus = document.createElement('div');
-    typingStatus.className = 'msg system-status';
-    typingStatus.textContent = `${currentCharacter} is thinking...`;
-    chatBox.appendChild(typingStatus);
-    scrollToBottom(true);
-
-    conversationHistory.push({ role: "user", content: messageText });
-
-    try {
-        const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
-
-        const response = await fetch(`/api/chat`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                username: storedUsername,
-                character: currentCharacter, // Added so backend knows who is chatting
-                messages: getPrunedHistory(),
-                generateTrivia: true 
-            })
-        });
-
-        const data = await response.json();
-        typingStatus.remove();
-
-        if (!response.ok) {
-            // Handle error response from server
-            const errorMessage = data.error || `${currentCharacter} is momentarily unavailable. Try again!`;
-            
-            const errBlock = document.createElement('div');
-            errBlock.className = 'msg system-status';
-            errBlock.style.borderColor = '#d62828';
-            errBlock.style.color = '#d62828';
-            errBlock.style.background = 'rgba(214, 40, 40, 0.1)';
-            errBlock.textContent = `❌ ${errorMessage}`;
-            
-            chatBox.appendChild(errBlock);
-            conversationHistory.pop(); // Remove the failed message from history
-        } else {
-            // Main Success Path
-            const botMsg = document.createElement('div');
-            botMsg.className = 'msg bot';
-            botMsg.textContent = data.reply;
-            chatBox.appendChild(botMsg);
-            
-            conversationHistory.push({ role: "assistant", content: data.reply });
-
-            // STRICT CHECK: Only trigger if the backend explicitly sent a brand new trivia object
-            if (data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
-                setTimeout(() => {
-                    triggerLLMTrivia(data.trivia);
-                }, 1200);
-            } else {
-                // Safe housekeeping: ensure modal stays hidden if no trivia was sent
-                const modal = document.getElementById('trivia-modal');
-                if (modal) modal.style.display = 'none';
-            }
-        }
-    } catch (error) {
-        console.error("Communication error:", error);
-        typingStatus.remove();
-    } finally {
-        // Always re-enable controls when complete
-        isGenerating = false;
-        input.disabled = false;
-        if (sendButton) sendButton.disabled = false;
-        input.focus();
+        const chatBox = document.getElementById('chat-box');
+        const userMsg = document.createElement('div');
+        userMsg.className = 'msg user';
+        userMsg.textContent = messageText;
+        chatBox.appendChild(userMsg);
+        input.value = '';
+        
+        const typingStatus = document.createElement('div');
+        typingStatus.className = 'msg system-status';
+        typingStatus.textContent = `${currentCharacter} is thinking...`;
+        chatBox.appendChild(typingStatus);
         scrollToBottom(true);
-    }
-}
 
-        } catch (error) {
-            console.error(error);
+        conversationHistory.push({ role: "user", content: messageText });
+
+        try {
+            const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
+
+            const response = await fetch(`/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    username: storedUsername,
+                    character: currentCharacter,
+                    messages: getPrunedHistory(),
+                    generateTrivia: true 
+                })
+            });
+
+            const data = await response.json();
             typingStatus.remove();
+
+            if (!response.ok) {
+                const errorMessage = data.error || `${currentCharacter} is momentarily unavailable. Try again!`;
+                
+                const errBlock = document.createElement('div');
+                errBlock.className = 'msg system-status';
+                errBlock.style.borderColor = '#d62828';
+                errBlock.style.color = '#d62828';
+                errBlock.style.background = 'rgba(214, 40, 40, 0.1)';
+                errBlock.textContent = `❌ ${errorMessage}`;
+                
+                chatBox.appendChild(errBlock);
+                conversationHistory.pop();
+            } else {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'msg bot';
+                botMsg.textContent = data.reply;
+                chatBox.appendChild(botMsg);
+                
+                conversationHistory.push({ role: "assistant", content: data.reply });
+
+                // STRICT VALIDATION: Verify structured object arrival before displaying modal
+                if (data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
+                    setTimeout(() => {
+                        triggerLLMTrivia(data.trivia);
+                    }, 1200);
+                } else {
+                    const modal = document.getElementById('trivia-modal');
+                    if (modal) modal.style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error("Communication error:", error);
+            if (typingStatus.parentNode) typingStatus.remove();
             
             const networkErrBlock = document.createElement('div');
             networkErrBlock.className = 'msg system-status';
@@ -614,8 +592,8 @@ async function sendMessage() {
             input.disabled = false;
             if (sendButton) sendButton.disabled = false;
             input.focus();
+            scrollToBottom(true);
         }
-        scrollToBottom(true);
     }
 
     document.addEventListener("DOMContentLoaded", () => {
