@@ -999,15 +999,18 @@
         inputEl.value = '';
         chatBox.scrollTop = chatBox.scrollHeight;
 
+        // Increment prompt tracker counter
+        promptsInCurrentWindow++;
+
         // 2. Add Typing Indicator Node
         const typingNode = document.createElement('div');
         typingNode.className = 'msg bot system-status';
         typingNode.id = 'typing-indicator';
-        typingNode.textContent = `${characterNames[currentCharacter]} is formulation an action response...`;
+        typingNode.textContent = `${characterNames[currentCharacter]} is formulating an action response...`;
         chatBox.appendChild(typingNode);
         chatBox.scrollTop = chatBox.scrollHeight;
 
-        // 3. Simulate Character Response generation after small delay
+        // 3. Simulate Character Response generation after a small delay
         setTimeout(() => {
             // Remove typing text indicator cleanly
             const indicator = document.getElementById('typing-indicator');
@@ -1025,6 +1028,32 @@
             
             chatBox.scrollTop = chatBox.scrollHeight;
             isGenerating = false;
+
+            // 4. Dynamic LLM Trivia Trigger Logic
+            // Evaluates your trigger window condition
+            if (promptsInCurrentWindow >= 2 && !triviaTriggeredInCurrentWindow) {
+                triviaTriggeredInCurrentWindow = true;
+                
+                // Fetch a dynamically generated question from your server route
+                fetch(`/api/trivia?character=${currentCharacter}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error("Could not fetch dynamic trivia");
+                        return response.json();
+                    })
+                    .then(dynamicTriviaData => {
+                        // Expected dynamic JSON format: 
+                        // { question: "...", options: ["A", "B", "C", "D"], correct: 0 }
+                        setTimeout(() => {
+                            triggerLLMTrivia(dynamicTriviaData);
+                        }, 800);
+                    })
+                    .catch(err => {
+                        console.error("Error loading dynamic LLM trivia:", err);
+                        // Fallback message to prevent terminal lock if backend route is down
+                        triviaTriggeredInCurrentWindow = false; 
+                    });
+            }
+
         }, 1200);
     }
 </script>
