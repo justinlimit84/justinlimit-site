@@ -506,81 +506,95 @@
         scrollToBottom(false); 
     }
 
-    async function sendMessage() {
-        if (isGenerating) return;
+async function sendMessage() {
+    if (isGenerating) return;
 
-        const input = document.getElementById('user-input');
-        const messageText = input.value.trim();
-        if (!messageText) return;
+    const input = document.getElementById('user-input');
+    const messageText = input.value.trim();
+    if (!messageText) return;
 
-        isGenerating = true;
-        input.disabled = true;
-        const sendButton = document.querySelector('.chat-input-area button');
-        if (sendButton) sendButton.disabled = true;
+    isGenerating = true;
+    input.disabled = true;
+    const sendButton = document.querySelector('.chat-input-area button');
+    if (sendButton) sendButton.disabled = true;
 
-        const chatBox = document.getElementById('chat-box');
-        const userMsg = document.createElement('div');
-        userMsg.className = 'msg user';
-        userMsg.textContent = messageText;
-        chatBox.appendChild(userMsg);
-        input.value = '';
-        
-        const typingStatus = document.createElement('div');
-        typingStatus.className = 'msg system-status';
-        typingStatus.textContent = `${currentCharacter} is thinking...`;
-        chatBox.appendChild(typingStatus);
-        scrollToBottom(true);
-
-        conversationHistory.push({ role: "user", content: messageText });
-
-        try {
-            const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
-
-            const response = await fetch(`/api/chat`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    username: storedUsername,
-                    messages: getPrunedHistory(),
-                    generateTrivia: true 
-                })
-            });
-
-            const data = await response.json();
-            typingStatus.remove();
-
-            if (!response.ok) {
-                const errorMessage = data.error || `${currentCharacter} is momentarily unavailable. Try again!`;
-                
-                const errBlock = document.createElement('div');
-                errBlock.className = 'msg system-status';
-                errBlock.style.borderColor = '#d62828';
-                errBlock.style.color = '#d62828';
-                errBlock.style.background = 'rgba(214, 40, 40, 0.1)';
-                errBlock.textContent = `❌ ${errorMessage}`;
-                
-                chatBox.appendChild(errBlock);
-                conversationHistory.pop();
-            // ... inside your sendMessage() function after receiving the server data:
-} else {
-    const botMsg = document.createElement('div');
-    botMsg.className = 'msg bot';
-    botMsg.textContent = data.reply;
-    chatBox.appendChild(botMsg);
+    const chatBox = document.getElementById('chat-box');
+    const userMsg = document.createElement('div');
+    userMsg.className = 'msg user';
+    userMsg.textContent = messageText;
+    chatBox.appendChild(userMsg);
+    input.value = '';
     
-    conversationHistory.push({ role: "assistant", content: data.reply });
+    const typingStatus = document.createElement('div');
+    typingStatus.className = 'msg system-status';
+    typingStatus.textContent = `${currentCharacter} is thinking...`;
+    chatBox.appendChild(typingStatus);
+    scrollToBottom(true);
 
-    // STRICT CHECK: Only trigger if the backend explicitly sent a brand new trivia object
-    if (data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
-        setTimeout(() => {
-            triggerLLMTrivia(data.trivia);
-        }, 1200);
-    } else {
-        // Safe housekeeping: ensure modal stays hidden if no trivia was sent
-        document.getElementById('trivia-modal').style.display = 'none';
+    conversationHistory.push({ role: "user", content: messageText });
+
+    try {
+        const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
+
+        const response = await fetch(`/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                username: storedUsername,
+                character: currentCharacter, // Added so backend knows who is chatting
+                messages: getPrunedHistory(),
+                generateTrivia: true 
+            })
+        });
+
+        const data = await response.json();
+        typingStatus.remove();
+
+        if (!response.ok) {
+            // Handle error response from server
+            const errorMessage = data.error || `${currentCharacter} is momentarily unavailable. Try again!`;
+            
+            const errBlock = document.createElement('div');
+            errBlock.className = 'msg system-status';
+            errBlock.style.borderColor = '#d62828';
+            errBlock.style.color = '#d62828';
+            errBlock.style.background = 'rgba(214, 40, 40, 0.1)';
+            errBlock.textContent = `❌ ${errorMessage}`;
+            
+            chatBox.appendChild(errBlock);
+            conversationHistory.pop(); // Remove the failed message from history
+        } else {
+            // Main Success Path
+            const botMsg = document.createElement('div');
+            botMsg.className = 'msg bot';
+            botMsg.textContent = data.reply;
+            chatBox.appendChild(botMsg);
+            
+            conversationHistory.push({ role: "assistant", content: data.reply });
+
+            // STRICT CHECK: Only trigger if the backend explicitly sent a brand new trivia object
+            if (data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
+                setTimeout(() => {
+                    triggerLLMTrivia(data.trivia);
+                }, 1200);
+            } else {
+                // Safe housekeeping: ensure modal stays hidden if no trivia was sent
+                const modal = document.getElementById('trivia-modal');
+                if (modal) modal.style.display = 'none';
+            }
+        }
+    } catch (error) {
+        console.error("Communication error:", error);
+        typingStatus.remove();
+    } finally {
+        // Always re-enable controls when complete
+        isGenerating = false;
+        input.disabled = false;
+        if (sendButton) sendButton.disabled = false;
+        input.focus();
+        scrollToBottom(true);
     }
 }
-            }
 
         } catch (error) {
             console.error(error);
