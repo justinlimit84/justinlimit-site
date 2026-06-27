@@ -5,6 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JustinLimit AI - Chat with Anime Legends</title>
     <style>
+        /* Container adjustment to pile elements vertically */
+.msg.user {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Keeps text and label flush right */
+    background: transparent !important; /* Move background to the text box if necessary */
+    border: none !important;
+    padding: 4px 10px !important;
+}
+
+/* Username design specifications */
+.msg-username-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5); /* Muted clean subtitle appearance */
+    margin-bottom: 3px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* Restores the original look to just the text section */
+.msg-text-payload {
+    background: #ffb700; /* Matches your yellow bubble color in image_8ace3b.png */
+    color: #000;
+    padding: 10px 14px;
+    border-radius: 12px 12px 2px 12px;
+    font-size: 0.95rem;
+    word-break: break-word;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
         :root {
             --bg-color: #0b0c10;
             --card-bg: #1f2833;
@@ -516,14 +545,32 @@ async function sendMessage() {
     input.disabled = true;
     const sendButton = document.querySelector('.chat-input-area button');
     if (sendButton) sendButton.disabled = true;
-
     const chatBox = document.getElementById('chat-box');
-    const userMsg = document.createElement('div');
-    userMsg.className = 'msg user';
-    userMsg.textContent = messageText;
-    chatBox.appendChild(userMsg);
+        
+    // 1. Fetch the current logged-in username
+    const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
+
+    // 2. Create a container wrapper for structural cleanliness
+    const userMsgContainer = document.createElement('div');
+    userMsgContainer.className = 'msg user';
+        
+    // 3. Create the small username badge element
+    const nameBadge = document.createElement('div');
+    nameBadge.className = 'msg-username-label';
+    nameBadge.textContent = storedUsername;
+        
+    // 4. Create the text content container
+    const textContent = document.createElement('div');
+    textContent.className = 'msg-text-payload';
+    textContent.textContent = messageText;
+        
+    // 5. Build the structural tree and append
+    userMsgContainer.appendChild(nameBadge);
+    userMsgContainer.appendChild(textContent);
+    chatBox.appendChild(userMsgContainer);
+
     input.value = '';
-    
+        
     const typingStatus = document.createElement('div');
     typingStatus.className = 'msg system-status';
     typingStatus.textContent = `${currentCharacter} is thinking...`;
