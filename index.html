@@ -561,19 +561,25 @@
                 
                 chatBox.appendChild(errBlock);
                 conversationHistory.pop();
-            } else {
-                const botMsg = document.createElement('div');
-                botMsg.className = 'msg bot';
-                botMsg.textContent = data.reply;
-                chatBox.appendChild(botMsg);
-                
-                conversationHistory.push({ role: "assistant", content: data.reply });
+            // ... inside your sendMessage() function after receiving the server data:
+} else {
+    const botMsg = document.createElement('div');
+    botMsg.className = 'msg bot';
+    botMsg.textContent = data.reply;
+    chatBox.appendChild(botMsg);
+    
+    conversationHistory.push({ role: "assistant", content: data.reply });
 
-                if (data.trivia) {
-                    setTimeout(() => {
-                        triggerLLMTrivia(data.trivia);
-                    }, 1200);
-                }
+    // STRICT CHECK: Only trigger if the backend explicitly sent a brand new trivia object
+    if (data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
+        setTimeout(() => {
+            triggerLLMTrivia(data.trivia);
+        }, 1200);
+    } else {
+        // Safe housekeeping: ensure modal stays hidden if no trivia was sent
+        document.getElementById('trivia-modal').style.display = 'none';
+    }
+}
             }
 
         } catch (error) {
