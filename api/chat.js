@@ -31,31 +31,57 @@ export default async function handler(req, res) {
 
         const cleanUrl = supabaseUrl.replace(/\/$/, '');
         let userAllowed = true;
+        let includeTriviaThisTurn = false;
 
-        // 3. USER CHECK & LIMITS
+        // 3. USER CHECK, DAILY LIMITS & TRIVIA TRACKING
         try {
             const userCheck = await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
                 headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
             });
             const userData = await userCheck.json();
 
+            // Generate a random target turn between 2 and 8 for new users
+            const randomTargetTurn = Math.floor(Math.random() * 7) + 2; 
+
             if (!Array.isArray(userData) || userData.length === 0) {
-                // New User Registration
+                // New User Registration: Initialize trivia values
                 await fetch(`${cleanUrl}/rest/v1/user_profiles`, {
                     method: 'POST',
                     headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-                    body: JSON.stringify({ username: cleanUsername, messages_sent_today: 1 })
+                    body: JSON.stringify({ 
+                        username: cleanUsername, 
+                        messages_sent_today: 1,
+                        trivia_target_turn: randomTargetTurn,
+                        has_received_trivia: false
+                    })
                 });
             } else {
                 // Limit to 50 messages per day
-                if (userData[0].messages_sent_today >= 50) {
+                const currentCount = userData[0].messages_sent_today;
+                if (currentCount >= 50) {
                     userAllowed = false;
                 } else {
-                    // Update daily counter
+                    const nextCount = currentCount + 1;
+                    const targetTurn = userData[0].trivia_target_turn || randomTargetTurn;
+                    const hasReceived = userData[0].has_received_trivia || false;
+                    
+                    let updatedTriviaFlag = hasReceived;
+
+                    // Evaluate if they hit the target turn or the fallback turn 10 safety line
+                    if (!hasReceived && (nextCount === targetTurn || nextCount >= 10)) {
+                        includeTriviaThisTurn = true;
+                        updatedTriviaFlag = true; // Mark as delivered so they only get one
+                    }
+
+                    // Update daily counter and trivia flag
                     await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
                         method: 'PATCH',
                         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ messages_sent_today: userData[0].messages_sent_today + 1, last_message_at: new Date() })
+                        body: JSON.stringify({ 
+                            messages_sent_today: nextCount, 
+                            has_received_trivia: updatedTriviaFlag,
+                            last_message_at: new Date() 
+                        })
                     });
                 }
             }
@@ -94,7 +120,24 @@ export default async function handler(req, res) {
             console.error("Points update failed:", dbErr);
         }
 
-        return res.status(200).json({ reply: replyText });
+        // 6. PREPARE THE FINAL JSON PAYLOAD
+        const finalResponse = { reply: replyText };
+
+        // Append trivia if tracking flagged it for this user turn
+        if (includeTriviaThisTurn) {
+            finalResponse.trivia = {
+                question: "What is the signature technique of the Uchiha clan?",
+                options: [
+                    "Shadow Clone Jutsu", 
+                    "Fire Style: Fireball Jutsu", 
+                    "Chidori", 
+                    "Rasengan"
+                ],
+                correct: 1 // Index of the correct option
+            };
+        }
+
+        return res.status(200).json(finalResponse);
 
     } catch (error) {
         console.error(error);
