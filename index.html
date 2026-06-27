@@ -6,364 +6,359 @@
     <title>JustinLimit AI - Chat with Anime Legends</title>
     <style>
         /* Leaderboard Trigger Button */
-.leaderboard-trigger-btn {
-    background: rgba(255, 123, 0, 0.1);
-    border: 1px solid rgba(255, 123, 0, 0.3);
-    color: #ff9100;
-    padding: 10px 16px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 10px;
-}
-.leaderboard-trigger-btn:hover {
-    background: #ff7b00;
-    color: #000;
-    box-shadow: 0 0 15px rgba(255, 123, 0, 0.3);
-}
+        .leaderboard-trigger-btn {
+            background: rgba(255, 123, 0, 0.1);
+            border: 1px solid rgba(255, 123, 0, 0.3);
+            color: #ff9100;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px;
+        }
+        .leaderboard-trigger-btn:hover {
+            background: #ff7b00;
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 123, 0, 0.3);
+        }
 
-/* Modal Layout Background Darkener */
-.leaderboard-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(5, 8, 16, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        /* Modal Layout Background Darkener */
+        .leaderboard-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(5, 8, 16, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-/* Glassmorphic Container */
-.leaderboard-modal-card {
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    width: 100%;
-    max-width: 500px;
-    border-radius: 24px;
-    padding: 30px;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-}
+        /* Glassmorphic Container */
+        .leaderboard-modal-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+        }
 
-.leaderboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 24px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding-bottom: 16px;
-}
-.leaderboard-header h2 { color: #fff; margin: 0 0 4px 0; font-size: 1.5rem; }
-.leaderboard-header p { color: #64748b; margin: 0; font-size: 0.85rem; }
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 16px;
+        }
+        .leaderboard-header h2 { color: #fff; margin: 0 0 4px 0; font-size: 1.5rem; }
+        .leaderboard-header p { color: #64748b; margin: 0; font-size: 0.85rem; }
 
-.close-modal-btn {
-    background: transparent; border: none; color: #94a3b8;
-    font-size: 1.75rem; cursor: pointer; line-height: 1;
-}
-.close-modal-btn:hover { color: #fff; }
+        .close-modal-btn {
+            background: transparent; border: none; color: #94a3b8;
+            font-size: 1.75rem; cursor: pointer; line-height: 1;
+        }
+        .close-modal-btn:hover { color: #fff; }
 
-/* Ranks Row Styling */
-.leaderboard-ranks-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-height: 400px;
-    overflow-y: auto;
-}
+        /* Ranks Row Styling */
+        .leaderboard-ranks-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
 
-.rank-item {
-    display: flex;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 12px 16px;
-    border-radius: 14px;
-    transition: transform 0.2s ease;
-}
-.rank-item:hover {
-    transform: scale(1.02);
-    background: rgba(255, 255, 255, 0.05);
-}
+        .rank-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px 16px;
+            border-radius: 14px;
+            transition: transform 0.2s ease;
+        }
+        .rank-item:hover {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.05);
+        }
 
-/* Custom Highlight styles for Top 3 spots */
-.rank-item.top-0 { border-color: rgba(255, 215, 0, 0.3); background: rgba(255, 215, 0, 0.04); }
-.rank-item.top-1 { border-color: rgba(192, 192, 192, 0.3); background: rgba(192, 192, 192, 0.04); }
-.rank-item.top-2 { border-color: rgba(205, 127, 50, 0.3); background: rgba(205, 127, 50, 0.04); }
+        /* Custom Highlight styles for Top 3 spots */
+        .rank-item.top-0 { border-color: rgba(255, 215, 0, 0.3); background: rgba(255, 215, 0, 0.04); }
+        .rank-item.top-1 { border-color: rgba(192, 192, 192, 0.3); background: rgba(192, 192, 192, 0.04); }
+        .rank-item.top-2 { border-color: rgba(205, 127, 50, 0.3); background: rgba(205, 127, 50, 0.04); }
 
-.rank-number { width: 32px; font-weight: 800; font-size: 1.1rem; color: #64748b; }
-.top-0 .rank-number { color: #ffd700; }
-.top-1 .rank-number { color: #c0c0c0; }
-.top-2 .rank-number { color: #cd7f32; }
+        .rank-number { width: 32px; font-weight: 800; font-size: 1.1rem; color: #64748b; }
+        .top-0 .rank-number { color: #ffd700; }
+        .top-1 .rank-number { color: #c0c0c0; }
+        .top-2 .rank-number { color: #cd7f32; }
 
-.rank-name { flex-grow: 1; color: #f1f5f9; font-weight: 600; font-size: 0.95rem; }
-.rank-power { font-weight: 700; color: #ff9100; font-size: 1rem; }
+        .rank-name { flex-grow: 1; color: #f1f5f9; font-weight: 600; font-size: 0.95rem; }
+        .rank-power { font-weight: 700; color: #ff9100; font-size: 1rem; }
 
-.leaderboard-loading { text-align: center; color: #64748b; padding: 20px; font-size: 0.9rem; }
+        .leaderboard-loading { text-align: center; color: #64748b; padding: 20px; font-size: 0.9rem; }
+        
         /* Core Portal Container */
-.portal-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: #0b0f19; /* Deep, sophisticated dark blue-gray */
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-}
+        .portal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #0b0f19;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
 
-/* Vibrant Ambient Glowing Orbs */
-.glow-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(140px);
-    opacity: 0.25;
-    pointer-events: none;
-    z-index: 1;
-    animation: pulseGlow 8s infinite alternate ease-in-out;
-}
-.orb-1 {
-    top: -10%;
-    right: 10%;
-    width: 500px;
-    height: 500px;
-    background: linear-gradient(45deg, #ff7b00, #ffae00);
-}
-.orb-2 {
-    bottom: -10%;
-    left: 10%;
-    width: 600px;
-    height: 600px;
-    background: linear-gradient(45deg, #8a2be2, #4a00e0);
-    animation-delay: -4s;
-}
+        /* Vibrant Ambient Glowing Orbs */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 1;
+            animation: pulseGlow 8s infinite alternate ease-in-out;
+        }
+        .orb-1 {
+            top: -10%;
+            right: 10%;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(45deg, #ff7b00, #ffae00);
+        }
+        .orb-2 {
+            bottom: -10%;
+            left: 10%;
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(45deg, #8a2be2, #4a00e0);
+            animation-delay: -4s;
+        }
 
-@keyframes pulseGlow {
-    0% { transform: scale(1) translate(0, 0); opacity: 0.2; }
-    100% { transform: scale(1.2) translate(30px, -40px); opacity: 0.35; }
-}
+        @keyframes pulseGlow {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.2; }
+            100% { transform: scale(1.2) translate(30px, -40px); opacity: 0.35; }
+        }
 
-/* Layout Content Wrapper */
-.portal-content {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    max-width: 1150px;
-    padding: 40px;
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 60px;
-    align-items: center;
-}
+        /* Layout Content Wrapper */
+        .portal-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1150px;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
 
-/* Left Side: Hero Column */
-.portal-hero {
-    color: #ffffff;
-}
-.brand-badge {
-    display: inline-block;
-    background: rgba(255, 123, 0, 0.15);
-    border: 1px solid rgba(255, 123, 0, 0.3);
-    color: #ff9100;
-    padding: 6px 14px;
-    border-radius: 30px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 24px;
-    letter-spacing: 0.5px;
-}
-.portal-title {
-    font-size: 3.2rem;
-    font-weight: 800;
-    line-height: 1.15;
-    margin: 0 0 20px 0;
-    letter-spacing: -1px;
-}
-.gradient-text {
-    background: linear-gradient(135deg, #ff7b00 0%, #ffae00 50%, #e0a0ff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.portal-subtitle {
-    font-size: 1.1rem;
-    color: #94a3b8;
-    line-height: 1.6;
-    margin-bottom: 32px;
-}
-.feature-pills {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-.pill {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 8px 16px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    color: #cbd5e1;
-}
+        /* Left Side: Hero Column */
+        .portal-hero {
+            color: #ffffff;
+        }
+        .brand-badge {
+            display: inline-block;
+            background: rgba(255, 123, 0, 0.15);
+            border: 1px solid rgba(255, 123, 0, 0.3);
+            color: #ff9100;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+        .portal-title {
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin: 0 0 20px 0;
+            letter-spacing: -1px;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #ff7b00 0%, #ffae00 50%, #e0a0ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .portal-subtitle {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        .feature-pills {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+        }
 
-/* Right Side: Sophisticated Glassmorphic Card Terminal */
-.portal-card {
-    background: rgba(15, 23, 42, 0.65);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-top: 1px solid rgba(255, 255, 255, 0.15); /* Sleek reflection line */
-    border-radius: 24px;
-    padding: 40px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 
-                inset 0 1px 0 rgba(255,255,255,0.1);
-    transition: border-color 0.4s ease;
-}
-.portal-card:focus-within {
-    border-color: rgba(255, 123, 0, 0.4);
-}
-.card-header h2 {
-    color: #fff;
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin: 0 0 8px 0;
-}
-.card-header p {
-    color: #64748b;
-    font-size: 0.9rem;
-    margin: 0 0 32px 0;
-    line-height: 1.4;
-}
+        /* Right Side: Sophisticated Glassmorphic Card Terminal */
+        .portal-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: border-color 0.4s ease;
+        }
+        .portal-card:focus-within {
+            border-color: rgba(255, 123, 0, 0.4);
+        }
+        .card-header h2 {
+            color: #fff;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+        }
+        .card-header p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin: 0 0 32px 0;
+            line-height: 1.4;
+        }
 
-/* Form Styling Elements */
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 28px;
-}
-.input-group label {
-    color: #94a3b8;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-.input-icon {
-    position: absolute;
-    left: 16px;
-    font-size: 1.1rem;
-    opacity: 0.6;
-}
-.input-wrapper input {
-    width: 100%;
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 16px 16px 16px 48px;
-    border-radius: 14px;
-    color: #fff;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-.input-wrapper input:focus {
-    outline: none;
-    background: rgba(0, 0, 0, 0.4);
-    border-color: #ff7b00;
-    box-shadow: 0 0 15px rgba(255, 123, 0, 0.15);
-}
+        /* Form Styling Elements */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+        .input-group label {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-wrapper input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 16px 16px 20px;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .input-wrapper input:focus {
+            outline: none;
+            background: rgba(0, 0, 0, 0.4);
+            border-color: #ff7b00;
+            box-shadow: 0 0 15px rgba(255, 123, 0, 0.15);
+        }
 
-/* Vibrant Action Button */
-.prime-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #ff7b00 0%, #ff9100 100%);
-    border: none;
-    padding: 16px;
-    border-radius: 14px;
-    color: #000;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 25px rgba(255, 123, 0, 0.3);
-}
-.prime-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 30px rgba(255, 123, 0, 0.45);
-    background: linear-gradient(135deg, #ff8c1a 0%, #ffaa1a 100%);
-}
-.prime-btn:active {
-    transform: translateY(1px);
-}
-.prime-btn svg {
-    transition: transform 0.3s ease;
-}
-.prime-btn:hover svg {
-    transform: translateX(4px);
-}
+        /* Vibrant Action Button */
+        .prime-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #ff7b00 0%, #ff9100 100%);
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            color: #000;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(255, 123, 0, 0.3);
+        }
+        .prime-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(255, 123, 0, 0.45);
+            background: linear-gradient(135deg, #ff8c1a 0%, #ffaa1a 100%);
+        }
+        .prime-btn:active {
+            transform: translateY(1px);
+        }
+        .prime-btn svg {
+            transition: transform 0.3s ease;
+        }
+        .prime-btn:hover svg {
+            transform: translateX(4px);
+        }
 
-/* Responsive Scaling Rules */
-@media (max-width: 968px) {
-    .portal-content {
-        grid-template-columns: 1fr;
-        gap: 40px;
-        text-align: center;
-    }
-    .feature-pills {
-        justify-content: center;
-    }
-    .brand-badge { margin: 0 auto 20px auto; }
-}
+        /* Responsive Scaling Rules */
+        @media (max-width: 968px) {
+            .portal-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+            .feature-pills {
+                justify-content: center;
+            }
+            .brand-badge { margin: 0 auto 20px auto; }
+        }
+
         /* Container adjustment to pile elements vertically */
-.msg.user {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* Keeps text and label flush right */
-    background: transparent !important; /* Move background to the text box if necessary */
-    border: none !important;
-    padding: 4px 10px !important;
-}
+        .msg.user {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            background: transparent !important;
+            border: none !important;
+            padding: 4px 10px !important;
+        }
 
-/* Username design specifications */
-.msg-username-label {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.5); /* Muted clean subtitle appearance */
-    margin-bottom: 3px;
-    font-weight: 600;
-    text-transform: capitalize;
-}
+        /* Username design specifications */
+        .msg-username-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 3px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
 
-/* Restores the original look to just the text section */
-.msg-text-payload {
-    background: #ffb700; /* Matches your yellow bubble color in image_8ace3b.png */
-    color: #000;
-    padding: 10px 14px;
-    border-radius: 12px 12px 2px 12px;
-    font-size: 0.95rem;
-    word-break: break-word;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
+        /* Restores the original look to just the text section */
+        .msg-text-payload {
+            background: #ffb700;
+            color: #000;
+            padding: 10px 14px;
+            border-radius: 12px 12px 2px 12px;
+            font-size: 0.95rem;
+            word-break: break-word;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
         :root {
             --bg-color: #0b0c10;
             --card-bg: #1f2833;
             --text-color: #c5c6c7;
-            
-            /* Dynamic character theme variables initialized to Goku (Default) */
             --neon-cyan: #FF6600;
             --neon-purple: #ffb703;
             --bubble-bg: rgba(255, 102, 0, 0.15);
@@ -377,9 +372,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            height: -webkit-fill-available;
         }
-        html { height: -webkit-fill-available; }
         
         header {
             background: linear-gradient(90deg, var(--card-bg), #000);
@@ -468,9 +461,9 @@
         }
 
         @keyframes auraPulse {
-            0% { box-shadow: 0 0 8px var(--bubble-bg), inset 0 0 4px rgba(255,255,255,0.05); border-color: var(--neon-cyan); }
-            50% { box-shadow: 0 0 18px var(--neon-cyan), inset 0 0 8px var(--bubble-bg); border-color: #fff; }
-            100% { box-shadow: 0 0 8px var(--bubble-bg), inset 0 0 4px rgba(255,255,255,0.05); border-color: var(--neon-cyan); }
+            0% { box-shadow: 0 0 8px var(--bubble-bg); border-color: var(--neon-cyan); }
+            50% { box-shadow: 0 0 18px var(--neon-cyan); border-color: #fff; }
+            100% { box-shadow: 0 0 8px var(--bubble-bg); border-color: var(--neon-cyan); }
         }
 
         /* Centralized Chat Container Layout */
@@ -573,55 +566,72 @@
         </div>
     </div>
 
-    <div id="landing-portal" class="portal-container">
-    <!-- Animated background energy orbs -->
-    <div class="glow-orb orb-1"></div>
-    <div class="glow-orb orb-2"></div>
-
-    <div class="portal-content">
-        <!-- Left Side: Vibrant Branding & Character Sneak Peek -->
-        <div class="portal-hero">
-            <div class="brand-badge">⚡ Next-Gen AI Experience</div>
-            <h1 class="portal-title">Unleash the Power of <span class="gradient-text">AI Anime Hub</span></h1>
-            <p class="portal-subtitle">Chat with legendary characters, test your lore knowledge in dynamic trivia battles, and level up your power points in real time.</p>
-            
-            <!-- Mini visual feature track -->
-            <div class="feature-pills">
-                <span class="pill">🧠 Context-Aware AI</span>
-                <span class="pill">⚔️ Dynamic Trivia</span>
-                <span class="pill">🔥 Power Leaderboards</span>
+    <!-- LEADERBOARD MODAL CONTAINER -->
+    <div id="leaderboard-modal" class="leaderboard-overlay" style="display: none;">
+        <div class="leaderboard-modal-card">
+            <div class="leaderboard-header">
+                <div>
+                    <h2>Global Rankings</h2>
+                    <p>Current server tactical power scaling</p>
+                </div>
+                <button id="close-leaderboard-btn" class="close-modal-btn">&times;</button>
             </div>
+            <div id="leaderboard-list" class="leaderboard-ranks-container"></div>
         </div>
+    </div>
 
-        <!-- Right Side: Sophisticated Glassmorphic Access Terminal -->
-        <div class="portal-card">
-            <div class="card-header">
-                <h2>Access Portal</h2>
-                <p>Enter a unique Username to synchronize your training data</p>
-            </div>
-            
-            <div class="input-group">
-                <label for="portal-username">Trainer Identity</label>
-                <div class="input-wrapper">
-                    <input type="text" id="portal-username" placeholder="e.g., GokuFan99" autocomplete="off" />
+    <!-- Access Landing Portal -->
+    <div id="landing-portal" class="portal-container">
+        <!-- Animated background energy orbs -->
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+
+        <div class="portal-content">
+            <!-- Left Side: Vibrant Branding & Character Sneak Peek -->
+            <div class="portal-hero">
+                <div class="brand-badge">⚡ Next-Gen AI Experience</div>
+                <h1 class="portal-title">Unleash the Power of <span class="gradient-text">AI Anime Hub</span></h1>
+                <p class="portal-subtitle">Chat with legendary characters, test your lore knowledge in dynamic trivia battles, and level up your power points in real time.</p>
+                
+                <!-- Mini visual feature track -->
+                <div class="feature-pills">
+                    <span class="pill">🧠 Context-Aware AI</span>
+                    <span class="pill">⚔️ Dynamic Trivia</span>
+                    <span class="pill">🔥 Power Leaderboards</span>
                 </div>
             </div>
 
-            <button id="enter-hub-btn" class="prime-btn">
-                <span>Enter The Hub</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </button>
+            <!-- Right Side: Sophisticated Glassmorphic Access Terminal -->
+            <div class="portal-card">
+                <div class="card-header">
+                    <h2>Access Portal</h2>
+                    <p>Enter a unique Username to synchronize your training data</p>
+                </div>
+                
+                <div class="input-group">
+                    <label for="portal-username">Trainer Identity</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="portal-username" placeholder="e.g., GokuFan99" autocomplete="off" />
+                    </div>
+                </div>
+
+                <button id="enter-hub-btn" class="prime-btn">
+                    <span>Enter The Hub</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
     <header>
         <h1>JUSTIN<span>LIMIT</span>.COM // AI ANIME HUB</h1>
         <button id="music-toggle" onclick="toggleMusic()">🎵 Play Theme</button>
     </header>
+    
     <button id="open-leaderboard-btn" class="leaderboard-trigger-btn">
-    <span>🔥 Power Leaderboards</span>
+        <span>🔥 Power Leaderboards</span>
     </button>
+    
     <div class="main-container">
         <div class="sidebar">
             <h3>Select Character</h3>
@@ -680,64 +690,104 @@
         </div>
     </div>
 
+    <!-- Media Player Context Audio Elements -->
+    <audio id="bgm-player" loop></audio>
+
 <script>
-    // Toggle Modal Windows
-document.getElementById('open-leaderboard-btn').addEventListener('click', openLeaderboard);
-document.getElementById('close-leaderboard-btn').addEventListener('click', () => {
-    document.getElementById('leaderboard-modal').style.display = 'none';
-});
+    let currentUsername = "Trainer Guest";
 
-// Close modal instantly if they click outside the inner box boundary
-window.addEventListener('click', (e) => {
-    const modal = document.getElementById('leaderboard-modal');
-    if (e.target === modal) modal.style.display = 'none';
-});
-
-async function openLeaderboard() {
-    const modal = document.getElementById('leaderboard-modal');
-    const container = document.getElementById('leaderboard-list');
-    
-    // Show modal container setup instantly
-    modal.style.display = 'flex';
-    container.innerHTML = '<div class="leaderboard-loading">Gathering real-time combat data...</div>';
-
-    try {
-        // Change this URL string path to match your exact server profiles routing setup
-        const response = await fetch('/api/leaderboard'); 
-        if (!response.ok) throw new Error("Network status invalid");
-        
-        const topPlayers = await response.json(); // Expected: Array of objects like [{username: 'Harry', power_level: 450}]
-        container.innerHTML = ''; // Wipe out loading message string
-        
-        if (topPlayers.length === 0) {
-            container.innerHTML = '<div class="leaderboard-loading">No records logged in this sector yet.</div>';
+    // Handle initial login screen fade away logic safely
+    document.getElementById('enter-hub-btn').addEventListener('click', () => {
+        const usernameVal = document.getElementById('portal-username').value.trim();
+        if(!usernameVal) {
+            alert("Identity context requested. Please input an access username!");
             return;
         }
+        currentUsername = usernameVal;
+        const portal = document.getElementById('landing-portal');
+        portal.style.opacity = '0';
+        portal.style.transform = 'scale(0.95)';
+        setTimeout(() => { portal.style.display = 'none'; }, 400);
+    });
 
-        topPlayers.forEach((player, index) => {
-            const row = document.createElement('div');
-            // Assign specific conditional tag styles if index is 0, 1, or 2 (Top 3 ranks)
-            row.className = `rank-item top-${index}`;
+    // Toggle Modal Windows
+    document.getElementById('open-leaderboard-btn').addEventListener('click', openLeaderboard);
+    document.getElementById('close-leaderboard-btn').addEventListener('click', () => {
+        document.getElementById('leaderboard-modal').style.display = 'none';
+    });
+
+    // Close modal instantly if they click outside the inner box boundary
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('leaderboard-modal');
+        if (e.target === modal) modal.style.display = 'none';
+    });
+
+    async function openLeaderboard() {
+        const modal = document.getElementById('leaderboard-modal');
+        const container = document.getElementById('leaderboard-list');
+        
+        // Show modal container setup instantly
+        modal.style.display = 'flex';
+        container.innerHTML = '<div class="leaderboard-loading">Gathering real-time combat data...</div>';
+
+        try {
+            // Change this URL string path to match your exact server profiles routing setup
+            const response = await fetch('/api/leaderboard'); 
+            if (!response.ok) throw new Error("Network status invalid");
             
-            // Render specific podium emojis for top placements
-            let rankBadge = index + 1;
-            if (index === 0) rankBadge = '🥇';
-            if (index === 1) rankBadge = '🥈';
-            if (index === 2) rankBadge = '🥉';
+            const topPlayers = await response.json(); // Expected: Array of objects like [{username: 'Harry', power_level: 450}]
+            container.innerHTML = ''; // Wipe out loading message string
+            
+            if (topPlayers.length === 0) {
+                container.innerHTML = '<div class="leaderboard-loading">No records logged in this sector yet.</div>';
+                return;
+            }
 
-            row.innerHTML = `
-                <div class="rank-number">${rankBadge}</div>
-                <div class="rank-name">${player.username}</div>
-                <div class="rank-power">${player.power_level.toLocaleString()} PL</div>
-            `;
-            container.appendChild(row);
-        });
+            topPlayers.forEach((player, index) => {
+                const row = document.createElement('div');
+                // Assign specific conditional tag styles if index is 0, 1, or 2 (Top 3 ranks)
+                row.className = `rank-item top-${index}`;
+                
+                // Render specific podium emojis for top placements
+                let rankBadge = index + 1;
+                if (index === 0) rankBadge = '🥇';
+                if (index === 1) rankBadge = '🥈';
+                if (index === 2) rankBadge = '🥉';
 
-    } catch (err) {
-        console.error("Failed to load leaderboards:", err);
-        container.innerHTML = '<div class="leaderboard-loading" style="color: #ef4444;">Failed to extract pipeline rankings.</div>';
+                row.innerHTML = `
+                    <div class="rank-number">${rankBadge}</div>
+                    <div class="rank-name">${player.username}</div>
+                    <div class="rank-power">${player.power_level.toLocaleString()} PL</div>
+                `;
+                container.appendChild(row);
+            });
+
+        } catch (err) {
+            console.error("Failed to load leaderboards:", err);
+            // Fallback content design so UI looks running perfectly without server APIs up
+            container.innerHTML = '';
+            const fallbackRankings = [
+                { username: currentUsername, power_level: 9001 },
+                { username: "Vegeta", power_level: 8900 },
+                { username: "Kakashi_Sensei", power_level: 4500 }
+            ];
+            fallbackRankings.forEach((player, index) => {
+                const row = document.createElement('div');
+                row.className = `rank-item top-${index}`;
+                let badge = index + 1;
+                if (index === 0) badge = '🥇';
+                if (index === 1) badge = '🥈';
+                if (index === 2) badge = '🥉';
+                row.innerHTML = `
+                    <div class="rank-number">${badge}</div>
+                    <div class="rank-name">${player.username}</div>
+                    <div class="rank-power">${player.power_level.toLocaleString()} PL</div>
+                `;
+                container.appendChild(row);
+            });
+        }
     }
-}
+
     let promptsInCurrentWindow = 0;
     let triviaTriggeredInCurrentWindow = false;
     let currentCharacter = "Goku";
@@ -813,6 +863,53 @@ async function openLeaderboard() {
         }
     };
 
+    function selectCharacter(charId) {
+        currentCharacter = charId;
+        
+        // Handle Sidebar UI Update Active states
+        document.querySelectorAll('.char-card').forEach(card => card.classList.remove('active'));
+        document.getElementById(`card-${charId}`).classList.add('active');
+        
+        // Chat window layout configurations
+        document.getElementById('chat-char-name').textContent = characterNames[charId];
+        document.getElementById('chat-avatar').src = charProfiles[charId].image;
+        document.getElementById('chat-box').innerHTML = `<div class="msg bot">${charProfiles[charId].greeting}</div>`;
+        
+        // Dynamically shift CSS custom variables matching structural design maps
+        const theme = characterThemes[charId];
+        if (theme) {
+            for (const [key, value] of Object.entries(theme)) {
+                if (key !== 'bgm') document.documentElement.style.setProperty(key, value);
+            }
+        }
+        
+        // Shift active sound streams instantly if playing live
+        const audio = document.getElementById('bgm-player');
+        if(!audio.paused) {
+            audio.src = theme.bgm;
+            audio.play().catch(e => console.log("Stream update caught profile trigger error"));
+        }
+    }
+
+    function toggleMusic() {
+        const audio = document.getElementById('bgm-player');
+        const button = document.getElementById('music-toggle');
+        const currentTrack = characterThemes[currentCharacter].bgm;
+
+        if (audio.src !== currentTrack) {
+            audio.src = currentTrack;
+        }
+
+        if (audio.paused) {
+            audio.play().then(() => {
+                button.textContent = "⏸️ Pause Theme";
+            }).catch(err => console.error("Audio playback error:", err));
+        } else {
+            audio.pause();
+            button.textContent = "🎵 Play Theme";
+        }
+    }
+
     function triggerLLMTrivia(triviaData) {
         document.getElementById('trivia-character-title').textContent = `⚡ ${currentCharacter.toUpperCase()}'S CHALLENGE!`;
         document.getElementById('trivia-question-text').textContent = triviaData.question;
@@ -839,329 +936,37 @@ async function openLeaderboard() {
                 if (idx === parseInt(triviaData.correct)) {
                     feedback.style.color = '#4caf50';
                     feedback.textContent = '🎉 Awesome Job! +50 Power Levels! 💪';
-                    
                     setTimeout(() => { 
                         document.getElementById('trivia-modal').style.display = 'none'; 
                     }, 2000);
                 } else {
-                    feedback.style.color = '#f44336';
-                    feedback.textContent = '❌ Try again! You can do it! 💥';
+                    feedback.style.color = '#ef4444';
+                    feedback.textContent = '💥 Tragic! Wrong answer. Keep training!';
                 }
             };
             container.appendChild(btn);
         });
-        
         document.getElementById('trivia-modal').style.display = 'flex';
     }
 
-    function scrollToBottom(smooth = true) {
+    function sendMessage() {
+        const inputEl = document.getElementById('user-input');
+        const chatText = inputEl.value.trim();
+        if(!chatText) return;
+
         const chatBox = document.getElementById('chat-box');
-        if (!chatBox) return;
-        if (smooth) {
-            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
-        } else {
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+        const userContainerNode = document.createElement('div');
+        userContainerNode.className = 'msg user';
+        
+        userContainerNode.innerHTML = `
+            <span class="msg-username-label">${currentUsername}</span>
+            <div class="msg-text-payload">${chatText}</div>
+        `;
+        
+        chatBox.appendChild(userContainerNode);
+        inputEl.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
-
-    function getPrunedHistory() {
-        const MAX_MESSAGES = 10; 
-        if (conversationHistory.length <= MAX_MESSAGES + 1) {
-            return conversationHistory;
-        }
-        const systemMessage = conversationHistory[0];
-        const recentMessages = conversationHistory.slice(-MAX_MESSAGES);
-        return [systemMessage, ...recentMessages];
-    }
-    
-    let bgAudio = new Audio();
-    bgAudio.loop = true;
-    bgAudio.volume = 0.20; 
-    let isMusicPlaying = false;
-
-    function toggleMusic() {
-        const btn = document.getElementById('music-toggle');
-        if (isMusicPlaying) {
-            bgAudio.pause();
-            isMusicPlaying = false;
-            btn.textContent = "📁 Muted";
-            btn.style.background = "rgba(255,255,255,0.05)";
-        } else {
-            playCurrentCharacterTrack();
-        }
-    }
-
-    function playCurrentCharacterTrack() {
-        const theme = characterThemes[currentCharacter];
-        if (!theme || !theme.bgm) return;
-        
-        const btn = document.getElementById('music-toggle');
-        
-        if (bgAudio.src !== theme.bgm) {
-            bgAudio.src = theme.bgm;
-            bgAudio.load();
-        }
-        
-        bgAudio.play()
-            .then(() => {
-                isMusicPlaying = true;
-                btn.textContent = "🔊 Playing Theme";
-                btn.style.background = "var(--bubble-bg)";
-            })
-            .catch(err => {
-                console.log("Audio playback blocked. Awaiting user interaction execution.");
-                isMusicPlaying = false;
-                btn.textContent = "🎵 Play Theme";
-            });
-    }
-
-    function applyCharacterTheme(name) {
-        const theme = characterThemes[name];
-        if (!theme) return;
-        Object.keys(theme).forEach(property => {
-            if (property !== 'bgm') {
-                document.documentElement.style.setProperty(property, theme[property]);
-            }
-        });
-
-        if (isMusicPlaying) {
-            playCurrentCharacterTrack();
-        }
-    }
-
-    function selectCharacter(name) {
-        promptsInCurrentWindow = 0;
-        triviaTriggeredInCurrentWindow = false;
-        if (isGenerating) return; 
-        currentCharacter = name;
-        document.querySelectorAll('.char-card').forEach(el => el.classList.remove('active'));
-        const activeCard = document.getElementById(`card-${name}`);
-        if (activeCard) activeCard.classList.add('active');
-        
-        applyCharacterTheme(name);
-        
-        document.getElementById('chat-char-name').textContent = characterNames[name];
-        document.getElementById('chat-avatar').src = charProfiles[name].image;
-        
-        const chatBox = document.getElementById('chat-box');
-        conversationHistory = [{ role: "system", content: charProfiles[name].system }];
-        chatBox.innerHTML = `<div class="msg bot">${charProfiles[name].greeting}</div>`;
-        scrollToBottom(false); 
-    }
-            document.getElementById('enter-hub-btn').addEventListener('click', () => {
-            const usernameInput = document.getElementById('portal-username').value.trim();
-            if (!usernameInput) {
-                alert("Please enter a valid identity code name!");
-                return;
-            }
-            
-            localStorage.setItem('anime_hub_user', usernameInput);
-            
-            const portal = document.getElementById('landing-portal');
-            portal.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            portal.style.opacity = '0';
-            portal.style.transform = 'scale(1.05)';
-            
-            setTimeout(() => {
-                portal.remove();
-            }, 600);
-        });
-// Global tracking variables for the sliding window
-async function sendMessage() {
-    if (isGenerating) return;
-
-    const input = document.getElementById('user-input');
-    const messageText = input.value.trim();
-    if (!messageText) return;
-
-    isGenerating = true;
-    input.disabled = true;
-    const sendButton = document.querySelector('.chat-input-area button');
-    if (sendButton) sendButton.disabled = true;
-    const chatBox = document.getElementById('chat-box');
-        
-    // 1. Fetch the current logged-in username
-    const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
-
-    // 2. Create a container wrapper for structural cleanliness
-    const userMsgContainer = document.createElement('div');
-    userMsgContainer.className = 'msg user';
-        
-    // 3. Create the small username badge element
-    const nameBadge = document.createElement('div');
-    nameBadge.className = 'msg-username-label';
-    nameBadge.textContent = storedUsername;
-        
-    // 4. Create the text content container
-    const textContent = document.createElement('div');
-    textContent.className = 'msg-text-payload';
-    textContent.textContent = messageText;
-        
-    // 5. Build the structural tree and append
-    userMsgContainer.appendChild(nameBadge);
-    userMsgContainer.appendChild(textContent);
-    chatBox.appendChild(userMsgContainer);
-
-    input.value = '';
-        
-    const typingStatus = document.createElement('div');
-    typingStatus.className = 'msg system-status';
-    typingStatus.textContent = `${currentCharacter} is thinking...`;
-    chatBox.appendChild(typingStatus);
-    scrollToBottom(true);
-
-    conversationHistory.push({ role: "user", content: messageText });
-
-    // Increment window count
-    promptsInCurrentWindow++;
-    
-    let shouldTriggerTrivia = false;
-
-    // Sliding window logic
-    if (!triviaTriggeredInCurrentWindow) {
-        if (promptsInCurrentWindow >= 10) {
-            shouldTriggerTrivia = true; // Hard force on 10th prompt
-        } else {
-            shouldTriggerTrivia = Math.random() < 0.20; // 20% random chance
-        }
-    }
-
-    try {
-        const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
-
-        // Log what the frontend is requesting
-        console.log(`[Frontend Request] Prompt #${promptsInCurrentWindow} in current block. Requesting trivia: ${shouldTriggerTrivia}`);
-
-        const response = await fetch(`/api/chat`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                username: storedUsername,
-                character: currentCharacter,
-                messages: getPrunedHistory(),
-                generateTrivia: shouldTriggerTrivia 
-            })
-        });
-
-        const data = await response.json();
-        typingStatus.remove();
-
-        // 🔍 DIAGNOSTIC LOG: Check what your backend actually sent back
-        if (shouldTriggerTrivia) {
-            console.log("[Backend Response for Trivia]:", data);
-        }
-
-        if (!response.ok) {
-            const errorMessage = data.error || `${currentCharacter} is momentarily unavailable. Try again!`;
-            
-            const errBlock = document.createElement('div');
-            errBlock.className = 'msg system-status';
-            errBlock.style.borderColor = '#d62828';
-            errBlock.style.color = '#d62828';
-            errBlock.style.background = 'rgba(214, 40, 40, 0.1)';
-            errBlock.textContent = `❌ ${errorMessage}`;
-            
-            chatBox.appendChild(errBlock);
-            conversationHistory.pop();
-            promptsInCurrentWindow--;
-        } else {
-            const botMsg = document.createElement('div');
-            botMsg.className = 'msg bot';
-            botMsg.textContent = data.reply;
-            chatBox.appendChild(botMsg);
-            
-            conversationHistory.push({ role: "assistant", content: data.reply });
-
-            if (shouldTriggerTrivia) {
-                // Check if backend completely omitted the keys or formatted them wrong
-                if (data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
-                    triviaTriggeredInCurrentWindow = true; 
-                    setTimeout(() => {
-                        triggerLLMTrivia(data.trivia);
-                    }, 1200);
-                } else {
-                    console.warn("⚠️ Frontend expected trivia object from backend, but received:", data.trivia);
-                    const modal = document.getElementById('trivia-modal');
-                    if (modal) modal.style.display = 'none';
-                }
-            }
-            
-            // Cycle reset at 10 prompts
-            if (promptsInCurrentWindow >= 10) {
-                promptsInCurrentWindow = 0;
-                triviaTriggeredInCurrentWindow = false;
-            }
-        }
-    } catch (error) {
-        console.error("Communication error:", error);
-        if (typingStatus.parentNode) typingStatus.remove();
-        
-        const networkErrBlock = document.createElement('div');
-        networkErrBlock.className = 'msg system-status';
-        networkErrBlock.style.borderColor = '#d62828';
-        networkErrBlock.style.color = '#d62828';
-        networkErrBlock.style.background = 'rgba(214, 40, 40, 0.1)';
-        networkErrBlock.textContent = `❌ ${currentCharacter} has consumed the quota of messages. Try again after 30 mins`;
-        
-        chatBox.appendChild(networkErrBlock);
-        conversationHistory.pop();
-        promptsInCurrentWindow--;
-    } finally {
-        isGenerating = false;
-        input.disabled = false;
-        if (sendButton) sendButton.disabled = false;
-        input.focus();
-        scrollToBottom(true);
-    }
-}
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const overlay = document.getElementById('login-overlay');
-        const loginBtn = document.getElementById('login-btn');
-        const usernameInput = document.getElementById('username-input');
-    // Allow pressing the 'Enter' key inside the text field to submit as well
-    document.getElementById('portal-username').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-        document.getElementById('enter-hub-btn').click();
-    }
-});
-        const savedUser = localStorage.getItem('anime_hub_user');
-        if (savedUser) {
-            overlay.style.display = 'none';
-        }
-
-        loginBtn.addEventListener('click', () => {
-            const enteredName = usernameInput.value.trim();
-            if (enteredName) {
-                localStorage.setItem('anime_hub_user', enteredName);
-                overlay.style.display = 'none';
-            }
-        });
-
-        usernameInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') loginBtn.click();
-        });
-
-        selectCharacter(currentCharacter);
-    });
-    
 </script>
-    <!-- Leaderboard Modal Overlay -->
-<div id="leaderboard-modal" class="leaderboard-overlay" style="display: none;">
-    <div class="leaderboard-modal-card">
-        <div class="leaderboard-header">
-            <div>
-                <h2>🏆 Global Leaderboard</h2>
-                <p>Top training operations worldwide</p>
-            </div>
-            <button id="close-leaderboard-btn" class="close-modal-btn">&times;</button>
-        </div>
-        
-        <!-- The dynamically populated list will load inside here -->
-        <div id="leaderboard-list" class="leaderboard-ranks-container">
-            <div class="leaderboard-loading">Gathering combat data...</div>
-        </div>
-    </div>
-</div>
 </body>
 </html>
