@@ -15,7 +15,8 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     try {
-        const { messages, username, character } = req.body;
+        // Extract generateTrivia from the incoming frontend body
+        const { messages, username, character, generateTrivia } = req.body;
         const selectedChar = character || "Goku"; 
         
         if (!username || username.trim() === '' || username.trim() === 'Anonymous User') {
@@ -102,7 +103,6 @@ export default async function handler(req, res) {
         }
 
         // 4. STEP 1: GENERATE STANDARD CHARACTER CHAT CHANNELS ONLY
-        // We do NOT modify the conversation history payload sent to Groq. Keep it pure text.
         const chatResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${groqApiKey.trim()}`, 'Content-Type': 'application/json' },
@@ -122,8 +122,8 @@ export default async function handler(req, res) {
         const finalResponse = { reply: cleanChatReply };
 
         // 6. STEP 2: INDEPENDENT ASYNCHRONOUS TRIVIA BLOCK
-        // If state tracking triggers, we spawn an isolated separate call to generate raw trivia JSON
-        if (includeTriviaThisTurn) {
+        // Check database trigger OR explicit frontend flag condition
+        if (includeTriviaThisTurn || generateTrivia === true || generateTrivia === "true") {
             try {
                 const randomTopic = topicsPool[Math.floor(Math.random() * topicsPool.length)];
                 
@@ -134,16 +134,16 @@ export default async function handler(req, res) {
                         model: 'llama-3.1-8b-instant',
                         messages: [{
                             role: "system",
-                            content: `You are a trivia generator bot. Create a highly accurate multiple-choice trivia question about the character ${selectedChar} from their respective anime universe based on the topic: ${randomTopic}.
+                            content: `You are a trivia generator bot. Create a highly accurate, random multiple-choice trivia question about the character ${selectedChar} from their respective anime universe based on the topic: ${randomTopic}.
                             You must reply ONLY with a valid JSON object matching this schema structure:
                             {
                                 "question": "Question text here?",
                                 "options": ["Option 0", "Option 1", "Option 2", "Option 3"],
                                 "correct": 0
                             }
-                            Note: "correct" must be the index number (0, 1, 2, or 3) of the right option. Do not add any text before or after the JSON.`
+                            Note: "correct" must be a valid mathematical index number (0, 1, 2, or 3) indicating the true correct answer inside the options array. Do not include any markdown wrapper formatting block or text before or after the JSON structure output.`
                         }],
-                        temperature: 0.85,
+                        temperature: 0.9, // Higher temperature ensures dynamic, unique questions
                         response_format: { type: "json_object" }
                     })
                 });
