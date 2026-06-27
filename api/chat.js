@@ -34,14 +34,15 @@ export default async function handler(req, res) {
         let userAllowed = true;
         let includeTriviaThisTurn = false;
 
-        // 3. DATABASE CHECK & TURN TRACKING (1-10 Prompt Rule)
+        // 3. DATABASE CHECK & TURN TRACKING (Enforces 1 Random Trivia after start)
         try {
             const userCheck = await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
                 headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
             });
             const userData = await userCheck.json();
 
-            const randomTargetTurn = Math.floor(Math.random() * 7) + 2; // Target turn between 2 and 8
+            // Pick a truly random target turn between prompt 3 and prompt 8 (never at the start)
+            const randomTargetTurn = Math.floor(Math.random() * 6) + 3; 
 
             if (!Array.isArray(userData) || userData.length === 0) {
                 // New User Registration
@@ -66,7 +67,7 @@ export default async function handler(req, res) {
                     
                     let updatedTriviaFlag = hasReceived;
 
-                    // Trigger EXACTLY ONCE within the first 10 prompts
+                    // Triggers randomly between turns 3-8, or pushes a fallback at turn 10 max
                     if (!hasReceived && (nextCount === targetTurn || nextCount >= 10)) {
                         includeTriviaThisTurn = true;
                         updatedTriviaFlag = true; 
@@ -91,24 +92,25 @@ export default async function handler(req, res) {
             return res.status(403).json({ error: "Training limits reached for today! Come back tomorrow to recharge your energy! ⚡" });
         }
 
-        // 4. PREPARE PROMPT FOR THE AI
-        // If it's time for trivia, we instruct the LLM to output valid JSON combining the response and trivia.
+        // 4. CHOOSE INFERENCE INSTRUCTIONS BASED ON STATE
         let finalMessages = [...messages];
-        
+        let responseFormatConfig = undefined;
+
         if (includeTriviaThisTurn) {
+            // Append short hidden modifier instructing a temporary JSON payload structure
             finalMessages.push({
                 role: "system",
-                content: `CRITICAL INSTRUCTION: On this specific turn, you must generate a random, fun trivia question related to your character (${selectedChar}) or your anime universe. Your entire response MUST be formatted strictly as a JSON object with this structure:
+                content: `You must generate a random trivia question related to your character (${selectedChar}) or universe. Respond strictly with a JSON object format matching this layout:
                 {
-                   "reply": "Your conversational character response here...",
+                   "reply": "Your conversational in-character message text here",
                    "trivia": {
-                      "question": "The trivia question text here...",
-                      "options": ["Option 0", "Option 1", "Option 2", "Option 3"],
+                      "question": "The trivia question text",
+                      "options": ["Opt 0", "Opt 1", "Opt 2", "Opt 3"],
                       "correct": 0
                    }
-                }
-                Make sure "correct" is the integer index (0-3) of the right option. Do not include any extra text outside the JSON block.`
+                }`
             });
+            responseFormatConfig = { type: "json_object" };
         }
 
         // 5. AI INFERENCE VIA GROQ
@@ -118,9 +120,9 @@ export default async function handler(req, res) {
             body: JSON.stringify({
                 model: 'llama-3.1-8b-instant',
                 messages: finalMessages,
-                temperature: 0.8, // Slightly higher for more random/creative questions
+                temperature: 0.8,
                 max_tokens: 300,
-                response_format: includeTriviaThisTurn ? { type: "json_object" } : undefined // Forces JSON output if trivia turn
+                response_format: responseFormatConfig
             })
         });
 
@@ -128,24 +130,23 @@ export default async function handler(req, res) {
         const data = await response.json();
         const rawContent = data.choices[0].message.content.trim();
 
-        // 6. PROCESS AND PARSE RESPONSE
+        // 6. SANITIZE AND CONSTRUCT RESPONSE SEPARATELY
         let finalResponse = { reply: rawContent };
 
         if (includeTriviaThisTurn) {
             try {
-                // Parse the forced JSON schema from the LLM
                 const parsedJSON = JSON.parse(rawContent);
-                finalResponse.reply = parsedJSON.reply || `I am ready to test you!`;
+                // We overwrite the reply to clean conversational text before history logs it!
+                finalResponse.reply = parsedJSON.reply || `Let's see if you can answer this!`;
                 if (parsedJSON.trivia) {
                     finalResponse.trivia = parsedJSON.trivia;
                 }
             } catch (jsonErr) {
-                console.error("Failed to parse LLM structured trivia JSON. Falling back.", jsonErr);
-                // Simple hardcoded fallback just in case the LLM formatting cracks
-                finalResponse.reply = rawContent;
+                console.error("JSON parsing fallback execution.", jsonErr);
+                finalResponse.reply = "Let's see how much you know about my world!";
                 finalResponse.trivia = {
-                    question: `Are you ready to surpass your limits with ${selectedChar}?`,
-                    options: ["Yes!", "Absolutely!", "Always!", "No"],
+                    question: `Are you a true fan of ${selectedChar}?`,
+                    options: ["Yes!", "Of course!", "Unsure", "No"],
                     correct: 0
                 };
             }
@@ -162,6 +163,8 @@ export default async function handler(req, res) {
             console.error("Points update failed:", dbErr);
         }
 
+        // The frontend will now receive a clean conversational string inside finalResponse.reply 
+        // to pass along into its history loop, preventing any endless formatting cascades.
         return res.status(200).json(finalResponse);
 
     } catch (error) {
