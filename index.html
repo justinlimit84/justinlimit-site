@@ -292,339 +292,336 @@
         </div>
     </div>
 
-    <script>
-        let currentCharacter = "Goku";
-        
-        // Trigger trivia immediately on every message for testing (1.0 = 100% chance)
-        function triggerLLMTrivia(triviaData) {
-    // triviaData is expected to look like: { question: "...", options: ["A", "B", "C", "D"], correct: 0 }
+ <script>
+    let currentCharacter = "Goku";
     
-    document.getElementById('trivia-character-title').textContent = `⚡ ${currentCharacter.toUpperCase()}'S CHALLENGE!`;
-    document.getElementById('trivia-question-text').textContent = triviaData.question;
-    
-    const container = document.getElementById('trivia-options-container');
-    container.innerHTML = '';
-    document.getElementById('trivia-feedback').textContent = '';
-    
-    triviaData.options.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.textContent = opt;
-        btn.style.width = '100%';
-        btn.style.padding = '12px';
-        btn.style.background = '#11141a';
-        btn.style.color = '#fff';
-        btn.style.border = '1px solid var(--neon-cyan)';
-        btn.style.borderRadius = '6px';
-        btn.style.cursor = 'pointer';
-        btn.style.fontSize = '1rem';
-        btn.style.transition = 'all 0.2s ease';
+    // Trigger trivia immediately on every message for testing (1.0 = 100% chance)
+    function triggerLLMTrivia(triviaData) {
+        // triviaData is expected to look like: { question: "...", options: ["A", "B", "C", "D"], correct: 0 }
         
-        btn.onclick = () => {
-            const feedback = document.getElementById('trivia-feedback');
-            if (idx === parseInt(triviaData.correct)) {
-                feedback.style.color = '#4caf50';
-                feedback.textContent = '🎉 Awesome Job! +50 Power Levels! 💪';
-                
-                setTimeout(() => { 
-                    document.getElementById('trivia-modal').style.display = 'none'; 
-                }, 2000);
-            } else {
-                feedback.style.color = '#f44336';
-                feedback.textContent = '❌ Try again! You can do it! 💥';
-            }
-        };
-        container.appendChild(btn);
-    });
-    
-    document.getElementById('trivia-modal').style.display = 'flex';
-}
-        };
+        document.getElementById('trivia-character-title').textContent = `⚡ ${currentCharacter.toUpperCase()}'S CHALLENGE!`;
+        document.getElementById('trivia-question-text').textContent = triviaData.question;
         
-        const charProfiles = {
-            Goku: { 
-                system: "You are Goku from Dragon Ball Z. Respond enthusiastically, love martial arts, and talk about getting stronger. Speak in a simple friendly way. Use actual emojis (like 😁, 💪, 💥) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
-                greeting: "Yo! I'm Goku. Let's train together, or just talk! What's on your mind? 😁",
-                image: "images/Goku.jpg"
-            },
-            Naruto: { 
-                system: "You are Naruto Uzumaki from Naruto Shippuden. You want to be Hokage, frequently say 'Believe it!', and love ramen. Use actual emojis (like 🦊, 🍜, 😎) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
-                greeting: "Hey! Naruto Uzumaki here, future Hokage! What's up? Believe it! 🍜",
-                image: "images/Naruto.jpg"
-            },
-            Sasuke: { 
-                system: "You are Sasuke Uchiha. You are calm, stoic, and serious. Speak with cool confidence. Use sparse, subtle emojis (like 👁️, ⚡, 👤) to express mood instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
-                greeting: "...Sasuke here. Speak your mind, but don't waste my time.",
-                image: "images/Sasuke.jpg"
-            },
-            Sakura: { 
-                system: "You are Sakura Haruno. You are a brilliant medical ninja, strong-willed, and sharp. Use actual emojis (like 🌸, 👊, 🩺) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
-                greeting: "Hi there! Sakura here. Hope you are keeping yourself healthy! What can I do for you? 🌸",
-                image: "images/Sakura-Haruno.jpg"
-            },
-            Sarada: { 
-                system: "You are Sarada Uchiha from Boruto. You are smart, logical, and want to become Hokage. Use actual emojis (like Glasses, 🎯, 🔥) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
-                greeting: "Hello! I'm Sarada Uchiha. I always have time for a strategic chat. What's on your radar? 👓",
-                image: "images/Sarada-Uchiha.jpg"
-            }
-        };
-
-        const characterNames = {
-            Goku: "Goku",
-            Naruto: "Naruto Uzumaki",
-            Sasuke: "Sasuke Uchiha",
-            Sakura: "Sakura Haruno",
-            Sarada: "Sarada Uchiha"
-        };
-
-        const characterThemes = {
-            Goku: {
-                '--neon-cyan': '#FF6600',       // Saiyan Orange
-                '--neon-purple': '#ffb703',     // Gold
-                '--bubble-bg': 'rgba(255, 102, 0, 0.15)',
-                bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
-            },
-            Naruto: {
-                '--neon-cyan': '#FFA500',       // Uzumaki Orange
-                '--neon-purple': '#d62828',     // Sage Red
-                '--bubble-bg': 'rgba(255, 165, 0, 0.15)',
-                bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
-            },
-            Sasuke: {
-                '--neon-cyan': '#00E5FF',       // Chidori Blue
-                '--neon-purple': '#8a2be2',     // Susanoo Purple
-                '--bubble-bg': 'rgba(0, 229, 255, 0.12)',
-                bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
-            },
-            Sakura: {
-                '--neon-cyan': '#FFB7C5',       // Sakura Pink
-                '--neon-purple': '#ff4d6d',     // Crimson
-                '--bubble-bg': 'rgba(255, 183, 197, 0.15)',
-                bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
-            },
-            Sarada: {
-                '--neon-cyan': '#E53935',       // Sharingan Red
-                '--neon-purple': '#6a1b9a',     // Dark Purple
-                '--bubble-bg': 'rgba(229, 57, 53, 0.15)',
-                bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'
-            }
-        };
-
-        let conversationHistory = [{ role: "system", content: charProfiles[currentCharacter].system }];
-        let isGenerating = false; 
-
-        function scrollToBottom(smooth = true) {
-            const chatBox = document.getElementById('chat-box');
-            if (!chatBox) return;
-            if (smooth) {
-                chatBox.scrollTo({
-                    top: chatBox.scrollHeight,
-                    behavior: 'smooth'
-                });
-            } else {
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-        }
-
-        function getPrunedHistory() {
-            const MAX_MESSAGES = 10; 
-            if (conversationHistory.length <= MAX_MESSAGES + 1) {
-                return conversationHistory;
-            }
-            const systemMessage = conversationHistory[0];
-            const recentMessages = conversationHistory.slice(-MAX_MESSAGES);
-            return [systemMessage, ...recentMessages];
-        }
+        const container = document.getElementById('trivia-options-container');
+        container.innerHTML = '';
+        document.getElementById('trivia-feedback').textContent = '';
         
-        let bgAudio = new Audio();
-        bgAudio.loop = true;
-        bgAudio.volume = 0.20; 
-        let isMusicPlaying = false;
-
-        function toggleMusic() {
-            const btn = document.getElementById('music-toggle');
-            if (isMusicPlaying) {
-                bgAudio.pause();
-                isMusicPlaying = false;
-                btn.textContent = "📁 Muted";
-                btn.style.background = "rgba(255,255,255,0.05)";
-            } else {
-                playCurrentCharacterTrack();
-            }
-        }
-
-        function playCurrentCharacterTrack() {
-            const theme = characterThemes[currentCharacter];
-            if (!theme || !theme.bgm) return;
+        triviaData.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.textContent = opt;
+            btn.style.width = '100%';
+            btn.style.padding = '12px';
+            btn.style.background = '#11141a';
+            btn.style.color = '#fff';
+            btn.style.border = '1px solid var(--neon-cyan)';
+            btn.style.borderRadius = '6px';
+            btn.style.cursor = 'pointer';
+            btn.style.fontSize = '1rem';
+            btn.style.transition = 'all 0.2s ease';
             
-            const btn = document.getElementById('music-toggle');
-            
-            if (bgAudio.src !== theme.bgm) {
-                bgAudio.src = theme.bgm;
-                bgAudio.load();
-            }
-            
-            bgAudio.play()
-                .then(() => {
-                    isMusicPlaying = true;
-                    btn.textContent = "🔊 Playing Theme";
-                    btn.style.background = "var(--bubble-bg)";
-                })
-                .catch(err => {
-                    console.log("Audio playback blocked. Awaiting user interaction execution.");
-                    isMusicPlaying = false;
-                    btn.textContent = "🎵 Play Theme";
-                });
-        }
-
-        function applyCharacterTheme(name) {
-            const theme = characterThemes[name];
-            if (!theme) return;
-            Object.keys(theme).forEach(property => {
-                if (property !== 'bgm') {
-                    document.documentElement.style.setProperty(property, theme[property]);
+            btn.onclick = () => {
+                const feedback = document.getElementById('trivia-feedback');
+                if (idx === parseInt(triviaData.correct)) {
+                    feedback.style.color = '#4caf50';
+                    feedback.textContent = '🎉 Awesome Job! +50 Power Levels! 💪';
+                    
+                    setTimeout(() => { 
+                        document.getElementById('trivia-modal').style.display = 'none'; 
+                    }, 2000);
+                } else {
+                    feedback.style.color = '#f44336';
+                    feedback.textContent = '❌ Try again! You can do it! 💥';
                 }
-            });
-
-            if (isMusicPlaying) {
-                playCurrentCharacterTrack();
-            }
-        }
-
-        function selectCharacter(name) {
-            if (isGenerating) return; 
-            currentCharacter = name;
-            document.querySelectorAll('.char-card').forEach(el => el.classList.remove('active'));
-            document.getElementById(`card-${name}`).classList.add('active');
-            
-            applyCharacterTheme(name);
-            
-            document.getElementById('chat-char-name').textContent = characterNames[name];
-            document.getElementById('chat-avatar').src = charProfiles[name].image;
-            
-            const chatBox = document.getElementById('chat-box');
-            conversationHistory = [{ role: "system", content: charProfiles[name].system }];
-            chatBox.innerHTML = `<div class="msg bot">${charProfiles[name].greeting}</div>`;
-            scrollToBottom(false); 
-        }
-
-        async function sendMessage() {
-    if (isGenerating) return;
-
-    const input = document.getElementById('user-input');
-    const messageText = input.value.trim();
-    if (!messageText) return;
-
-    isGenerating = true;
-    input.disabled = true;
-    const sendButton = document.querySelector('.chat-input-area button');
-    if (sendButton) sendButton.disabled = true;
-
-    const chatBox = document.getElementById('chat-box');
-    const userMsg = document.createElement('div');
-    userMsg.className = 'msg user';
-    userMsg.textContent = messageText;
-    chatBox.appendChild(userMsg);
-    input.value = '';
+            };
+            container.appendChild(btn);
+        });
+        
+        document.getElementById('trivia-modal').style.display = 'flex';
+    } // Fixed the extra trailing bracket here
     
-    const typingStatus = document.createElement('div');
-    typingStatus.className = 'msg system-status';
-    typingStatus.textContent = `${currentCharacter} is thinking...`;
-    chatBox.appendChild(typingStatus);
-    scrollToBottom(true);
+    const charProfiles = {
+        Goku: { 
+            system: "You are Goku from Dragon Ball Z. Respond enthusiastically, love martial arts, and talk about getting stronger. Speak in a simple friendly way. Use actual emojis (like 😁, 💪, 💥) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
+            greeting: "Yo! I'm Goku. Let's train together, or just talk! What's on your mind? 😁",
+            image: "images/Goku.jpg"
+        },
+        Naruto: { 
+            system: "You are Naruto Uzumaki from Naruto Shippuden. You want to be Hokage, frequently say 'Believe it!', and love ramen. Use actual emojis (like 🦊, 🍜, 😎) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
+            greeting: "Hey! Naruto Uzumaki here, future Hokage! What's up? Believe it! 🍜",
+            image: "images/Naruto.jpg"
+        },
+        Sasuke: { 
+            system: "You are Sasuke Uchiha. You are calm, stoic, and serious. Speak with cool confidence. Use sparse, subtle emojis (like 👁️, ⚡, 👤) to express mood instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
+            greeting: "...Sasuke here. Speak your mind, but don't waste my time.",
+            image: "images/Sasuke.jpg"
+        },
+        Sakura: { 
+            system: "You are Sakura Haruno. You are a brilliant medical ninja, strong-willed, and sharp. Use actual emojis (like 🌸, 👊, 🩺) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
+            greeting: "Hi there! Sakura here. Hope you are keeping yourself healthy! What can I do for you? 🌸",
+            image: "images/Sakura-Haruno.jpg"
+        },
+        Sarada: { 
+            system: "You are Sarada Uchiha from Boruto. You are smart, logical, and want to become Hokage. Use actual emojis (like 👓, 🎯, 🔥) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks.", 
+            greeting: "Hello! I'm Sarada Uchiha. I always have time for a strategic chat. What's on your radar? 👓",
+            image: "images/Sarada-Uchiha.jpg"
+        }
+    };
 
-    conversationHistory.push({ role: "user", content: messageText });
+    const characterNames = {
+        Goku: "Goku",
+        Naruto: "Naruto Uzumaki",
+        Sasuke: "Sasuke Uchiha",
+        Sakura: "Sakura Haruno",
+        Sarada: "Sarada Uchiha"
+    };
 
-    try {
-        const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
+    const characterThemes = {
+        Goku: {
+            '--neon-cyan': '#FF6600',       // Saiyan Orange
+            '--neon-purple': '#ffb703',     // Gold
+            '--bubble-bg': 'rgba(255, 102, 0, 0.15)',
+            bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+        },
+        Naruto: {
+            '--neon-cyan': '#FFA500',       // Uzumaki Orange
+            '--neon-purple': '#d62828',     // Sage Red
+            '--bubble-bg': 'rgba(255, 165, 0, 0.15)',
+            bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+        },
+        Sasuke: {
+            '--neon-cyan': '#00E5FF',       // Chidori Blue
+            '--neon-purple': '#8a2be2',     // Susanoo Purple
+            '--bubble-bg': 'rgba(0, 229, 255, 0.12)',
+            bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+        },
+        Sakura: {
+            '--neon-cyan': '#FFB7C5',       // Sakura Pink
+            '--neon-purple': '#ff4d6d',     // Crimson
+            '--bubble-bg': 'rgba(255, 183, 197, 0.15)',
+            bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
+        },
+        Sarada: {
+            '--neon-cyan': '#E53935',       // Sharingan Red
+            '--neon-purple': '#6a1b9a',     // Dark Purple
+            '--bubble-bg': 'rgba(229, 57, 53, 0.15)',
+            bgm: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'
+        }
+    };
 
-        // Requesting chat response AND telling backend to generate a trivia object
-        const response = await fetch(`/api/chat`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                username: storedUsername,
-                messages: getPrunedHistory(),
-                generateTrivia: true // Flag telling backend to include a random question
+    let conversationHistory = [{ role: "system", content: charProfiles[currentCharacter].system }];
+    let isGenerating = false; 
+
+    function scrollToBottom(smooth = true) {
+        const chatBox = document.getElementById('chat-box');
+        if (!chatBox) return;
+        if (smooth) {
+            chatBox.scrollTo({
+                top: chatBox.scrollHeight,
+                behavior: 'smooth'
+            });
+        } else {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    }
+
+    function getPrunedHistory() {
+        const MAX_MESSAGES = 10; 
+        if (conversationHistory.length <= MAX_MESSAGES + 1) {
+            return conversationHistory;
+        }
+        const systemMessage = conversationHistory[0];
+        const recentMessages = conversationHistory.slice(-MAX_MESSAGES);
+        return [systemMessage, ...recentMessages];
+    }
+    
+    let bgAudio = new Audio();
+    bgAudio.loop = true;
+    bgAudio.volume = 0.20; 
+    let isMusicPlaying = false;
+
+    function toggleMusic() {
+        const btn = document.getElementById('music-toggle');
+        if (isMusicPlaying) {
+            bgAudio.pause();
+            isMusicPlaying = false;
+            btn.textContent = "📁 Muted";
+            btn.style.background = "rgba(255,255,255,0.05)";
+        } else {
+            playCurrentCharacterTrack();
+        }
+    }
+
+    function playCurrentCharacterTrack() {
+        const theme = characterThemes[currentCharacter];
+        if (!theme || !theme.bgm) return;
+        
+        const btn = document.getElementById('music-toggle');
+        
+        if (bgAudio.src !== theme.bgm) {
+            bgAudio.src = theme.bgm;
+            bgAudio.load();
+        }
+        
+        bgAudio.play()
+            .then(() => {
+                isMusicPlaying = true;
+                btn.textContent = "🔊 Playing Theme";
+                btn.style.background = "var(--bubble-bg)";
             })
+            .catch(err => {
+                console.log("Audio playback blocked. Awaiting user interaction execution.");
+                isMusicPlaying = false;
+                btn.textContent = "🎵 Play Theme";
+            });
+    }
+
+    function applyCharacterTheme(name) {
+        const theme = characterThemes[name];
+        if (!theme) return;
+        Object.keys(theme).forEach(property => {
+            if (property !== 'bgm') {
+                document.documentElement.style.setProperty(property, theme[property]);
+            }
         });
 
-        const data = await response.json();
-        typingStatus.remove();
+        if (isMusicPlaying) {
+            playCurrentCharacterTrack();
+        }
+    }
 
-        if (!response.ok) {
-            const errorMessage = data.error || `${currentCharacter} is momentarily unavailable. Try again!`;
-            
-            const errBlock = document.createElement('div');
-            errBlock.className = 'msg system-status';
-            errBlock.style.borderColor = '#d62828';
-            errBlock.style.color = '#d62828';
-            errBlock.style.background = 'rgba(214, 40, 40, 0.1)';
-            errBlock.textContent = `❌ ${errorMessage}`;
-            
-            chatBox.appendChild(errBlock);
-            conversationHistory.pop();
-        } else {
-            const botMsg = document.createElement('div');
-            botMsg.className = 'msg bot';
-            botMsg.textContent = data.reply;
-            chatBox.appendChild(botMsg);
-            
-            conversationHistory.push({ role: "assistant", content: data.reply });
+    function selectCharacter(name) {
+        if (isGenerating) return; 
+        currentCharacter = name;
+        document.querySelectorAll('.char-card').forEach(el => el.classList.remove('active'));
+        document.getElementById(`card-${name}`).classList.add('active');
+        
+        applyCharacterTheme(name);
+        
+        document.getElementById('chat-char-name').textContent = characterNames[name];
+        document.getElementById('chat-avatar').src = charProfiles[name].image;
+        
+        const chatBox = document.getElementById('chat-box');
+        conversationHistory = [{ role: "system", content: charProfiles[name].system }];
+        chatBox.innerHTML = `<div class="msg bot">${charProfiles[name].greeting}</div>`;
+        scrollToBottom(false); 
+    }
 
-            // If the backend returned an LLM-generated trivia question, trigger the modal with it
-            if (data.trivia) {
-                setTimeout(() => {
-                    triggerLLMTrivia(data.trivia);
-                }, 1200);
+    async function sendMessage() {
+        if (isGenerating) return;
+
+        const input = document.getElementById('user-input');
+        const messageText = input.value.trim();
+        if (!messageText) return;
+
+        isGenerating = true;
+        input.disabled = true;
+        const sendButton = document.querySelector('.chat-input-area button');
+        if (sendButton) sendButton.disabled = true;
+
+        const chatBox = document.getElementById('chat-box');
+        const userMsg = document.createElement('div');
+        userMsg.className = 'msg user';
+        userMsg.textContent = messageText;
+        chatBox.appendChild(userMsg);
+        input.value = '';
+        
+        const typingStatus = document.createElement('div');
+        typingStatus.className = 'msg system-status';
+        typingStatus.textContent = `${currentCharacter} is thinking...`;
+        chatBox.appendChild(typingStatus);
+        scrollToBottom(true);
+
+        conversationHistory.push({ role: "user", content: messageText });
+
+        try {
+            const storedUsername = localStorage.getItem('anime_hub_user') || 'Anonymous User';
+
+            const response = await fetch(`/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    username: storedUsername,
+                    messages: getPrunedHistory(),
+                    generateTrivia: true 
+                })
+            });
+
+            const data = await response.json();
+            typingStatus.remove();
+
+            if (!response.ok) {
+                const errorMessage = data.error || `${currentCharacter} is momentarily unavailable. Try again!`;
+                
+                const errBlock = document.createElement('div');
+                errBlock.className = 'msg system-status';
+                errBlock.style.borderColor = '#d62828';
+                errBlock.style.color = '#d62828';
+                errBlock.style.background = 'rgba(214, 40, 40, 0.1)';
+                errBlock.textContent = `❌ ${errorMessage}`;
+                
+                chatBox.appendChild(errBlock);
+                conversationHistory.pop();
+            } else {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'msg bot';
+                botMsg.textContent = data.reply;
+                chatBox.appendChild(botMsg);
+                
+                conversationHistory.push({ role: "assistant", content: data.reply });
+
+                if (data.trivia) {
+                    setTimeout(() => {
+                        triggerLLMTrivia(data.trivia);
+                    }, 1200);
+                }
             }
+
+        } catch (error) {
+            console.error(error);
+            typingStatus.remove();
+            
+            const networkErrBlock = document.createElement('div');
+            networkErrBlock.className = 'msg system-status';
+            networkErrBlock.style.borderColor = '#d62828';
+            networkErrBlock.style.color = '#d62828';
+            networkErrBlock.style.background = 'rgba(214, 40, 40, 0.1)';
+            networkErrBlock.textContent = `❌ ${currentCharacter} has consumed the quota of messages. Try again after 30 mins`;
+            
+            chatBox.appendChild(networkErrBlock);
+            conversationHistory.pop();
+        } finally {
+            isGenerating = false;
+            input.disabled = false;
+            if (sendButton) sendButton.disabled = false;
+            input.focus();
+        }
+        scrollToBottom(true);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const overlay = document.getElementById('login-overlay');
+        const loginBtn = document.getElementById('login-btn');
+        const usernameInput = document.getElementById('username-input');
+
+        const savedUser = localStorage.getItem('anime_hub_user');
+        if (savedUser) {
+            overlay.style.display = 'none';
         }
 
-    } catch (error) {
-        console.error(error);
-        typingStatus.remove();
-        
-        const networkErrBlock = document.createElement('div');
-        networkErrBlock.className = 'msg system-status';
-        networkErrBlock.style.borderColor = '#d62828';
-        networkErrBlock.style.color = '#d62828';
-        networkErrBlock.style.background = 'rgba(214, 40, 40, 0.1)';
-        networkErrBlock.textContent = `❌ ${currentCharacter} has consumed the quota of messages. Try again after 30 mins`;
-        
-        chatBox.appendChild(networkErrBlock);
-        conversationHistory.pop();
-    } finally {
-        isGenerating = false;
-        input.disabled = false;
-        if (sendButton) sendButton.disabled = false;
-        input.focus();
-    }
-    scrollToBottom(true);
-}
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const overlay = document.getElementById('login-overlay');
-            const loginBtn = document.getElementById('login-btn');
-            const usernameInput = document.getElementById('username-input');
-
-            const savedUser = localStorage.getItem('anime_hub_user');
-            if (savedUser) {
+        loginBtn.addEventListener('click', () => {
+            const enteredName = usernameInput.value.trim();
+            if (enteredName) {
+                localStorage.setItem('anime_hub_user', enteredName);
                 overlay.style.display = 'none';
             }
-
-            loginBtn.addEventListener('click', () => {
-                const enteredName = usernameInput.value.trim();
-                if (enteredName) {
-                    localStorage.setItem('anime_hub_user', enteredName);
-                    overlay.style.display = 'none';
-                }
-            });
-
-            usernameInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') loginBtn.click();
-            });
-
-            selectCharacter(currentCharacter);
         });
-    </script>
+
+        usernameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') loginBtn.click();
+        });
+
+        selectCharacter(currentCharacter);
+    });
+</script>
 </body>
 </html>
