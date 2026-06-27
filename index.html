@@ -208,7 +208,17 @@
     </style>
 </head>
 <body>
-
+    <!-- TRIVIA CHALLENGE POP-UP MODAL -->
+<div id="trivia-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; display:none; justify-content:center; align-items:center;">
+    <div style="background:#1f2833; padding:30px; border-radius:12px; border:3px solid var(--neon-cyan); text-align:center; max-width:400px; width:90%; box-shadow: 0 0 25px var(--neon-cyan);">
+        <h3 id="trivia-character-title" style="color:#fff; margin-top:0; font-size:1.4rem;">💥 GOKU'S CHALLENGE!</h3>
+        <p id="trivia-question-text" style="color:#c5c6c7; font-size:1.1rem; margin-bottom:20px;">Question goes here?</p>
+        <div id="trivia-options-container" style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
+            <!-- Buttons dynamically spawned here -->
+        </div>
+        <div id="trivia-feedback" style="font-weight:bold; font-size:1.1rem; min-height:24px; margin-bottom:10px;"></div>
+    </div>
+</div>
     <div id="login-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(11,12,16,0.96); z-index:9999; display:flex; justify-content:center; align-items:center;">
         <div style="background:#1f2833; padding:40px; border-radius:10px; border:2px solid #FF6600; text-align:center; box-shadow: 0 0 20px rgba(255,102,0,0.3); width: 320px;">
             <h2 style="color:#fff; margin-bottom:10px; font-size: 1.6rem; letter-spacing: 1px;">ANIME HUB LOGIN</h2>
