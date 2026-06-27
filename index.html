@@ -5,6 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JustinLimit AI - Chat with Anime Legends</title>
     <style>
+        /* Leaderboard Trigger Button */
+.leaderboard-trigger-btn {
+    background: rgba(255, 123, 0, 0.1);
+    border: 1px solid rgba(255, 123, 0, 0.3);
+    color: #ff9100;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px;
+}
+.leaderboard-trigger-btn:hover {
+    background: #ff7b00;
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 123, 0, 0.3);
+}
+
+/* Modal Layout Background Darkener */
+.leaderboard-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(5, 8, 16, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Glassmorphic Container */
+.leaderboard-modal-card {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    width: 100%;
+    max-width: 500px;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+}
+
+.leaderboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 16px;
+}
+.leaderboard-header h2 { color: #fff; margin: 0 0 4px 0; font-size: 1.5rem; }
+.leaderboard-header p { color: #64748b; margin: 0; font-size: 0.85rem; }
+
+.close-modal-btn {
+    background: transparent; border: none; color: #94a3b8;
+    font-size: 1.75rem; cursor: pointer; line-height: 1;
+}
+.close-modal-btn:hover { color: #fff; }
+
+/* Ranks Row Styling */
+.leaderboard-ranks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.rank-item {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px 16px;
+    border-radius: 14px;
+    transition: transform 0.2s ease;
+}
+.rank-item:hover {
+    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Custom Highlight styles for Top 3 spots */
+.rank-item.top-0 { border-color: rgba(255, 215, 0, 0.3); background: rgba(255, 215, 0, 0.04); }
+.rank-item.top-1 { border-color: rgba(192, 192, 192, 0.3); background: rgba(192, 192, 192, 0.04); }
+.rank-item.top-2 { border-color: rgba(205, 127, 50, 0.3); background: rgba(205, 127, 50, 0.04); }
+
+.rank-number { width: 32px; font-weight: 800; font-size: 1.1rem; color: #64748b; }
+.top-0 .rank-number { color: #ffd700; }
+.top-1 .rank-number { color: #c0c0c0; }
+.top-2 .rank-number { color: #cd7f32; }
+
+.rank-name { flex-grow: 1; color: #f1f5f9; font-weight: 600; font-size: 0.95rem; }
+.rank-power { font-weight: 700; color: #ff9100; font-size: 1rem; }
+
+.leaderboard-loading { text-align: center; color: #64748b; padding: 20px; font-size: 0.9rem; }
         /* Core Portal Container */
 .portal-container {
     position: fixed;
@@ -519,7 +619,9 @@
         <h1>JUSTIN<span>LIMIT</span>.COM // AI ANIME HUB</h1>
         <button id="music-toggle" onclick="toggleMusic()">🎵 Play Theme</button>
     </header>
-
+    <button id="open-leaderboard-btn" class="leaderboard-trigger-btn">
+    <span>🔥 Power Leaderboards</span>
+    </button>
     <div class="main-container">
         <div class="sidebar">
             <h3>Select Character</h3>
@@ -579,6 +681,63 @@
     </div>
 
 <script>
+    // Toggle Modal Windows
+document.getElementById('open-leaderboard-btn').addEventListener('click', openLeaderboard);
+document.getElementById('close-leaderboard-btn').addEventListener('click', () => {
+    document.getElementById('leaderboard-modal').style.display = 'none';
+});
+
+// Close modal instantly if they click outside the inner box boundary
+window.addEventListener('click', (e) => {
+    const modal = document.getElementById('leaderboard-modal');
+    if (e.target === modal) modal.style.display = 'none';
+});
+
+async function openLeaderboard() {
+    const modal = document.getElementById('leaderboard-modal');
+    const container = document.getElementById('leaderboard-list');
+    
+    // Show modal container setup instantly
+    modal.style.display = 'flex';
+    container.innerHTML = '<div class="leaderboard-loading">Gathering real-time combat data...</div>';
+
+    try {
+        // Change this URL string path to match your exact server profiles routing setup
+        const response = await fetch('/api/leaderboard'); 
+        if (!response.ok) throw new Error("Network status invalid");
+        
+        const topPlayers = await response.json(); // Expected: Array of objects like [{username: 'Harry', power_level: 450}]
+        container.innerHTML = ''; // Wipe out loading message string
+        
+        if (topPlayers.length === 0) {
+            container.innerHTML = '<div class="leaderboard-loading">No records logged in this sector yet.</div>';
+            return;
+        }
+
+        topPlayers.forEach((player, index) => {
+            const row = document.createElement('div');
+            // Assign specific conditional tag styles if index is 0, 1, or 2 (Top 3 ranks)
+            row.className = `rank-item top-${index}`;
+            
+            // Render specific podium emojis for top placements
+            let rankBadge = index + 1;
+            if (index === 0) rankBadge = '🥇';
+            if (index === 1) rankBadge = '🥈';
+            if (index === 2) rankBadge = '🥉';
+
+            row.innerHTML = `
+                <div class="rank-number">${rankBadge}</div>
+                <div class="rank-name">${player.username}</div>
+                <div class="rank-power">${player.power_level.toLocaleString()} PL</div>
+            `;
+            container.appendChild(row);
+        });
+
+    } catch (err) {
+        console.error("Failed to load leaderboards:", err);
+        container.innerHTML = '<div class="leaderboard-loading" style="color: #ef4444;">Failed to extract pipeline rankings.</div>';
+    }
+}
     let promptsInCurrentWindow = 0;
     let triviaTriggeredInCurrentWindow = false;
     let currentCharacter = "Goku";
@@ -987,5 +1146,22 @@ async function sendMessage() {
     });
     
 </script>
+    <!-- Leaderboard Modal Overlay -->
+<div id="leaderboard-modal" class="leaderboard-overlay" style="display: none;">
+    <div class="leaderboard-modal-card">
+        <div class="leaderboard-header">
+            <div>
+                <h2>🏆 Global Leaderboard</h2>
+                <p>Top training operations worldwide</p>
+            </div>
+            <button id="close-leaderboard-btn" class="close-modal-btn">&times;</button>
+        </div>
+        
+        <!-- The dynamically populated list will load inside here -->
+        <div id="leaderboard-list" class="leaderboard-ranks-container">
+            <div class="leaderboard-loading">Gathering combat data...</div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
