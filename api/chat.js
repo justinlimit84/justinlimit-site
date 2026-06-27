@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-base-js'; // Ensure you are using npm package or direct HTTP requests
+import { createClient } from '@supabase/supabase-js'; // Ensure you are using npm package or direct HTTP requests
 
 export default async function handler(req, res) {
     // CORS Headers
