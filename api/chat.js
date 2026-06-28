@@ -25,6 +25,7 @@ async function fetchUserData(cleanUrl, supabaseKey, cleanUsername) {
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
     });
     const data = await res.json();
+    console.log("DEBUG: Fetched User Data:", JSON.stringify(data));
     return data && data.length > 0 ? data[0] : null;
 }
 
@@ -37,34 +38,37 @@ async function getChatHistory(cleanUrl, supabaseKey, cleanUsername, character) {
 }
 async function updatePersistence(cleanUrl, supabaseKey, cleanUsername, character, power, history) {
     const rank = calculateRank(power);
+    console.log("DEBUG: Updating persistence for", cleanUsername, "Power:", power, "Rank:", rank);
 
-    // Update Profile - GLOBAL POWER LEVEL (no character filter)
-    await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
+    // Update Profile
+    const profileRes = await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
         method: 'PATCH',
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ current_power: power, current_rank: rank })
     });
+    console.log("Profile Update Status:", profileRes.status, await profileRes.text());
 
-    // Update History (scoped to character)
-    // ...
-
+    // Update History
     const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&character=eq.${encodeURIComponent(character)}&select=id`, {
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
     });
     const existing = await res.json();
+    console.log("DEBUG: Checking existing history:", JSON.stringify(existing));
 
     if (existing && existing.length > 0) {
-        await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&character=eq.${encodeURIComponent(character)}`, {
+        const patchRes = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&character=eq.${encodeURIComponent(character)}`, {
             method: 'PATCH',
             headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ conversation_data: history, updated_at: new Date() })
         });
+        console.log("History PATCH Status:", patchRes.status, await patchRes.text());
     } else {
-        await fetch(`${cleanUrl}/rest/v1/chat_history`, {
+        const postRes = await fetch(`${cleanUrl}/rest/v1/chat_history`, {
             method: 'POST',
             headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: cleanUsername, character: character, conversation_data: history, updated_at: new Date() })
         });
+        console.log("History POST Status:", postRes.status, await postRes.text());
     }
 
     return { power, rank };
