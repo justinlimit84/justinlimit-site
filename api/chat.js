@@ -28,15 +28,15 @@ async function fetchUserData(cleanUrl, supabaseKey, cleanUsername) {
     return data && data.length > 0 ? data[0] : null;
 }
 
-async function getChatHistory(cleanUrl, supabaseKey, cleanUsername) {
-    const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&select=conversation_data`, {
+async function getChatHistory(cleanUrl, supabaseKey, cleanUsername, character) {
+    const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&character=eq.${encodeURIComponent(character)}&select=conversation_data`, {
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
     });
     const data = await res.json();
     return data && data.length > 0 ? data[0].conversation_data : [];
 }
 
-async function updatePersistence(cleanUrl, supabaseKey, cleanUsername, power, history) {
+async function updatePersistence(cleanUrl, supabaseKey, cleanUsername, character, power, history) {
     const rank = calculateRank(power);
 
     // Update Profile
@@ -46,25 +46,23 @@ async function updatePersistence(cleanUrl, supabaseKey, cleanUsername, power, hi
         body: JSON.stringify({ current_power: power, current_rank: rank })
     });
 
-    // Update History (Fetch first to check if exists, then POST or PATCH)
-    const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&select=id`, {
+    // Update History
+    const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&character=eq.${encodeURIComponent(character)}&select=id`, {
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
     });
     const existing = await res.json();
 
     if (existing && existing.length > 0) {
-        // PATCH existing
-        await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}`, {
+        await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&character=eq.${encodeURIComponent(character)}`, {
             method: 'PATCH',
             headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ conversation_data: history, updated_at: new Date() })
         });
     } else {
-        // POST new
         await fetch(`${cleanUrl}/rest/v1/chat_history`, {
             method: 'POST',
             headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: cleanUsername, conversation_data: history, updated_at: new Date() })
+            body: JSON.stringify({ username: cleanUsername, character: character, conversation_data: history, updated_at: new Date() })
         });
     }
 
@@ -155,13 +153,13 @@ export default async function handler(req, res) {
 
         // Fetch User Data
         const userData = await fetchUserData(cleanUrl, supabaseKey, cleanUsername);
-        const history = await getChatHistory(cleanUrl, supabaseKey, cleanUsername);
+        const history = await getChatHistory(cleanUrl, supabaseKey, cleanUsername, character);
         
         if (action === 'FETCH_STATE') {
             return res.status(200).json({ 
                 power: userData ? (userData.current_power || 0) : 0,
                 rank: userData ? (userData.current_rank || 'Academy Student') : 'Academy Student',
-                history: history // Added this
+                history: history
             });
         }
         
@@ -173,13 +171,11 @@ export default async function handler(req, res) {
         const fullHistory = [...history, ...messages.slice(1)]; 
         const chatData = await callGroq(groqApiKey, [{role: "system", content: profile.system}, ...fullHistory]);
         
-        console.log("Groq Response:", JSON.stringify(chatData)); // Added Log
-        
         const botReply = chatData.choices[0].message.content.trim();
         const updatedHistory = [...fullHistory, {role: "assistant", content: botReply}];
 
         // Persist
-        const { rank } = await updatePersistence(cleanUrl, supabaseKey, cleanUsername, currentPower, updatedHistory);
+        const { rank } = await updatePersistence(cleanUrl, supabaseKey, cleanUsername, character, currentPower, updatedHistory);
 
         // ... Trivia Generation (same as before) ...
         
