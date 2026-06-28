@@ -74,11 +74,14 @@ function selectCharacter(name) {
     document.getElementById('chat-char-name').textContent = characterNames[name];
     document.getElementById('chat-avatar').src = charProfiles[name].image;
     
+    // Reset History State
+    conversationHistory = [{ role: "system", content: charProfiles[name].system }];
+    
     // Clear chat and show greeting initially
     const chatBox = document.getElementById('chat-box');
     chatBox.innerHTML = `<div class="msg bot ${name}">${charProfiles[name].greeting}</div>`;
     
-    // Fetch History and State in background (without clearing chatBox)
+    // Fetch History and State
     fetch('/api/chat', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -89,22 +92,31 @@ function selectCharacter(name) {
             messages: [{role: "system", content: charProfiles[name].system}] 
         })
     }).then(res => res.json()).then(data => {
+        // Clear box again to render ONLY what is returned in data.history
+        const chatBox = document.getElementById('chat-box');
+        chatBox.innerHTML = '';
+        
+        // Render Greeting first
+        chatBox.innerHTML += `<div class="msg bot ${name}">${charProfiles[name].greeting}</div>`;
+        
         // Render full history if available
         if (data.history && Array.isArray(data.history) && data.history.length > 0) {
-            // Append history to the greeting, don't clear chatBox
             data.history.forEach(msg => {
                 if (msg.role !== 'system') {
-                    // Check if message is already rendered (skip greeting)
+                    // Avoid duplicating greeting if it is already in the history
                     if (msg.content === charProfiles[name].greeting) return;
 
                     const msgDiv = document.createElement('div');
                     msgDiv.className = `msg ${msg.role} ${name}`;
                     msgDiv.textContent = msg.content;
                     chatBox.appendChild(msgDiv);
+                    
+                    // Maintain local history state
+                    conversationHistory.push(msg);
                 }
             });
-            scrollToBottom(false);
         }
+        scrollToBottom(false);
         
         // Update UI Rank/Power
         if (data.power !== undefined) {
