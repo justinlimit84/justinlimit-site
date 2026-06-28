@@ -15,13 +15,33 @@ window.toggleMusic = () => toggleMusic(currentCharacter);
 window.selectCharacter = selectCharacter;
 window.sendMessage = sendMessage;
 
+function applyAwakenedAura(active) {
+    const header = document.querySelector('header');
+    const activeCard = document.querySelector('.char-card.active');
+    if (active) {
+        header.classList.add('awakened-aura');
+        if (activeCard) activeCard.classList.add('awakened-aura');
+    } else {
+        header.classList.remove('awakened-aura');
+        if (activeCard) activeCard.classList.remove('awakened-aura');
+    }
+}
+
 function updatePowerDisplay(amount) {
     userPower = Math.min(userPower + amount, 100);
     const fill = document.getElementById('power-fill');
     const value = document.getElementById('power-value');
     if (fill) fill.style.width = `${userPower}%`;
     if (value) value.textContent = userPower;
+    
+    // Check for mastery
+    if (userPower >= 100) {
+        applyAwakenedAura(true);
+    } else {
+        applyAwakenedAura(false);
+    }
 }
+
 
 function scrollToBottom(smooth = true) {
     const chatBox = document.getElementById('chat-box');

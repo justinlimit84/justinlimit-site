@@ -512,3 +512,13 @@ button:active { transform: translateY(0); }
     .chat-header img { width: 35px; height: 35px; }
     .chat-header h2 { font-size: 16px; }
 }
+
+/* Awakening Aura Effect */
+.awakened-aura {
+    animation: awakenedPulse 1.5s infinite alternate;
+}
+
+@keyframes awakenedPulse {
+    0% { box-shadow: 0 0 10px var(--neon-cyan); border-color: var(--neon-cyan); }
+    100% { box-shadow: 0 0 30px #ffffff, 0 0 50px var(--neon-cyan); border-color: #fff; }
+}

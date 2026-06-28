@@ -35,18 +35,19 @@ async function getChatHistory(cleanUrl, supabaseKey, cleanUsername, character) {
     const data = await res.json();
     return data && data.length > 0 ? data[0].conversation_data : [];
 }
-
 async function updatePersistence(cleanUrl, supabaseKey, cleanUsername, character, power, history) {
     const rank = calculateRank(power);
 
-    // Update Profile
+    // Update Profile - GLOBAL POWER LEVEL (no character filter)
     await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
         method: 'PATCH',
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ current_power: power, current_rank: rank })
     });
 
-    // Update History
+    // Update History (scoped to character)
+    // ...
+
     const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&character=eq.${encodeURIComponent(character)}&select=id`, {
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
     });
