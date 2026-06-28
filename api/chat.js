@@ -157,7 +157,15 @@ export default async function handler(req, res) {
         };
 
         // Fetch User Data
-        const userData = await fetchUserData(cleanUrl, supabaseKey, cleanUsername);
+        let userData = await fetchUserData(cleanUrl, supabaseKey, cleanUsername);
+        
+        // Auto-create user if they don't exist
+        if (!userData) {
+            console.log("DEBUG: User not found, creating:", cleanUsername);
+            await createUser(cleanUrl, supabaseKey, cleanUsername, 0); // Need to see if createUser needs extra args
+            userData = { username: cleanUsername, current_power: 0, current_rank: 'Academy Student' };
+        }
+
         const history = await getChatHistory(cleanUrl, supabaseKey, cleanUsername, character);
         
         if (action === 'FETCH_STATE') {
