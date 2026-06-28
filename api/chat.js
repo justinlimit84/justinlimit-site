@@ -75,17 +75,20 @@ async function updatePersistence(cleanUrl, supabaseKey, cleanUsername, character
 }
 // ... rest of helper functions (callGroq, createUser etc) ...
 
-async function createUser(cleanUrl, supabaseKey, cleanUsername, randomTargetTurn) {
-    await fetch(`${cleanUrl}/rest/v1/user_profiles`, {
+async function createUser(cleanUrl, supabaseKey, cleanUsername) {
+    const res = await fetch(`${cleanUrl}/rest/v1/user_profiles`, {
         method: 'POST',
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
         body: JSON.stringify({ 
             username: cleanUsername, 
-            messages_sent_today: 1,
-            trivia_target_turn: randomTargetTurn,
-            has_received_trivia: false
+            current_power: 0,
+            current_rank: 'Academy Student'
         })
     });
+    
+    if (!res.ok) {
+        console.error("DEBUG: User creation failed:", res.status, await res.text());
+    }
 }
 
 async function updateUser(cleanUrl, supabaseKey, cleanUsername, data) {
