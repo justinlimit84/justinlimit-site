@@ -169,9 +169,9 @@ export default async function handler(req, res) {
         
         const profile = charProfiles[character] || charProfiles.Goku;
         const fullHistory = [...history, ...messages.slice(1)]; 
-        const chatData = await callGroq(groqApiKey, [{role: "system", content: profile.system}, ...fullHistory]);
+        const groqResponse = await callGroq(groqApiKey, [{role: "system", content: profile.system}, ...fullHistory]);
         
-        const botReply = chatData.choices[0].message.content.trim();
+        const botReply = groqResponse.choices[0].message.content.trim();
         const updatedHistory = [...fullHistory, {role: "assistant", content: botReply}];
 
         // Persist
@@ -183,7 +183,8 @@ export default async function handler(req, res) {
         return res.status(200).json({ reply: botReply, power: currentPower, rank, trivia });
 
     } catch (error) {
-        console.error("Backend Error:", error);
+        console.error("CRITICAL BACKEND ERROR:", error);
+        // Ensure we send back a JSON error so the frontend doesn't crash
         return res.status(500).json({ error: `Internal failure: ${error.message}` });
     }
 }
