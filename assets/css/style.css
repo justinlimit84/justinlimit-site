@@ -451,8 +451,12 @@ header span { color: var(--neon-cyan); transition: all 0.4s ease; }
     padding-bottom: 40px;
 }
 
-.msg { max-width: 80%; padding: 14px 18px; border-radius: 12px; line-height: 1.5; word-break: break-word; font-size: 15px; }
-.msg.bot { background-color: var(--card-bg); align-self: flex-start; border-left: 4px solid var(--neon-cyan); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+/* Character Specific Bubble Styles */
+.msg.bot.Goku { border-left-color: #FF6600; }
+.msg.bot.Naruto { border-left-color: #FFA500; border-radius: 12px 12px 12px 2px; }
+.msg.bot.Sasuke { border-left-color: #00E5FF; border-radius: 2px 12px 12px 12px; }
+.msg.bot.Sakura { border-left-color: #FFB7C5; border-radius: 12px 2px 12px 12px; }
+.msg.bot.Sarada { border-left-color: #E53935; border-radius: 12px 12px 2px 12px; }
 .msg.user { background-color: var(--neon-purple); color: #fff; align-self: flex-end; box-shadow: 0 4px 12px var(--bubble-bg); }
 
 .msg.system-status {

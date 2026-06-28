@@ -48,8 +48,13 @@ function applyCharacterTheme(name) {
     }
 }
 
+const selectSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+
 function selectCharacter(name) {
     if (isGenerating) return; 
+    
+    selectSound.play().catch(e => console.log("Sound played blocked"));
+
     promptsInCurrentWindow = 0;
     triviaTriggeredInCurrentWindow = false;
     currentCharacter = name;
@@ -142,7 +147,7 @@ function updatePowerDisplay(amount) {
 // In sendMessage function:
 // ... After receiving response ...
         const botMsg = document.createElement('div');
-        botMsg.className = 'msg bot';
+        botMsg.className = `msg bot ${currentCharacter}`;
         botMsg.textContent = data.reply;
         chatBox.appendChild(botMsg);
         
