@@ -30,25 +30,17 @@ async function fetchUserData(cleanUrl, supabaseKey, cleanUsername) {
 }
 
 async function getChatHistory(cleanUrl, supabaseKey, cleanUsername, character) {
-    const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&character=eq.${encodeURIComponent(character)}&select=conversation_data`, {
+    const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&character=eq.${encodeURIComponent(character)}&select=conversation_data,current_power,current_rank`, {
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
     });
     const data = await res.json();
-    return data && data.length > 0 ? data[0].conversation_data : [];
+    return data && data.length > 0 ? data[0] : { conversation_data: [], current_power: 0, current_rank: 'Academy Student' };
 }
 async function updatePersistence(cleanUrl, supabaseKey, cleanUsername, character, power, history) {
     const rank = calculateRank(power);
-    console.log("DEBUG: Updating persistence for", cleanUsername, "Power:", power, "Rank:", rank);
+    console.log("DEBUG: Updating persistence for", cleanUsername, character, "Power:", power, "Rank:", rank);
 
-    // Update Profile
-    const profileRes = await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
-        method: 'PATCH',
-        headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ current_power: power, current_rank: rank })
-    });
-    console.log("Profile Update Status:", profileRes.status, await profileRes.text());
-
-    // Update History
+    // Update History (scoped to character) - Store power here too
     const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&character=eq.${encodeURIComponent(character)}&select=id`, {
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
     });
@@ -56,19 +48,17 @@ async function updatePersistence(cleanUrl, supabaseKey, cleanUsername, character
     console.log("DEBUG: Checking existing history:", JSON.stringify(existing));
 
     if (existing && existing.length > 0) {
-        const patchRes = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&character=eq.${encodeURIComponent(character)}`, {
+        await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&character=eq.${encodeURIComponent(character)}`, {
             method: 'PATCH',
             headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ conversation_data: history, updated_at: new Date() })
+            body: JSON.stringify({ conversation_data: history, current_power: power, current_rank: rank, updated_at: new Date() })
         });
-        console.log("History PATCH Status:", patchRes.status, await patchRes.text());
     } else {
-        const postRes = await fetch(`${cleanUrl}/rest/v1/chat_history`, {
+        await fetch(`${cleanUrl}/rest/v1/chat_history`, {
             method: 'POST',
             headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: cleanUsername, character: character, conversation_data: history, updated_at: new Date() })
+            body: JSON.stringify({ username: cleanUsername, character: character, conversation_data: history, current_power: power, current_rank: rank, updated_at: new Date() })
         });
-        console.log("History POST Status:", postRes.status, await postRes.text());
     }
 
     return { power, rank };
@@ -160,28 +150,20 @@ export default async function handler(req, res) {
         };
 
         // Fetch User Data
-        let userData = await fetchUserData(cleanUrl, supabaseKey, cleanUsername);
-        
-        // Auto-create user if they don't exist
-        if (!userData) {
-            console.log("DEBUG: User not found, creating:", cleanUsername);
-            await createUser(cleanUrl, supabaseKey, cleanUsername, 0); // Need to see if createUser needs extra args
-            userData = { username: cleanUsername, current_power: 0, current_rank: 'Academy Student' };
-        }
-
-        const history = await getChatHistory(cleanUrl, supabaseKey, cleanUsername, character);
+        const chatData = await getChatHistory(cleanUrl, supabaseKey, cleanUsername, character);
+        const history = chatData.conversation_data;
         
         if (action === 'FETCH_STATE') {
             return res.status(200).json({ 
-                power: userData ? (userData.current_power || 0) : 0,
-                rank: userData ? (userData.current_rank || 'Academy Student') : 'Academy Student',
+                power: chatData.current_power,
+                rank: chatData.current_rank,
                 history: history
             });
         }
         
         // Chat Processing
-        // Only increment power when a message is sent, NOT on FETCH_STATE
-        const currentPower = (userData ? (userData.current_power || 0) : 0) + 10;
+        // Increment power by 5 per message, scoped to character
+        const currentPower = (chatData.current_power || 0) + 5;
         
         let trivia = null;
         
