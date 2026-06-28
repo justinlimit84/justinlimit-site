@@ -89,12 +89,11 @@ function selectCharacter(name) {
             messages: [{role: "system", content: charProfiles[name].system}] 
         })
     }).then(res => res.json()).then(data => {
-        // Render full history if available
-        if (data.history && Array.isArray(data.history)) {
-            const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML = ''; // Clear greeting
+        // Render history *after* the greeting
+        if (data.history && Array.isArray(data.history) && data.history.length > 0) {
             data.history.forEach(msg => {
-                if (msg.role !== 'system') {
+                // If history contains the initial greeting, skip to avoid double rendering
+                if (msg.role !== 'system' && msg.content !== charProfiles[name].greeting) {
                     const msgDiv = document.createElement('div');
                     msgDiv.className = `msg ${msg.role} ${name}`;
                     msgDiv.textContent = msg.content;

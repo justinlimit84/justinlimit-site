@@ -29,7 +29,7 @@ async function fetchUserData(cleanUrl, supabaseKey, cleanUsername) {
 }
 
 async function getChatHistory(cleanUrl, supabaseKey, cleanUsername) {
-    const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}`, {
+    const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&select=conversation_data`, {
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
     });
     const data = await res.json();
