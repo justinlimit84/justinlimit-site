@@ -65,7 +65,11 @@ function selectCharacter(name) {
     document.getElementById('chat-char-name').textContent = characterNames[name];
     document.getElementById('chat-avatar').src = charProfiles[name].image;
     
-    // Fetch History and State
+    // Clear chat and show greeting initially
+    const chatBox = document.getElementById('chat-box');
+    chatBox.innerHTML = `<div class="msg bot ${name}">${charProfiles[name].greeting}</div>`;
+    
+    // Fetch History and State in background (without clearing chatBox)
     fetch('/api/chat', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -75,10 +79,8 @@ function selectCharacter(name) {
             messages: [{role: "system", content: charProfiles[name].system}] 
         })
     }).then(res => res.json()).then(data => {
-        const chatBox = document.getElementById('chat-box');
-        chatBox.innerHTML = '';
-        // Render history... (simplified)
-        chatBox.innerHTML += `<div class="msg bot ${name}">${data.reply}</div>`;
+        // Here you could merge persisted history with current greeting if desired.
+        // For now, updating rank display is sufficient.
         
         // Update UI Rank/Power
         if (data.power) {
