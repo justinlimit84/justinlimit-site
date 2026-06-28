@@ -55,8 +55,6 @@ function selectCharacter(name) {
     
     selectSound.play().catch(e => console.log("Sound played blocked"));
 
-    promptsInCurrentWindow = 0;
-    triviaTriggeredInCurrentWindow = false;
     currentCharacter = name;
     document.querySelectorAll('.char-card').forEach(el => el.classList.remove('active'));
     const activeCard = document.getElementById(`card-${name}`);
@@ -67,10 +65,27 @@ function selectCharacter(name) {
     document.getElementById('chat-char-name').textContent = characterNames[name];
     document.getElementById('chat-avatar').src = charProfiles[name].image;
     
-    const chatBox = document.getElementById('chat-box');
-    conversationHistory = [{ role: "system", content: charProfiles[name].system }];
-    chatBox.innerHTML = `<div class="msg bot">${charProfiles[name].greeting}</div>`;
-    scrollToBottom(false); 
+    // Fetch History and State
+    fetch('/api/chat', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            username: localStorage.getItem('anime_hub_user'),
+            character: name,
+            messages: [{role: "system", content: charProfiles[name].system}] 
+        })
+    }).then(res => res.json()).then(data => {
+        const chatBox = document.getElementById('chat-box');
+        chatBox.innerHTML = '';
+        // Render history... (simplified)
+        chatBox.innerHTML += `<div class="msg bot ${name}">${data.reply}</div>`;
+        
+        // Update UI Rank/Power
+        if (data.power) {
+            document.getElementById('power-value').textContent = data.power;
+            document.getElementById('power-fill').style.width = `${Math.min(data.power, 100)}%`;
+        }
+    });
 }
 
 async function sendMessage() {

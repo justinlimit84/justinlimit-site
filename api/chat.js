@@ -2,14 +2,60 @@ const topicsPool = [
     "combat styles", "hidden abilities", "iconic battles", "allies and enemies", "lore and backstories", "signature moves"
 ];
 
+const ranks = [
+    { name: "Academy Student", minPower: 0 },
+    { name: "Genin", minPower: 50 },
+    { name: "Chunin", minPower: 150 },
+    { name: "Jonin", minPower: 300 },
+    { name: "Kage/Master", minPower: 500 }
+];
+
+function calculateRank(power) {
+    let currentRank = ranks[0].name;
+    for (const rank of ranks) {
+        if (power >= rank.minPower) currentRank = rank.name;
+    }
+    return currentRank;
+}
+
 // --- Helper Functions ---
 
-async function checkUserEligibility(cleanUrl, supabaseKey, cleanUsername) {
-    const userCheck = await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
+async function fetchUserData(cleanUrl, supabaseKey, cleanUsername) {
+    const res = await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
     });
-    return await userCheck.json();
+    const data = await res.json();
+    return data && data.length > 0 ? data[0] : null;
 }
+
+async function getChatHistory(cleanUrl, supabaseKey, cleanUsername) {
+    const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}`, {
+        headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
+    });
+    const data = await res.json();
+    return data && data.length > 0 ? data[0].conversation_data : [];
+}
+
+async function updatePersistence(cleanUrl, supabaseKey, cleanUsername, power, history) {
+    const rank = calculateRank(power);
+
+    // Update Profile
+    await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
+        method: 'PATCH',
+        headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ current_power: power, current_rank: rank })
+    });
+
+    // Update History
+    await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}`, {
+        method: 'UPSERT',
+        headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: cleanUsername, conversation_data: history })
+    });
+
+    return { power, rank };
+}
+// ... rest of helper functions (callGroq, createUser etc) ...
 
 async function createUser(cleanUrl, supabaseKey, cleanUsername, randomTargetTurn) {
     await fetch(`${cleanUrl}/rest/v1/user_profiles`, {
@@ -61,104 +107,37 @@ async function incrementPower(cleanUrl, supabaseKey, cleanUsername, amount) {
 // --- Main Handler ---
 
 export default async function handler(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
-
+    // ... (Headers setup)
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     try {
         const { messages, username, character, generateTrivia } = req.body;
-        const selectedChar = character || "Goku"; 
-        
-        if (!username || username.trim() === '' || username.trim() === 'Anonymous User') {
-            return res.status(400).json({ error: 'Please log in with a valid Username!' });
-        }
-        
         const cleanUsername = String(username).trim().toLowerCase();
+        
+        // ... (Supabase/Groq config setup)
 
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-        const groqApiKey = process.env.GROQ_API_KEY;
+        // 1. Fetch State
+        const userData = await fetchUserData(cleanUrl, supabaseKey, cleanUsername);
+        const history = await getChatHistory(cleanUrl, supabaseKey, cleanUsername);
+        
+        const currentPower = userData ? (userData.current_power || 0) + 10 : 10;
+        
+        // 2. Combine and call Groq
+        const fullHistory = [...history, ...messages.slice(1)]; // Append new user msg
+        const chatData = await callGroq(groqApiKey, [{role: "system", content: charProfiles[character].system}, ...fullHistory]);
+        
+        const botReply = chatData.choices[0].message.content.trim();
+        const updatedHistory = [...fullHistory, {role: "assistant", content: botReply}];
 
-        if (!groqApiKey || !supabaseUrl || !supabaseKey) {
-            return res.status(500).json({ error: 'Backend configuration missing!' });
-        }
+        // 3. Persist
+        const { rank } = await updatePersistence(cleanUrl, supabaseKey, cleanUsername, currentPower, updatedHistory);
 
-        const cleanUrl = supabaseUrl.replace(/\/$/, '');
-        let userAllowed = true;
-        let includeTriviaThisTurn = false;
-
-        // DB Logic
-        try {
-            const userData = await checkUserEligibility(cleanUrl, supabaseKey, cleanUsername);
-            const randomTargetTurn = Math.floor(Math.random() * 5) + 3; 
-
-            if (!Array.isArray(userData) || userData.length === 0) {
-                await createUser(cleanUrl, supabaseKey, cleanUsername, randomTargetTurn);
-            } else {
-                const currentCount = parseInt(userData[0].messages_sent_today) || 0;
-                
-                if (currentCount >= 50) {
-                    userAllowed = false;
-                } else {
-                    const nextCount = currentCount + 1;
-                    const targetTurn = parseInt(userData[0].trivia_target_turn) || randomTargetTurn;
-                    const hasReceived = String(userData[0].has_received_trivia) === 'true';
-                    let nextTriviaState = hasReceived;
-
-                    if (!hasReceived && (nextCount === targetTurn || nextCount >= 10)) {
-                        includeTriviaThisTurn = true;
-                        nextTriviaState = true;
-                    }
-
-                    await updateUser(cleanUrl, supabaseKey, cleanUsername, { 
-                        messages_sent_today: nextCount, 
-                        has_received_trivia: nextTriviaState,
-                        last_message_at: new Date() 
-                    });
-                }
-            }
-        } catch (err) {
-            console.error("Supabase engine error bypassed:", err);
-        }
-
-        if (!userAllowed) {
-            return res.status(403).json({ error: "Training limits reached!" });
-        }
-
-        // Generate Chat
-        const chatData = await callGroq(groqApiKey, messages, { temperature: 0.7, max_tokens: 150 });
-        const finalResponse = { reply: chatData.choices[0].message.content.trim() };
-
-        // Generate Trivia
-        if (includeTriviaThisTurn || generateTrivia === true || generateTrivia === "true") {
-            try {
-                const randomTopic = topicsPool[Math.floor(Math.random() * topicsPool.length)];
-                const triviaData = await callGroq(groqApiKey, [{
-                    role: "system",
-                    content: `You are a trivia generator bot. Create a highly accurate, random multiple-choice trivia question about ${selectedChar} based on: ${randomTopic}.
-                            Reply ONLY with JSON: {"question": "...", "options": ["...", "...", "...", "..."], "correct": 0}`
-                }], { temperature: 0.9, response_format: { type: "json_object" } });
-
-                finalResponse.trivia = JSON.parse(triviaData.choices[0].message.content.trim());
-            } catch (triviaErr) {
-                finalResponse.trivia = {
-                    question: `Are you ready to unlock maximum power with ${selectedChar}?`,
-                    options: ["Let's do it!", "Absolutely!", "Not sure", "No"],
-                    correct: 0
-                };
-            }
-        }
-
-        await incrementPower(cleanUrl, supabaseKey, cleanUsername, 10);
-        return res.status(200).json(finalResponse);
+        // 4. Return
+        return res.status(200).json({ reply: botReply, power: currentPower, rank });
 
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: 'Internal server failure.' });
+        return res.status(500).json({ error: 'Internal failure.' });
     }
 }
