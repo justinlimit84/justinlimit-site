@@ -107,16 +107,33 @@ async function incrementPower(cleanUrl, supabaseKey, cleanUsername, amount) {
 // --- Main Handler ---
 
 export default async function handler(req, res) {
-    // ... (Headers setup)
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     try {
-        const { messages, username, character, generateTrivia } = req.body;
+        const { messages, username, character } = req.body;
         const cleanUsername = String(username).trim().toLowerCase();
-        
-        // ... (Supabase/Groq config setup)
 
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+        const groqApiKey = process.env.GROQ_API_KEY;
+
+        if (!groqApiKey || !supabaseUrl || !supabaseKey) {
+            return res.status(500).json({ error: 'Backend configuration missing!' });
+        }
+
+        const cleanUrl = supabaseUrl.replace(/\/$/, '');
+        const charProfiles = { // Minimal requirement to fix crash
+            Goku: { system: "..." }, Naruto: { system: "..." }, Sasuke: { system: "..." },
+            Sakura: { system: "..." }, Sarada: { system: "..." }
+        };
+        
         // 1. Fetch State
         const userData = await fetchUserData(cleanUrl, supabaseKey, cleanUsername);
         const history = await getChatHistory(cleanUrl, supabaseKey, cleanUsername);
@@ -124,7 +141,7 @@ export default async function handler(req, res) {
         const currentPower = userData ? (userData.current_power || 0) + 10 : 10;
         
         // 2. Combine and call Groq
-        const fullHistory = [...history, ...messages.slice(1)]; // Append new user msg
+        const fullHistory = [...history, ...messages.slice(1)]; 
         const chatData = await callGroq(groqApiKey, [{role: "system", content: charProfiles[character].system}, ...fullHistory]);
         
         const botReply = chatData.choices[0].message.content.trim();
