@@ -153,8 +153,29 @@ export default async function handler(req, res) {
         // 3. Persist
         const { rank } = await updatePersistence(cleanUrl, supabaseKey, cleanUsername, currentPower, updatedHistory);
 
-        // 4. Return
-        return res.status(200).json({ reply: botReply, power: currentPower, rank });
+        // 4. Trivia Generation
+        let trivia = null;
+        if (generateTrivia === true || generateTrivia === "true" || Math.random() < 0.1) {
+            try {
+                const randomTopic = topicsPool[Math.floor(Math.random() * topicsPool.length)];
+                const triviaData = await callGroq(groqApiKey, [{
+                    role: "system",
+                    content: `You are a trivia generator bot. Create a highly accurate, random multiple-choice trivia question about ${character} based on: ${randomTopic}.
+                            Reply ONLY with JSON: {"question": "...", "options": ["...", "...", "...", "..."], "correct": 0}`
+                }], { temperature: 0.9, response_format: { type: "json_object" } });
+
+                trivia = JSON.parse(triviaData.choices[0].message.content.trim());
+            } catch (triviaErr) {
+                trivia = {
+                    question: `Are you ready to unlock maximum power with ${character}?`,
+                    options: ["Let's do it!", "Absolutely!", "Not sure", "No"],
+                    correct: 0
+                };
+            }
+        }
+
+        // 5. Return
+        return res.status(200).json({ reply: botReply, power: currentPower, rank, trivia });
 
     } catch (error) {
         console.error(error);
