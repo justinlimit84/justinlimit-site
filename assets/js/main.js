@@ -138,10 +138,17 @@ function selectCharacter(name) {
         }
         scrollToBottom(false);
         
-        // Update UI Rank/Power
+        // Final Sync: Update the UI with the latest power level from the DB
         if (data.power !== undefined) {
             userPower = data.power;
-            updatePowerDisplay(0);
+            // Force immediate UI update to the global userPower value
+            const fill = document.getElementById('power-fill');
+            const value = document.getElementById('power-value');
+            if (fill) fill.style.width = `${Math.min(userPower, 100)}%`;
+            if (value) value.textContent = userPower;
+            
+            // Check for mastery aura
+            applyAwakenedAura(userPower >= 100);
         }
     });
 }
