@@ -490,7 +490,22 @@ button:active { transform: translateY(0); }
     .sidebar-avatar { width: 28px; height: 28px; }
     .sidebar-info p { display: none; }
     .chat-messages { padding: 15px; }
-    #music-toggle { position: static; margin-left: auto; right: auto; }
+    #music-toggle { 
+        padding: 8px 14px;
+        font-size: 13px;
+        background: rgba(0, 0, 0, 0.4);
+        color: var(--neon-cyan);
+        border: 1px solid var(--neon-cyan);
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    #music-toggle:hover {
+        box-shadow: 0 0 12px var(--neon-cyan);
+        background: rgba(0, 0, 0, 0.6);
+    }
     header { padding: 10px 15px; flex-direction: row; justify-content: space-between; }
     header h1 { margin: 0; font-size: 16px; }
     .chat-header { padding: 10px 15px; gap: 10px; }
