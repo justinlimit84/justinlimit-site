@@ -151,6 +151,7 @@ export default async function handler(req, res) {
         
         // Chat Processing
         const currentPower = (userData ? (userData.current_power || 0) : 0) + 10;
+        let trivia = null;
         
         const profile = charProfiles[character] || charProfiles.Goku;
         const fullHistory = [...history, ...messages.slice(1)]; 
