@@ -8,11 +8,20 @@ let triviaTriggeredInCurrentWindow = false;
 let currentCharacter = "Goku";
 let conversationHistory = [];
 let isGenerating = false;
+let userPower = 0;
 
 // Expose toggleMusic for inline onclick
 window.toggleMusic = () => toggleMusic(currentCharacter);
 window.selectCharacter = selectCharacter;
 window.sendMessage = sendMessage;
+
+function updatePowerDisplay(amount) {
+    userPower = Math.min(userPower + amount, 100);
+    const fill = document.getElementById('power-fill');
+    const value = document.getElementById('power-value');
+    if (fill) fill.style.width = `${userPower}%`;
+    if (value) value.textContent = userPower;
+}
 
 function scrollToBottom(smooth = true) {
     const chatBox = document.getElementById('chat-box');
@@ -79,13 +88,9 @@ function selectCharacter(name) {
             messages: [{role: "system", content: charProfiles[name].system}] 
         })
     }).then(res => res.json()).then(data => {
-        // Here you could merge persisted history with current greeting if desired.
-        // For now, updating rank display is sufficient.
-        
-        // Update UI Rank/Power
-        if (data.power) {
-            document.getElementById('power-value').textContent = data.power;
-            document.getElementById('power-fill').style.width = `${Math.min(data.power, 100)}%`;
+        if (data.power !== undefined) {
+            userPower = data.power;
+            updatePowerDisplay(0);
         }
     });
 }
@@ -148,21 +153,18 @@ async function sendMessage() {
             messages: getPrunedHistory(),
             generateTrivia: shouldTriggerTrivia 
         });
-let isGenerating = false;
-let userPower = 0; // Moved to global scope
 
-function updatePowerDisplay(amount) {
-    userPower = Math.min(userPower + amount, 100);
-    const fill = document.getElementById('power-fill');
-    const value = document.getElementById('power-value');
-    if (fill) fill.style.width = `${userPower}%`;
-    if (value) value.textContent = userPower;
-}
+        typingStatus.remove();
 
-// ... (in sendMessage function, after receiving response)
+        const botMsg = document.createElement('div');
+        botMsg.className = `msg bot ${currentCharacter}`;
+        botMsg.textContent = data.reply;
+        chatBox.appendChild(botMsg);
+        
+        conversationHistory.push({ role: "assistant", content: data.reply });
+        
         // Gamification: Increase power
         updatePowerDisplay(5);
-
 
         // Handle Trivia
         if (data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
