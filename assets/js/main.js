@@ -85,6 +85,7 @@ function selectCharacter(name) {
         body: JSON.stringify({ 
             username: localStorage.getItem('anime_hub_user'),
             character: name,
+            action: 'FETCH_STATE',
             messages: [{role: "system", content: charProfiles[name].system}] 
         })
     }).then(res => res.json()).then(data => {
@@ -179,6 +180,7 @@ async function sendMessage() {
         }
     } catch (error) {
         console.error("Communication error:", error);
+        console.log("Detailed error message:", error.message);
         if (typingStatus.parentNode) typingStatus.remove();
         
         const networkErrBlock = document.createElement('div');
