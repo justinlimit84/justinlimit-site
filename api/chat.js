@@ -1,10 +1,66 @@
-// A lightweight internal helper array to fall back on if you want completely random ideas without breaking history
 const topicsPool = [
     "combat styles", "hidden abilities", "iconic battles", "allies and enemies", "lore and backstories", "signature moves"
 ];
 
+// --- Helper Functions ---
+
+async function checkUserEligibility(cleanUrl, supabaseKey, cleanUsername) {
+    const userCheck = await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
+        headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
+    });
+    return await userCheck.json();
+}
+
+async function createUser(cleanUrl, supabaseKey, cleanUsername, randomTargetTurn) {
+    await fetch(`${cleanUrl}/rest/v1/user_profiles`, {
+        method: 'POST',
+        headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ 
+            username: cleanUsername, 
+            messages_sent_today: 1,
+            trivia_target_turn: randomTargetTurn,
+            has_received_trivia: false
+        })
+    });
+}
+
+async function updateUser(cleanUrl, supabaseKey, cleanUsername, data) {
+    await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
+        method: 'PATCH',
+        headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+}
+
+async function callGroq(groqApiKey, messages, options = {}) {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${groqApiKey.trim()}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            model: 'llama-3.1-8b-instant',
+            messages: messages,
+            ...options
+        })
+    });
+    if (!response.ok) throw new Error('Groq API error');
+    return await response.json();
+}
+
+async function incrementPower(cleanUrl, supabaseKey, cleanUsername, amount) {
+    try {
+        await fetch(`${cleanUrl}/rest/v1/rpc/increment_power`, {
+            method: 'POST',
+            headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ p_username: cleanUsername, p_amount: amount })
+        });
+    } catch (dbErr) {
+        console.error("Points update failed:", dbErr);
+    }
+}
+
+// --- Main Handler ---
+
 export default async function handler(req, res) {
-    // 1. CORS Headers Setup
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,7 +71,6 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     try {
-        // Extract generateTrivia from the incoming frontend body
         const { messages, username, character, generateTrivia } = req.body;
         const selectedChar = character || "Goku"; 
         
@@ -25,43 +80,25 @@ export default async function handler(req, res) {
         
         const cleanUsername = String(username).trim().toLowerCase();
 
-        // 2. Environment Variables
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
         const groqApiKey = process.env.GROQ_API_KEY;
 
         if (!groqApiKey || !supabaseUrl || !supabaseKey) {
-            return res.status(500).json({ 
-                error: 'Backend configuration missing! Please verify your Vercel Environment Variables.' 
-            });
+            return res.status(500).json({ error: 'Backend configuration missing!' });
         }
 
         const cleanUrl = supabaseUrl.replace(/\/$/, '');
         let userAllowed = true;
         let includeTriviaThisTurn = false;
 
-        // 3. DATABASE CHECK & STATE FORCING
+        // DB Logic
         try {
-            const userCheck = await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
-                headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
-            });
-            const userData = await userCheck.json();
-
-            // Set a random turn target out of the gate (Turns 3 through 7)
+            const userData = await checkUserEligibility(cleanUrl, supabaseKey, cleanUsername);
             const randomTargetTurn = Math.floor(Math.random() * 5) + 3; 
 
             if (!Array.isArray(userData) || userData.length === 0) {
-                // New User Creation
-                await fetch(`${cleanUrl}/rest/v1/user_profiles`, {
-                    method: 'POST',
-                    headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-                    body: JSON.stringify({ 
-                        username: cleanUsername, 
-                        messages_sent_today: 1,
-                        trivia_target_turn: randomTargetTurn,
-                        has_received_trivia: false
-                    })
-                });
+                await createUser(cleanUrl, supabaseKey, cleanUsername, randomTargetTurn);
             } else {
                 const currentCount = parseInt(userData[0].messages_sent_today) || 0;
                 
@@ -70,27 +107,18 @@ export default async function handler(req, res) {
                 } else {
                     const nextCount = currentCount + 1;
                     const targetTurn = parseInt(userData[0].trivia_target_turn) || randomTargetTurn;
-                    
-                    // Explicitly cast database values to check against structural truth
                     const hasReceived = String(userData[0].has_received_trivia) === 'true';
-                    
                     let nextTriviaState = hasReceived;
 
-                    // STRICT RULE TRIGGER CHECK
                     if (!hasReceived && (nextCount === targetTurn || nextCount >= 10)) {
                         includeTriviaThisTurn = true;
-                        nextTriviaState = true; // Flips permanently right here
+                        nextTriviaState = true;
                     }
 
-                    // Write updates immediately back down to database
-                    await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
-                        method: 'PATCH',
-                        headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            messages_sent_today: nextCount, 
-                            has_received_trivia: nextTriviaState,
-                            last_message_at: new Date() 
-                        })
+                    await updateUser(cleanUrl, supabaseKey, cleanUsername, { 
+                        messages_sent_today: nextCount, 
+                        has_received_trivia: nextTriviaState,
+                        last_message_at: new Date() 
                     });
                 }
             }
@@ -99,65 +127,25 @@ export default async function handler(req, res) {
         }
 
         if (!userAllowed) {
-            return res.status(403).json({ error: "Training limits reached for today! Come back tomorrow to recharge your energy! ⚡" });
+            return res.status(403).json({ error: "Training limits reached!" });
         }
 
-        // 4. STEP 1: GENERATE STANDARD CHARACTER CHAT CHANNELS ONLY
-        const chatResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${groqApiKey.trim()}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                model: 'llama-3.1-8b-instant',
-                messages: messages,
-                temperature: 0.7,
-                max_tokens: 150
-            })
-        });
+        // Generate Chat
+        const chatData = await callGroq(groqApiKey, messages, { temperature: 0.7, max_tokens: 150 });
+        const finalResponse = { reply: chatData.choices[0].message.content.trim() };
 
-        if (!chatResponse.ok) return res.status(500).json({ error: 'Groq chat engine connection drop.' });
-        const chatData = await chatResponse.json();
-        const cleanChatReply = chatData.choices[0].message.content.trim();
-
-        // 5. PREPARE RESPONSES
-        const finalResponse = { reply: cleanChatReply };
-
-        // 6. STEP 2: INDEPENDENT ASYNCHRONOUS TRIVIA BLOCK
-        // Check database trigger OR explicit frontend flag condition
+        // Generate Trivia
         if (includeTriviaThisTurn || generateTrivia === true || generateTrivia === "true") {
             try {
                 const randomTopic = topicsPool[Math.floor(Math.random() * topicsPool.length)];
-                
-                const triviaGeneration = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${groqApiKey.trim()}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        model: 'llama-3.1-8b-instant',
-                        messages: [{
-                            role: "system",
-                            content: `You are a trivia generator bot. Create a highly accurate, random multiple-choice trivia question about the character ${selectedChar} from their respective anime universe based on the topic: ${randomTopic}.
-                            You must reply ONLY with a valid JSON object matching this schema structure:
-                            {
-                                "question": "Question text here?",
-                                "options": ["Option 0", "Option 1", "Option 2", "Option 3"],
-                                "correct": 0
-                            }
-                            Note: "correct" must be a valid mathematical index number (0, 1, 2, or 3) indicating the true correct answer inside the options array. Do not include any markdown wrapper formatting block or text before or after the JSON structure output.`
-                        }],
-                        temperature: 0.9, // Higher temperature ensures dynamic, unique questions
-                        response_format: { type: "json_object" }
-                    })
-                });
+                const triviaData = await callGroq(groqApiKey, [{
+                    role: "system",
+                    content: `You are a trivia generator bot. Create a highly accurate, random multiple-choice trivia question about ${selectedChar} based on: ${randomTopic}.
+                            Reply ONLY with JSON: {"question": "...", "options": ["...", "...", "...", "..."], "correct": 0}`
+                }], { temperature: 0.9, response_format: { type: "json_object" } });
 
-                if (triviaGeneration.ok) {
-                    const triviaData = await triviaGeneration.json();
-                    const parsedTrivia = JSON.parse(triviaData.choices[0].message.content.trim());
-                    if (parsedTrivia.question && Array.isArray(parsedTrivia.options)) {
-                        finalResponse.trivia = parsedTrivia;
-                    }
-                }
+                finalResponse.trivia = JSON.parse(triviaData.choices[0].message.content.trim());
             } catch (triviaErr) {
-                console.error("Trivia generation issue encountered, inserting static backup object:", triviaErr);
-                // Hardcoded absolute backup so user experience doesn't break
                 finalResponse.trivia = {
                     question: `Are you ready to unlock maximum power with ${selectedChar}?`,
                     options: ["Let's do it!", "Absolutely!", "Not sure", "No"],
@@ -166,21 +154,11 @@ export default async function handler(req, res) {
             }
         }
 
-        // 7. REWARD SYSTEM POWER POINTS
-        try {
-            await fetch(`${cleanUrl}/rest/v1/rpc/increment_power`, {
-                method: 'POST',
-                headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ p_username: cleanUsername, p_amount: 10 })
-            });
-        } catch (dbErr) {
-            console.error("Points update failed:", dbErr);
-        }
-
+        await incrementPower(cleanUrl, supabaseKey, cleanUsername, 10);
         return res.status(200).json(finalResponse);
 
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: 'Critical internal server handler failure.' });
+        return res.status(500).json({ error: 'Internal server failure.' });
     }
 }
