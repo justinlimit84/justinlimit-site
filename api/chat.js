@@ -120,7 +120,14 @@ export default async function handler(req, res) {
         const { messages, username, character, action, generateTrivia } = req.body;
         const cleanUsername = String(username).trim().toLowerCase();
 
-        // ... (Supabase/Groq config setup)
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+        const groqApiKey = process.env.GROQ_API_KEY;
+
+        if (!groqApiKey || !supabaseUrl || !supabaseKey) {
+            console.error("Backend config missing:", { groqApiKey: !!groqApiKey, supabaseUrl: !!supabaseUrl, supabaseKey: !!supabaseKey });
+            return res.status(500).json({ error: 'Backend configuration missing!' });
+        }
         
         const cleanUrl = supabaseUrl.replace(/\/$/, '');
         const charProfiles = {
@@ -163,7 +170,7 @@ export default async function handler(req, res) {
         return res.status(200).json({ reply: botReply, power: currentPower, rank, trivia });
 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal failure.' });
+        console.error("Backend Error:", error);
+        return res.status(500).json({ error: `Internal failure: ${error.message}` });
     }
 }
