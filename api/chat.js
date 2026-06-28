@@ -180,7 +180,9 @@ export default async function handler(req, res) {
         }
         
         // Chat Processing
+        // Only increment power when a message is sent, NOT on FETCH_STATE
         const currentPower = (userData ? (userData.current_power || 0) : 0) + 10;
+        
         let trivia = null;
         
         const profile = charProfiles[character] || charProfiles.Goku;

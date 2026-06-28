@@ -138,14 +138,13 @@ function selectCharacter(name) {
         }
         scrollToBottom(false);
         
-        // Final Sync: Update the UI with the latest power level from the DB
+        // Sync Power Level directly from Backend - NO LOCAL INCREMENT
         if (data.power !== undefined) {
             userPower = data.power;
-            // Force immediate UI update to the global userPower value
             const fill = document.getElementById('power-fill');
             const value = document.getElementById('power-value');
             if (fill) fill.style.width = `${Math.min(userPower, 100)}%`;
-            if (value) value.textContent = userPower;
+            if (value) value.textContent = Math.min(userPower, 100);
             
             // Check for mastery aura
             applyAwakenedAura(userPower >= 100);
