@@ -148,10 +148,8 @@ async function sendMessage() {
             messages: getPrunedHistory(),
             generateTrivia: shouldTriggerTrivia 
         });
-
-        typingStatus.remove();
-
-let userPower = 0; // Initialize at 0
+let isGenerating = false;
+let userPower = 0; // Moved to global scope
 
 function updatePowerDisplay(amount) {
     userPower = Math.min(userPower + amount, 100);
@@ -161,9 +159,10 @@ function updatePowerDisplay(amount) {
     if (value) value.textContent = userPower;
 }
 
-// ... in sendMessage fetch ...
+// ... (in sendMessage function, after receiving response)
         // Gamification: Increase power
         updatePowerDisplay(5);
+
 
         // Handle Trivia
         if (data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
