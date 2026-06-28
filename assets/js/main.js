@@ -221,8 +221,17 @@ async function sendMessage() {
         
         conversationHistory.push({ role: "assistant", content: data.reply });
         
-        // Gamification: Increase power
-        updatePowerDisplay(5);
+        // Gamification: Update power display based on backend response
+        if (data.power !== undefined) {
+            userPower = data.power;
+            const fill = document.getElementById('power-fill');
+            const value = document.getElementById('power-value');
+            if (fill) fill.style.width = `${Math.min(userPower, 100)}%`;
+            if (value) value.textContent = Math.min(userPower, 100);
+            
+            // Check for mastery aura
+            applyAwakenedAura(userPower >= 100);
+        }
 
         // Handle Trivia
         if (data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
