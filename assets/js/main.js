@@ -89,11 +89,20 @@ function selectCharacter(name) {
             messages: [{role: "system", content: charProfiles[name].system}] 
         })
     }).then(res => res.json()).then(data => {
-        // Render history *after* the greeting
+        console.log("DEBUG: Raw API data:", data);
+        console.log("DEBUG: History type:", typeof data.history);
+        
+        // Render full history if available
         if (data.history && Array.isArray(data.history) && data.history.length > 0) {
+            console.log("DEBUG: Rendering history, count:", data.history.length);
+            const chatBox = document.getElementById('chat-box');
+            // We should NOT clear the innerHTML here if we want the greeting to stay.
+            // Or, we should clear it and render ALL messages including greeting.
+            // Let's clear and render everything from history to ensure correct order.
+            chatBox.innerHTML = ''; 
+            
             data.history.forEach(msg => {
-                // If history contains the initial greeting, skip to avoid double rendering
-                if (msg.role !== 'system' && msg.content !== charProfiles[name].greeting) {
+                if (msg.role !== 'system') {
                     const msgDiv = document.createElement('div');
                     msgDiv.className = `msg ${msg.role} ${name}`;
                     msgDiv.textContent = msg.content;
