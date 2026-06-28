@@ -89,6 +89,22 @@ function selectCharacter(name) {
             messages: [{role: "system", content: charProfiles[name].system}] 
         })
     }).then(res => res.json()).then(data => {
+        // Render full history if available
+        if (data.history && Array.isArray(data.history)) {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = ''; // Clear greeting
+            data.history.forEach(msg => {
+                if (msg.role !== 'system') {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = `msg ${msg.role} ${name}`;
+                    msgDiv.textContent = msg.content;
+                    chatBox.appendChild(msgDiv);
+                }
+            });
+            scrollToBottom(false);
+        }
+        
+        // Update UI Rank/Power
         if (data.power !== undefined) {
             userPower = data.power;
             updatePowerDisplay(0);

@@ -147,7 +147,8 @@ export default async function handler(req, res) {
         if (action === 'FETCH_STATE') {
             return res.status(200).json({ 
                 power: userData ? (userData.current_power || 0) : 0,
-                rank: userData ? (userData.current_rank || 'Academy Student') : 'Academy Student'
+                rank: userData ? (userData.current_rank || 'Academy Student') : 'Academy Student',
+                history: history // Added this
             });
         }
         
