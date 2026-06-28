@@ -40,20 +40,33 @@ async function updatePersistence(cleanUrl, supabaseKey, cleanUsername, power, hi
     const rank = calculateRank(power);
 
     // Update Profile
-    const profileRes = await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
+    await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
         method: 'PATCH',
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ current_power: power, current_rank: rank })
     });
-    console.log("Profile Update Status:", profileRes.status, await profileRes.text());
 
-    // Update History
-    const historyRes = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}`, {
-        method: 'POST', // Changed from UPSERT to POST as Supabase REST often uses POST for insert, and UPSERT is not a standard HTTP method
-        headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates' },
-        body: JSON.stringify({ username: cleanUsername, conversation_data: history, updated_at: new Date() })
+    // Update History (Fetch first to check if exists, then POST or PATCH)
+    const res = await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}&select=id`, {
+        headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
     });
-    console.log("History Update Status:", historyRes.status, await historyRes.text());
+    const existing = await res.json();
+
+    if (existing && existing.length > 0) {
+        // PATCH existing
+        await fetch(`${cleanUrl}/rest/v1/chat_history?username=eq.${encodeURIComponent(cleanUsername)}`, {
+            method: 'PATCH',
+            headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ conversation_data: history, updated_at: new Date() })
+        });
+    } else {
+        // POST new
+        await fetch(`${cleanUrl}/rest/v1/chat_history`, {
+            method: 'POST',
+            headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: cleanUsername, conversation_data: history, updated_at: new Date() })
+        });
+    }
 
     return { power, rank };
 }
