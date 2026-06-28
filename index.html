@@ -63,7 +63,17 @@
 
     <header>
         <h1>JUSTIN<span>LIMIT</span>.COM // AI ANIME HUB</h1>
-        <button id="music-toggle" onclick="toggleMusic()">🎵 Play Theme</button>
+        
+        <div style="display:flex; gap:15px; align-items:center; position:absolute; right:20px;">
+            <button id="music-toggle" onclick="toggleMusic()">🎵 Play Theme</button>
+            
+            <div class="power-gauge-wrapper">
+                <span class="power-label">Power: <span id="power-value">30</span>%</span>
+                <div class="power-bar">
+                    <div id="power-fill" class="power-fill"></div>
+                </div>
+            </div>
+        </div>
     </header>
 
     <div class="main-container">

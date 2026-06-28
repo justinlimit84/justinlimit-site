@@ -129,12 +129,27 @@ async function sendMessage() {
 
         typingStatus.remove();
 
+let userPower = 30;
+
+function updatePowerDisplay(amount) {
+    userPower = Math.min(userPower + amount, 100);
+    const fill = document.getElementById('power-fill');
+    const value = document.getElementById('power-value');
+    if (fill) fill.style.width = `${userPower}%`;
+    if (value) value.textContent = userPower;
+}
+
+// In sendMessage function:
+// ... After receiving response ...
         const botMsg = document.createElement('div');
         botMsg.className = 'msg bot';
         botMsg.textContent = data.reply;
         chatBox.appendChild(botMsg);
         
         conversationHistory.push({ role: "assistant", content: data.reply });
+        
+        // Gamification: Increase power
+        updatePowerDisplay(5);
 
         if (shouldTriggerTrivia && data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
             triviaTriggeredInCurrentWindow = true; 
