@@ -82,11 +82,14 @@ async function createUser(cleanUrl, supabaseKey, cleanUsername) {
 }
 
 async function updateUser(cleanUrl, supabaseKey, cleanUsername, data) {
-    await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
+    const res = await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
         method: 'PATCH',
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     });
+    if (!res.ok) {
+        console.error("DEBUG: User update failed for", cleanUsername, ":", res.status, await res.text());
+    }
 }
 
 async function callGroq(groqApiKey, messages, options = {}) {
