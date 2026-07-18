@@ -10,6 +10,9 @@ let conversationHistory = [];
 let isGenerating = false;
 let userPower = 0;
 
+window.toggleMusic = () => toggleMusic(currentCharacter);
+window.selectCharacter = selectCharacter;
+window.sendMessage = sendMessage;
 window.toggleLeaderboard = toggleLeaderboard;
 
 async function toggleLeaderboard() {
