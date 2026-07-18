@@ -28,6 +28,18 @@ async function toggleLeaderboard() {
     }
 }
 
+function applyAwakenedAura(active) {
+    const header = document.querySelector('header');
+    const activeCard = document.querySelector('.char-card.active');
+    if (active) {
+        header.classList.add('awakened-aura');
+        if (activeCard) activeCard.classList.add('awakened-aura');
+    } else {
+        header.classList.remove('awakened-aura');
+        if (activeCard) activeCard.classList.remove('awakened-aura');
+    }
+}
+
 function updatePowerDisplay(newPower) {
     const oldPower = userPower;
     userPower = Math.min(newPower, 100);
