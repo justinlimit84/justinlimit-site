@@ -194,6 +194,7 @@ export default async function handler(req, res) {
         const { rank } = await updatePersistence(cleanUrl, supabaseKey, cleanUsername, character, currentPower, updatedHistory);
 
         // --- UPDATED: Ensure leaderboard is updated by syncing user_profiles ---
+        console.log("DEBUG: Calling updateUser for:", cleanUsername);
         await updateUser(cleanUrl, supabaseKey, cleanUsername, {
             current_power: currentPower,
             current_rank: rank,
