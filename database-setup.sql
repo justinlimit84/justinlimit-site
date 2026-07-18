@@ -1,5 +1,5 @@
 -- =========================================================
--- JUSTINLIMIT.COM // AI ANIME HUB // DATABASE SETUP SCRIPT
+-- JUSTINLIMIT.COM // AI ANIME HUB // DATABASE SETUP SCRIPT // Update this SQL queries to Supabase
 -- =========================================================
 
 -- 1. TABLE CREATION & ALTERATIONS
