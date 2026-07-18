@@ -10,7 +10,8 @@ export default async function handler(req, res) {
             headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
         });
         const data = await response.json();
-        return res.status(200).json(data);
+        const validData = data.filter(u => u.username && u.username !== 'null');
+        return res.status(200).json(validData);
     } catch (error) {
         return res.status(500).json({ error: 'Failed to fetch leaderboard' });
     }

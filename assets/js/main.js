@@ -40,9 +40,12 @@ function updatePowerDisplay(newPower) {
     if (userPower >= 100) {
         applyAwakenedAura(true);
         if (oldPower < 100) {
-            console.log("Triggering surge");
+            console.log("SURGE TRIGGERED: Power is 100+");
             document.body.classList.add('surge-body');
-            setTimeout(() => document.body.classList.remove('surge-body'), 500);
+            setTimeout(() => {
+                document.body.classList.remove('surge-body');
+                console.log("SURGE REMOVED");
+            }, 600);
         }
     } else {
         applyAwakenedAura(false);
