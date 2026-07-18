@@ -237,19 +237,22 @@ async function sendMessage() {
         }
     } catch (error) {
         console.error("Communication error:", error);
-        console.log("Detailed error message:", error.message);
+        
         if (typingStatus.parentNode) typingStatus.remove();
         
-        const networkErrBlock = document.createElement('div');
-        networkErrBlock.className = 'msg system-status';
-        networkErrBlock.style.borderColor = '#d62828';
-        networkErrBlock.style.color = '#d62828';
-        networkErrBlock.style.background = 'rgba(214, 40, 40, 0.1)';
-        networkErrBlock.textContent = `❌ ${currentCharacter} is busy. Try again soon!`;
-        
-        chatBox.appendChild(networkErrBlock);
-        conversationHistory.pop();
-        promptsInCurrentWindow--;
+        // Only show error if the error message is critical/blocked
+        if (error.message.includes('403') || error.message.includes('busy')) {
+            const networkErrBlock = document.createElement('div');
+            networkErrBlock.className = 'msg system-status';
+            networkErrBlock.style.borderColor = '#d62828';
+            networkErrBlock.style.color = '#d62828';
+            networkErrBlock.style.background = 'rgba(214, 40, 40, 0.1)';
+            networkErrBlock.textContent = `❌ ${currentCharacter} is busy. Try again soon!`;
+            
+            chatBox.appendChild(networkErrBlock);
+            conversationHistory.pop();
+            promptsInCurrentWindow--;
+        }
     } finally {
         isGenerating = false;
         input.disabled = false;
