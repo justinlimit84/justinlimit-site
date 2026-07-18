@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS public.user_profiles (
   last_message_at timestamptz DEFAULT now(),
   messages_sent_today integer DEFAULT 0,
   current_power integer DEFAULT 0,
-  current_rank text DEFAULT 'Academy Student'
+  current_rank text DEFAULT 'Academy Student',
+  mastery_count integer DEFAULT 0
 );
 ALTER TABLE public.user_profiles OWNER TO CURRENT_USER;
 

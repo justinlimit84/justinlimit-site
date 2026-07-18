@@ -191,8 +191,16 @@ export default async function handler(req, res) {
         
         // Chat Processing
         // Increment power by 5 per message, scoped to character
-        const currentPower = (chatData.current_power || 0) + 5;
-        
+        let newPower = (chatData.current_power || 0) + 5;
+        let masteryCount = chatData.mastery_count || 0;
+        let didAwaken = false;
+
+        if (newPower >= 100) {
+            newPower = 0;
+            masteryCount += 1;
+            didAwaken = true;
+        }
+
         let trivia = null;
         
         const profile = charProfiles[character] || charProfiles.Goku;
@@ -203,12 +211,13 @@ export default async function handler(req, res) {
         const updatedHistory = [...fullHistory, {role: "assistant", content: botReply}];
 
         // Persist
-        const { rank } = await updatePersistence(cleanUrl, supabaseKey, cleanUsername, character, currentPower, updatedHistory);
+        const { rank } = await updatePersistence(cleanUrl, supabaseKey, cleanUsername, character, newPower, updatedHistory);
 
         // --- UPDATED: Ensure leaderboard is updated by syncing user_profiles ---
         console.log("DEBUG: Calling updateUser for:", cleanUsername);
         await updateUser(cleanUrl, supabaseKey, cleanUsername, {
-            current_power: currentPower,
+            current_power: newPower,
+            mastery_count: masteryCount,
             current_rank: rank,
             last_message_at: new Date()
         });
@@ -216,7 +225,7 @@ export default async function handler(req, res) {
         // ... Trivia Generation (same as before) ...
         
         // Return
-        return res.status(200).json({ reply: botReply, power: currentPower, rank, trivia });
+        return res.status(200).json({ reply: botReply, power: newPower, rank, trivia, didAwaken });
 
     } catch (error) {
         console.error("CRITICAL BACKEND ERROR:", error);

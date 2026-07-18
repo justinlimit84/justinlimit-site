@@ -240,6 +240,22 @@ async function sendMessage() {
             updatePowerDisplay(data.power);
         }
 
+        // --- NEW: Mastery Awakening Celebration ---
+        if (data.didAwaken) {
+            // Trigger spectacular surge effect
+            document.body.classList.add('surge-body');
+            setTimeout(() => document.body.classList.remove('surge-body'), 1000);
+            
+            // Show celebratory message
+            const celebration = document.createElement('div');
+            celebration.className = 'msg system-status';
+            celebration.style.background = 'var(--neon-cyan)';
+            celebration.style.color = '#000';
+            celebration.textContent = '🌟 POWER RESET! MASTERY INCREMENTED! AWAKENED! 🌟';
+            chatBox.appendChild(celebration);
+            scrollToBottom(true);
+        }
+
         // Handle Trivia
         if (data.trivia && typeof data.trivia === 'object' && data.trivia.question) {
             setTimeout(() => {
