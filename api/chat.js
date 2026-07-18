@@ -82,10 +82,16 @@ async function createUser(cleanUrl, supabaseKey, cleanUsername) {
 }
 
 async function updateUser(cleanUrl, supabaseKey, cleanUsername, data) {
-    const res = await fetch(`${cleanUrl}/rest/v1/user_profiles?username=eq.${encodeURIComponent(cleanUsername)}`, {
-        method: 'PATCH',
+    // Switch to RPC for reliable updating regardless of RLS complexity
+    const res = await fetch(`${cleanUrl}/rest/v1/rpc/update_user_profile`, {
+        method: 'POST',
         headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ 
+            p_username: cleanUsername, 
+            p_current_power: data.current_power,
+            p_current_rank: data.current_rank,
+            p_last_message_at: data.last_message_at
+        })
     });
     if (!res.ok) {
         console.error("DEBUG: User update failed for", cleanUsername, ":", res.status, await res.text());
