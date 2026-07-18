@@ -53,7 +53,7 @@ All database configurations are consolidated into `justinlimit-site/database-set
 Configure these in your Vercel Project Settings:
 
 - **GROQ**
-  - `GROQ_API_KEY`: API key for Groq inference.
+  - `GROQ_API_KEY`: API key for Groq inference. Obtain this from the [Groq Cloud Console](https://console.groq.com/).
 - **SUPABASE**
   - `SUPABASE_URL`: Supabase project URL.
   - `SUPABASE_SERVICE_ROLE_KEY`: Key with RPC/admin privileges.
@@ -77,7 +77,18 @@ Configure these in your Vercel Project Settings:
 
 ---
 
-## 📧 Contact
+## 🚀 GitHub & Vercel Integration
+
+To enable automatic deployments whenever you push code to GitHub:
+
+1.  **Create a Vercel Account** if you haven't already.
+2.  **Import Project**: In your Vercel Dashboard, click **"Add New..."** -> **"Project"**.
+3.  **Connect GitHub**: Select your GitHub repository. You will be prompted to authorize Vercel to access your GitHub account (via OAuth) so it can read your repository and trigger deployments on code pushes.
+4.  **Configure Project**:
+    - **Framework Preset**: Vercel should auto-detect the project type.
+    - **Environment Variables**: Add your `GROQ_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `SUPABASE_ANON_KEY` here.
+5.  **Deploy**: Click **"Deploy"**. Vercel will now automatically rebuild and redeploy your site every time you push changes to your `main` branch.
+
 
 - Author: JustinLimit
 - GitHub: github.com/justinlimit84
