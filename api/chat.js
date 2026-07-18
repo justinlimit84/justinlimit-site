@@ -171,6 +171,12 @@ export default async function handler(req, res) {
             Sarada: { system: "You are Sarada Uchiha from Boruto. You are smart, logical, and want to become Hokage. Use actual emojis (like 👓, 🎯, 🔥) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks." }
         };
 
+        // --- ADDED: Ensure user exists in user_profiles ---
+        const userCheck = await fetchUserData(cleanUrl, supabaseKey, cleanUsername);
+        if (!userCheck) {
+            await createUser(cleanUrl, supabaseKey, cleanUsername);
+        }
+
         // Fetch User Data
         const chatData = await getChatHistory(cleanUrl, supabaseKey, cleanUsername, character);
         const history = chatData.conversation_data;

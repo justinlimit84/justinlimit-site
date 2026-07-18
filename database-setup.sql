@@ -19,9 +19,16 @@ ALTER TABLE public.chat_history ADD COLUMN IF NOT EXISTS current_rank text DEFAU
 ALTER TABLE public.chat_history ADD COLUMN IF NOT EXISTS character text DEFAULT 'Goku';
 ALTER TABLE public.chat_history OWNER TO CURRENT_USER;
 
--- User Profiles Table Alterations
-ALTER TABLE public.user_profiles ADD COLUMN IF NOT EXISTS current_power integer DEFAULT 0;
-ALTER TABLE public.user_profiles ADD COLUMN IF NOT EXISTS current_rank text DEFAULT 'Academy Student';
+-- User Profiles Table
+CREATE TABLE IF NOT EXISTS public.user_profiles (
+  username text PRIMARY KEY,
+  power_level integer DEFAULT 0,
+  last_message_at timestamptz DEFAULT now(),
+  messages_sent_today integer DEFAULT 0,
+  current_power integer DEFAULT 0,
+  current_rank text DEFAULT 'Academy Student'
+);
+ALTER TABLE public.user_profiles OWNER TO CURRENT_USER;
 
 -- User Blocks Table
 CREATE TABLE IF NOT EXISTS public.user_blocks (
@@ -30,8 +37,6 @@ CREATE TABLE IF NOT EXISTS public.user_blocks (
   blocked_at timestamptz DEFAULT now(),
   last_reset_at timestamptz DEFAULT now()
 );
-
-ALTER TABLE public.user_blocks ADD COLUMN IF NOT EXISTS last_reset_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
 
 -- 2. INDEXES
 -- =========================================================
@@ -44,21 +49,27 @@ CREATE INDEX IF NOT EXISTS idx_chat_history_username_char ON public.chat_history
 
 -- Ensure RLS is enabled
 ALTER TABLE public.chat_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
 
--- 1. Allow anyone to read chat history (Public)
+-- Policies for chat_history
 DROP POLICY IF EXISTS "Allow public read access" ON public.chat_history;
-CREATE POLICY "Allow public read access" ON public.chat_history 
-FOR SELECT USING (true);
+CREATE POLICY "Allow public read access" ON public.chat_history FOR SELECT USING (true);
 
--- 2. Allow anyone to insert new messages (Public)
 DROP POLICY IF EXISTS "Allow public insert access" ON public.chat_history;
-CREATE POLICY "Allow public insert access" ON public.chat_history 
-FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public insert access" ON public.chat_history FOR INSERT WITH CHECK (true);
 
--- 3. Allow users to update their own messages if needed
 DROP POLICY IF EXISTS "Allow public update access" ON public.chat_history;
-CREATE POLICY "Allow public update access" ON public.chat_history 
-FOR UPDATE USING (true);
+CREATE POLICY "Allow public update access" ON public.chat_history FOR UPDATE USING (true);
+
+-- Policies for user_profiles
+DROP POLICY IF EXISTS "Allow public read access" ON public.user_profiles;
+CREATE POLICY "Allow public read access" ON public.user_profiles FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public insert access" ON public.user_profiles;
+CREATE POLICY "Allow public insert access" ON public.user_profiles FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public update access" ON public.user_profiles;
+CREATE POLICY "Allow public update access" ON public.user_profiles FOR UPDATE USING (true);
 
 -- 4. FUNCTIONS / RPCs
 -- =========================================================
