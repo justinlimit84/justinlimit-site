@@ -190,6 +190,13 @@ export default async function handler(req, res) {
         // Persist
         const { rank } = await updatePersistence(cleanUrl, supabaseKey, cleanUsername, character, currentPower, updatedHistory);
 
+        // --- UPDATED: Ensure leaderboard is updated by syncing user_profiles ---
+        await updateUser(cleanUrl, supabaseKey, cleanUsername, {
+            current_power: currentPower,
+            current_rank: rank,
+            last_message_at: new Date()
+        });
+
         // ... Trivia Generation (same as before) ...
         
         // Return
