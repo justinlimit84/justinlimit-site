@@ -10,25 +10,24 @@ let conversationHistory = [];
 let isGenerating = false;
 let userPower = 0;
 
-// Expose toggleMusic for inline onclick
-window.toggleMusic = () => toggleMusic(currentCharacter);
-window.selectCharacter = selectCharacter;
-window.sendMessage = sendMessage;
+window.toggleLeaderboard = toggleLeaderboard;
 
-function applyAwakenedAura(active) {
-    const header = document.querySelector('header');
-    const activeCard = document.querySelector('.char-card.active');
-    if (active) {
-        header.classList.add('awakened-aura');
-        if (activeCard) activeCard.classList.add('awakened-aura');
+async function toggleLeaderboard() {
+    const panel = document.getElementById('leaderboard-panel');
+    if (panel.classList.contains('hidden')) {
+        panel.classList.remove('hidden');
+        const res = await fetch('/api/leaderboard');
+        const data = await res.json();
+        const list = document.getElementById('leaderboard-list');
+        list.innerHTML = data.map(u => `<div class="leaderboard-item"><span>${u.username}</span><span>${u.current_power}</span></div>`).join('');
     } else {
-        header.classList.remove('awakened-aura');
-        if (activeCard) activeCard.classList.remove('awakened-aura');
+        panel.classList.add('hidden');
     }
 }
 
-function updatePowerDisplay(amount) {
-    userPower = Math.min(userPower + amount, 100);
+function updatePowerDisplay(newPower) {
+    const oldPower = userPower;
+    userPower = Math.min(newPower, 100);
     const fill = document.getElementById('power-fill');
     const value = document.getElementById('power-value');
     if (fill) fill.style.width = `${userPower}%`;
@@ -37,6 +36,10 @@ function updatePowerDisplay(amount) {
     // Check for mastery
     if (userPower >= 100) {
         applyAwakenedAura(true);
+        if (oldPower < 100) {
+            document.body.classList.add('surge-body');
+            setTimeout(() => document.body.classList.remove('surge-body'), 500);
+        }
     } else {
         applyAwakenedAura(false);
     }
@@ -140,14 +143,7 @@ function selectCharacter(name) {
         
         // Sync Power Level directly from Backend - NO LOCAL INCREMENT
         if (data.power !== undefined) {
-            userPower = data.power;
-            const fill = document.getElementById('power-fill');
-            const value = document.getElementById('power-value');
-            if (fill) fill.style.width = `${Math.min(userPower, 100)}%`;
-            if (value) value.textContent = Math.min(userPower, 100);
-            
-            // Check for mastery aura
-            applyAwakenedAura(userPower >= 100);
+            updatePowerDisplay(data.power);
         }
     });
 }
@@ -222,14 +218,7 @@ async function sendMessage() {
         
         // Gamification: Update power display based on backend response
         if (data.power !== undefined) {
-            userPower = data.power;
-            const fill = document.getElementById('power-fill');
-            const value = document.getElementById('power-value');
-            if (fill) fill.style.width = `${Math.min(userPower, 100)}%`;
-            if (value) value.textContent = Math.min(userPower, 100);
-            
-            // Check for mastery aura
-            applyAwakenedAura(userPower >= 100);
+            updatePowerDisplay(data.power);
         }
 
         // Handle Trivia

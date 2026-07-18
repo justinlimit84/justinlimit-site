@@ -61,10 +61,17 @@
         </div>
     </div>
 
+    <div id="leaderboard-panel" class="hidden">
+        <h3>Top Trainers</h3>
+        <div id="leaderboard-list"></div>
+        <button onclick="document.getElementById('leaderboard-panel').classList.add('hidden')">Close</button>
+    </div>
+
     <header>
         <h1>JUSTIN<span>LIMIT</span>.COM // AI ANIME HUB</h1>
         
         <div style="display:flex; gap:15px; align-items:center; position:absolute; right:20px;">
+            <button id="leaderboard-toggle" onclick="toggleLeaderboard()">🏆 Leaderboard</button>
             <button id="music-toggle" onclick="toggleMusic()">🎵 Play Theme</button>
             
             <div class="power-gauge-wrapper">
