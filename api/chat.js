@@ -141,6 +141,19 @@ export default async function handler(req, res) {
         }
         
         const cleanUrl = supabaseUrl.replace(/\/$/, '');
+        
+        // --- ADDED: Rate Limiter Gatekeeper ---
+        const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+        const rateCheckRes = await fetch(`${cleanUrl}/rest/v1/rpc/check_user_message_limit`, {
+            method: 'POST',
+            headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ p_user_id: clientIp })
+        });
+        const isAllowed = await rateCheckRes.json();
+        if (isAllowed === false) {
+            return res.status(403).json({ error: "Rate limit reached. Try again in 30 minutes! ⚡" });
+        }
+
         const charProfiles = {
             Goku: { system: "You are Goku from Dragon Ball Z. Respond enthusiastically, love martial arts, and talk about getting stronger. Speak in a simple friendly way. Use actual emojis (like 😁, 💪, 💥) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks." },
             Naruto: { system: "You are Naruto Uzumaki from Naruto Shippuden. You want to be Hokage, frequently say 'Believe it!', and love ramen. Use actual emojis (like 🦊, 🍜, 😎) to express your emotions and actions instead of text descriptions inside asterisks. Keep responses concise (1-3 sentences max). Never use asterisks." },
