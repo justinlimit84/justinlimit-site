@@ -16,6 +16,17 @@ window.sendMessage = sendMessage;
 window.toggleLeaderboard = toggleLeaderboard;
 
 async function toggleLeaderboard() {
+    const panel = document.getElementById('leaderboard-panel');
+    if (panel.classList.contains('hidden')) {
+        panel.classList.remove('hidden');
+        const res = await fetch('/api/leaderboard');
+        const data = await res.json();
+        const list = document.getElementById('leaderboard-list');
+        list.innerHTML = data.map(u => `<div class="leaderboard-item"><span>${u.username}</span><span>${u.current_power}</span></div>`).join('');
+    } else {
+        panel.classList.add('hidden');
+    }
+}
 
 function applyAwakenedAura(active) {
     const header = document.querySelector('header');
