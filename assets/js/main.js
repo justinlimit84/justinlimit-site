@@ -14,6 +14,13 @@ window.toggleMusic = () => toggleMusic(currentCharacter);
 window.selectCharacter = selectCharacter;
 window.sendMessage = sendMessage;
 window.toggleLeaderboard = toggleLeaderboard;
+window.toggleSidebar = toggleSidebar;
+
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('open');
+}
+
 
 async function toggleLeaderboard() {
     const panel = document.getElementById('leaderboard-panel');
