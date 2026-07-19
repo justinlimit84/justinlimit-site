@@ -481,29 +481,15 @@ button { background: var(--neon-cyan); color: #000; border: none; padding: 0 24p
 button:hover { box-shadow: 0 0 15px var(--neon-cyan); transform: translateY(-1px); }
 button:active { transform: translateY(0); }
 
-#menu-toggle {
-    display: none; /* Only show on mobile */
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 1.5rem;
-    cursor: pointer;
-    margin-right: 15px;
-}
-
+/* Responsive Breakpoints */
 @media (max-width: 768px) {
-    #menu-toggle { display: block; }
-    .sidebar {
-        position: fixed;
-        top: 60px;
-        left: -260px;
-        height: calc(100% - 60px);
-        z-index: 1000;
-        transition: left 0.3s ease;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.5);
-    }
-    .sidebar.open { left: 0; }
-}
+    .main-container { flex-direction: column; }
+    .sidebar { width: 100%; flex-direction: row; padding: 10px; gap: 10px; overflow-x: auto; overflow-y: hidden; border-right: none; border-bottom: 1px solid #2d3748; box-sizing: border-box; }
+    .sidebar h3 { display: none; }
+    .char-card { padding: 8px 12px; min-width: 130px; justify-content: center; gap: 8px; }
+    .sidebar-avatar { width: 28px; height: 28px; }
+    .sidebar-info p { display: none; }
+    .chat-messages { padding: 15px; }
     #music-toggle { 
         padding: 8px 14px;
         font-size: 13px;
