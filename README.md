@@ -2,7 +2,7 @@
 
 Interactive science learning for NCERT Class 9 (2026 *Exploration* textbook): canvas labs, short ManimGL
 animations and step-by-step solutions. A static multi-page site (Vite + TypeScript, no framework),
-hosted on Vercel.
+hosted on GitHub Pages.
 
 ## Rules for every page
 
@@ -13,7 +13,7 @@ hosted on Vercel.
   exercises by number and link to https://ncert.nic.in/textbook.php. Only original images, system fonts and
   no third-party assets.
 - **Privacy (children's site, DPDP Act 2023).** No accounts, cookies, analytics, forms or third-party requests.
-  The Content-Security-Policy in `vercel.json` enforces "same origin only". The "Spotted a mistake?" links are
+  The Content-Security-Policy `<meta>` tag in every page enforces "same origin only". The "Spotted a mistake?" links are
   plain `mailto:` links (`src/site.ts` sets the address).
 
 ## Develop (in WSL: node/npm live there)
@@ -44,7 +44,15 @@ Rendered with ManimGL in WSL (`~/manim/venv`, GPU via `~/manim/gpu_render.py`), 
 self-hosted in `public/clips/` with a poster frame. Separate from the outoflimit YouTube channel. Every number
 on screen is checked in `tests/clips.test.ts`.
 
-## Deploy
+## Deploy (GitHub Pages)
 
-Vercel builds this repo (`vercel.json`: `npm ci`, `npm run build`, output `dist/`). Pushing a branch other than
-`main` gives a preview URL; **pushing to `main` updates www.justinlimit.com**, so merge only after a review.
+This repo is public and GitHub Pages serves it directly. `.github/workflows/pages.yml` runs on every push to
+`main`: `npm ci`, `npm test`, `npm run build`, then publishes `dist/`. A failing test blocks the deploy.
+**Pushing to `main` updates www.justinlimit.com**, so work on a branch and merge after review.
+(One-time setting: repo Settings → Pages → Source: "GitHub Actions"; custom domain www.justinlimit.com.)
+
+- `public/CNAME` (www.justinlimit.com) and `public/.nojekyll` are copied into `dist/`.
+- Pages can't send HTTP headers, so the Content-Security-Policy and referrer policy are `<meta>` tags in each
+  page (checked by `tests/site.test.ts`).
+- DNS (GoDaddy): `www` CNAME → `justinlimit84.github.io`; apex `@` A records → 185.199.108.153,
+  185.199.109.153, 185.199.110.153, 185.199.111.153. Then tick "Enforce HTTPS" in the Pages settings.
