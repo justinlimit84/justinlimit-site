@@ -24,3 +24,9 @@ describe('GitHub Pages setup', () => {
     })
   }
 })
+
+describe('mistake reports', () => {
+  it('go to the real inbox', () => {
+    expect(readFileSync(resolve(root, 'src/site.ts'), 'utf8')).toContain("REPORT_EMAIL = 'beyond@justinlimit.com'")
+  })
+})
