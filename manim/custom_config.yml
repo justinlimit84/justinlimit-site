@@ -1,0 +1,15 @@
+# justinlimit Ch 7 clips: 16:9 landscape. Run manimgl from inside this folder so this file is used.
+camera:
+  resolution: (1280, 720)
+  background_color: "#111111"
+  fps: 30
+resolution_options:
+  low: (854, 480)
+  med: (1280, 720)
+  high: (1280, 720)
+  4k: (3840, 2160)
+sizes:
+  frame_height: 8.0
+file_writer:
+  video_codec: "h264_nvenc"
+  pixel_format: "yuv420p"

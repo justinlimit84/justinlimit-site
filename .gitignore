@@ -1,0 +1,6 @@
+node_modules
+dist
+*.tsbuildinfo
+manim/videos
+manim/__pycache__
+.DS_Store

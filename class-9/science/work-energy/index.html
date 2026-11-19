@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Work, Energy and Simple Machines — Class 9 Science Ch 7 (interactive) · justinlimit</title>
+    <meta name="description" content="Class 9 Science (NCERT Exploration) Chapter 7, learned by doing: interactive labs for work, kinetic and potential energy, power and simple machines, short animations, and step-by-step solutions to every exercise." />
+    <link rel="canonical" href="https://www.justinlimit.com/class-9/science/work-energy/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#0d0e10" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="justinlimit" />
+    <meta property="og:title" content="Work, Energy and Simple Machines — Class 9 Science, interactive" />
+    <meta property="og:description" content="Interactive labs, animations and worked solutions for NCERT Class 9 Science Chapter 7." />
+    <meta property="og:url" content="https://www.justinlimit.com/class-9/science/work-energy/" />
+    <meta property="og:image" content="https://www.justinlimit.com/clips/energy-swap.jpg" />
+    <script type="module" src="/src/page-chapter.ts"></script>
+  </head>
+  <body data-section="ch7">
+    <!-- @include header -->
+    <main id="main">
+      <div class="wrap chapter-head">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/#class-9">Class 9 Science</a> › Chapter 7</nav>
+        <span class="eyebrow">Class 9 Science · NCERT Exploration · Chapter 7</span>
+        <h1>Work, Energy and Simple&nbsp;Machines</h1>
+        <p class="lead">Push a block and watch the work add up as an area. Drop a ball down slides of different shapes and see where its energy goes. Race up the stairs to feel what power means, then lift a heavy load with a ramp and a lever. Every formula here is the one in your NCERT book, with the same symbols and SI units.</p>
+        <div class="key go">
+          <span class="key-title">Use this with your textbook</span>
+          <p>This page follows Chapter 7 of the NCERT <em>Exploration</em> Science textbook for Grade 9 (2026). Read the chapter in the <a href="https://ncert.nic.in/textbook.php" rel="noopener" target="_blank">official NCERT book</a> first. Here you get labs to play with and our own step-by-step solutions. We refer to the book's examples and exercises by number only. In the numerical examples we take <var>g</var> = 10 m s<sup>−2</sup>, just like the chapter.</p>
+        </div>
+      </div>
+
+      <div class="wrap chapter-layout">
+        <nav class="chapter-nav" aria-label="In this chapter">
+          <ol>
+            <li><a href="#work">7.1 Work</a></li>
+            <li><a href="#work-energy">7.2–7.3 Energy</a></li>
+            <li><a href="#mechanical">7.4 Kinetic &amp; potential energy</a></li>
+            <li><a href="#power">7.5 Power</a></li>
+            <li><a href="#machines">7.6 Simple machines</a></li>
+            <li><a href="#examples">Worked examples</a></li>
+            <li><a href="#ponder">Pause and Ponder</a></li>
+            <li><a href="#exercises">Exercises 1–15</a></li>
+            <li><a href="#revise">One-page revision</a></li>
+          </ol>
+        </nav>
+
+        <article>
+          <!-- ===================================================================== 7.1 WORK -->
+          <section class="topic" id="work">
+            <h2><span class="num">7.1</span> Work done by a constant force</h2>
+            <p>In science, <strong>work</strong> is done on an object when a force acts on it <em>and</em> the object is displaced in the direction of that force. Lifting one bag through 1 m is some work. Lifting three bags, or lifting one bag three times as high, is three times the work. So work grows with the force and with the displacement:</p>
+            <div class="formula">
+              <span class="eq"><var>W</var> = <var>F</var> × <var>s</var></span>
+              <span class="where">work = force × displacement in the direction of the force</span>
+            </div>
+            <ul>
+              <li><strong>SI unit:</strong> the <strong>joule (J)</strong>. 1 J = 1 N × 1 m = 1 kg m<sup>2</sup> s<sup>−2</sup>. That is the work done when a force of 1 newton moves an object by 1 metre in the direction of the force.</li>
+              <li>Always say <em>which force</em> (who or what is pushing) does work <em>on which object</em>.</li>
+              <li>Work has <strong>no direction</strong>, but it can be <strong>positive or negative</strong>.</li>
+              <li>On a force–displacement graph, <strong>work = area under the graph</strong>. This works even when the force changes along the way.</li>
+            </ul>
+
+            <h3>When is the work zero?</h3>
+            <ul>
+              <li><strong>No force</strong> (<var>F</var> = 0): no work.</li>
+              <li><strong>No displacement</strong> (<var>s</var> = 0): no work, however hard you push. Pushing a wall does no work on the wall, even though you get tired. Your muscles use up your body's energy as they tense and relax.</li>
+              <li><strong>Force perpendicular to the displacement</strong>: no work by that force. When you carry a bag while walking, your upward force does no work on the bag, because the bag moves sideways.</li>
+            </ul>
+
+            <h3>Positive and negative work</h3>
+            <ul>
+              <li><strong>Positive work:</strong> displacement in the <em>same</em> direction as the force (pushing a wheelchair forward).</li>
+              <li><strong>Negative work:</strong> displacement <em>opposite</em> to the force (a goalkeeper's hands stopping a ball). In <var>W</var> = <var>F</var> × <var>s</var>, take <var>s</var> as negative.</li>
+            </ul>
+
+            <div class="lab" data-lab="work">
+              <div class="lab-top"><span class="lab-title">Lab 1 · Work is an area</span><span class="muted" style="font-size:.85rem">Pick a force, then press Push</span></div>
+              <div class="lab-stage"><canvas role="img" aria-label="A block pushed along the floor, with its force–displacement graph and the shaded work"></canvas></div>
+              <div class="lab-controls">
+                <div>
+                  <span class="lab-label">Force</span>
+                  <div class="seg" role="group" aria-label="Force type">
+                    <button type="button" data-mode="constant" aria-pressed="true">Constant</button>
+                    <button type="button" data-mode="changing" aria-pressed="false">Changing</button>
+                  </div>
+                  <span class="lab-label">Direction of the force</span>
+                  <div class="seg" role="group" aria-label="Direction of the force">
+                    <button type="button" data-dir="along" aria-pressed="true">Along the motion</button>
+                    <button type="button" data-dir="against" aria-pressed="false">Against it</button>
+                    <button type="button" data-dir="perpendicular" aria-pressed="false">Perpendicular</button>
+                  </div>
+                  <div class="ctrl"><label for="w-F">Force <var>F</var></label><output for="w-F"></output><input id="w-F" name="F" type="range" min="0" max="50" step="1" value="20" /></div>
+                  <div class="ctrl"><label for="w-s">Displacement <var>s</var></label><output for="w-s"></output><input id="w-s" name="s" type="range" min="0.5" max="5" step="0.1" value="3" /></div>
+                </div>
+                <div>
+                  <div class="stats">
+                    <div class="stat"><b data-stat="f">–</b><span>force along the motion now</span></div>
+                    <div class="stat"><b data-stat="s">–</b><span>displacement so far</span></div>
+                    <div class="stat"><b data-stat="w">–</b><span>work done so far</span></div>
+                    <div class="stat"><b data-stat="wfinal">–</b><span>work for the whole push</span></div>
+                  </div>
+                  <div class="lab-actions">
+                    <button class="btn btn-sm btn-primary" type="button" data-action="play">Push ▶</button>
+                    <button class="btn btn-sm" type="button" data-action="reset">Reset</button>
+                  </div>
+                  <p class="lab-note" data-note aria-live="polite"></p>
+                </div>
+              </div>
+            </div>
+            <p class="muted">Try this: with a <em>constant</em> force of 20 N over 3 m, the work is 60 J. Switch to <em>changing</em> and the force builds up, holds, then eases off. The area is now smaller (48 J), because the force is less than 20 N at the start and the end.</p>
+
+            <figure class="clip">
+              <video controls preload="none" playsinline muted poster="/clips/work-area.jpg" aria-label="Animation: work as the area under a force–displacement graph">
+                <source src="/clips/work-area.mp4" type="video/mp4" />
+              </video>
+              <figcaption>Animation (24 s, no sound): a constant force gives a rectangle, a growing force gives a triangle, and a force against the motion gives a negative area.</figcaption>
+            </figure>
+            <p class="mistake">Spotted a mistake? <a data-mistake="7.1 Work" href="/about/#mistakes">Tell us</a></p>
+          </section>
+
+          <!-- ===================================================================== 7.2 / 7.3 -->
+          <section class="topic" id="work-energy">
+            <h2><span class="num">7.2–7.3</span> Energy and the work–energy theorem</h2>
+            <p>A thrown cricket ball can knock the wicket over. A flower pot raised high can break something if it falls. Each has gained the <strong>capacity to do work</strong>, and anything with the capacity to do work has <strong>energy</strong>. The ball got its energy from the work the fielder did in throwing it. The pot got its energy from the work done in lifting it.</p>
+            <div class="formula">
+              <span class="eq">work done on an object = change in its energy</span>
+              <span class="where">the <strong>work–energy theorem</strong> (it holds for systems of objects, and for forces that are not constant)</span>
+            </div>
+            <p>Energy is measured in the same SI unit as work, the <strong>joule (J)</strong>. Positive work done on an object increases its energy, and negative work decreases it. Energy can change from one form to another:</p>
+            <div class="tbl-wrap">
+              <table class="tbl">
+                <thead><tr><th>Form</th><th>What it is</th><th>Example of a change</th></tr></thead>
+                <tbody>
+                  <tr><td>Mechanical</td><td>due to motion or position</td><td>a ringing bell: mechanical → sound</td></tr>
+                  <tr><td>Thermal</td><td>makes things warm or hot</td><td>electric water heater: electrical → thermal</td></tr>
+                  <tr><td>Light</td><td>lets us see</td><td>bulb: electrical → light (and heat)</td></tr>
+                  <tr><td>Sound</td><td>vibrations of air or other material</td><td>microphone: sound → electrical</td></tr>
+                  <tr><td>Electrical</td><td>related to positions or motion of charges</td><td>fan: electrical → mechanical</td></tr>
+                  <tr><td>Chemical</td><td>stored in the bonds between atoms (food, fuels)</td><td>muscles: chemical → mechanical</td></tr>
+                  <tr><td>Nuclear</td><td>stored in the nuclei of atoms</td><td>the Sun: nuclear → light and heat</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="key go"><span class="key-title">Beyond the book's core</span><p>Doing work is only one way to transfer energy. Energy also moves as heat (hot to cold), by radiation (sunlight), in electric circuits and in sound waves.</p></div>
+            <p class="mistake">Spotted a mistake? <a data-mistake="7.2–7.3 Energy" href="/about/#mistakes">Tell us</a></p>
+          </section>
+
+          <!-- ===================================================================== 7.4 MECHANICAL ENERGY -->
+          <section class="topic" id="mechanical">
+            <h2><span class="num">7.4</span> Mechanical energy: kinetic and potential</h2>
+            <p><strong>Mechanical energy</strong> is energy an object has because of its <em>motion</em> (kinetic energy) or its <em>position or shape</em> (potential energy).</p>
+
+            <h3>Kinetic energy</h3>
+            <p>Kinetic energy is the energy an object has because it is moving. Here is where the formula comes from, in four steps. Take a constant force <var>F</var> acting on a mass <var>m</var>, which speeds up from <var>u</var> to <var>v</var> over a displacement <var>s</var>:</p>
+            <ol class="steps-list">
+              <li>From the equations of motion: <var>v</var><sup>2</sup> = <var>u</var><sup>2</sup> + 2<var>as</var>, so <var>s</var> = (<var>v</var><sup>2</sup> − <var>u</var><sup>2</sup>) / 2<var>a</var>.</li>
+              <li>Work done by the force: <var>W</var> = <var>F</var> × <var>s</var>, and Newton's second law gives <var>F</var> = <var>ma</var>.</li>
+              <li>So <var>W</var> = <var>ma</var> × (<var>v</var><sup>2</sup> − <var>u</var><sup>2</sup>) / 2<var>a</var> = ½ <var>m</var>(<var>v</var><sup>2</sup> − <var>u</var><sup>2</sup>). The <var>a</var> cancels!</li>
+              <li>Starting from rest (<var>u</var> = 0), all of this work becomes kinetic energy:</li>
+            </ol>
+            <div class="formula">
+              <span class="eq"><var>K</var> = ½ <var>m</var> <var>v</var><sup>2</sup></span>
+              <span class="where">kinetic energy, in joules; it has no direction</span>
+            </div>
+            <p>Positive work speeds an object up, so its kinetic energy grows. Negative work slows it down. No work means the speed and the kinetic energy stay the same. Because <var>v</var> is squared, <strong>doubling the speed makes the kinetic energy four times bigger</strong>.</p>
+
+            <h3>Potential energy</h3>
+            <p><strong>Potential energy</strong> is energy stored because of an object's <em>shape</em> (a stretched rubber band, a bent bow, a compressed spring) or because of the <em>positions</em> of objects in a system that pull or push on each other (two magnets, two charges, a ball and the Earth). Released, that stored energy can do work.</p>
+            <p>To lift a mass <var>m</var> slowly to a height <var>h</var>, you apply an upward force equal to its weight <var>mg</var>, so you do work <var>mg</var> × <var>h</var>. We take the potential energy on the ground as zero, so:</p>
+            <div class="formula">
+              <span class="eq"><var>U</var> = <var>m g h</var></span>
+              <span class="where">gravitational potential energy at a height <var>h</var> above the ground (valid near the Earth's surface)</span>
+            </div>
+
+            <h3>Conservation of mechanical energy</h3>
+            <p>Mechanical energy = kinetic energy + potential energy. Drop a ball from height <var>h</var>. After a time <var>t</var>, its speed is <var>v</var> = <var>gt</var> and it has fallen ½<var>gt</var><sup>2</sup>. Its potential energy has dropped by <var>mg</var> × ½<var>gt</var><sup>2</sup> = ½<var>mg</var><sup>2</sup><var>t</var><sup>2</sup>. Its kinetic energy has risen by ½<var>m</var>(<var>gt</var>)<sup>2</sup> = ½<var>mg</var><sup>2</sup><var>t</var><sup>2</sup>, <em>exactly the same amount</em>. So:</p>
+            <div class="formula">
+              <span class="eq"><var>K</var> + <var>U</var> = constant = <var>mgh</var></span>
+              <span class="where">when only gravity does work (no friction, no air resistance)</span>
+            </div>
+            <p>A child at the top of a slide of height <var>h</var> has energy <var>mgh</var>. At the bottom (no friction) it has all become kinetic: ½<var>mv</var><sup>2</sup> = <var>mgh</var>, so <strong><var>v</var> = √(2<var>gh</var>)</strong>. The mass cancels, and the shape of the slide does not appear at all. Test that in the lab below.</p>
+
+            <div class="lab" data-lab="energy">
+              <div class="lab-top"><span class="lab-title">Lab 2 · Where does the energy go?</span><span class="muted" style="font-size:.85rem">Choose a track, then Release</span></div>
+              <div class="lab-stage"><canvas role="img" aria-label="A ball on a slide or in free fall, with bars for potential energy, kinetic energy and heat"></canvas></div>
+              <div class="lab-controls">
+                <div>
+                  <span class="lab-label">Track</span>
+                  <div class="seg" role="group" aria-label="Track">
+                    <button type="button" data-track="drop" aria-pressed="false">Free fall</button>
+                    <button type="button" data-track="straight" aria-pressed="true">Straight slide</button>
+                    <button type="button" data-track="curve" aria-pressed="false">Steep, then gentle</button>
+                    <button type="button" data-track="wavy" aria-pressed="false">Wavy slide</button>
+                    <button type="button" data-track="valley" aria-pressed="false">Valley (swings back)</button>
+                  </div>
+                  <div class="ctrl"><label for="e-m">Mass <var>m</var></label><output for="e-m"></output><input id="e-m" name="m" type="range" min="10" max="60" step="5" value="30" /></div>
+                  <div class="ctrl"><label for="e-h">Start height <var>h</var></label><output for="e-h"></output><input id="e-h" name="h" type="range" min="1" max="10" step="0.5" value="5" /></div>
+                  <div class="ctrl"><label for="e-f">Rough surface: resistive force <var>f</var></label><output for="e-f"></output><input id="e-f" name="f" type="range" min="0" max="100" step="5" value="0" /></div>
+                </div>
+                <div>
+                  <div class="stats three">
+                    <div class="stat"><b data-stat="height">–</b><span>height</span></div>
+                    <div class="stat"><b data-stat="v">–</b><span>speed <var>v</var></span></div>
+                    <div class="stat"><b data-stat="heat">–</b><span>heat (friction)</span></div>
+                    <div class="stat"><b data-stat="pe">–</b><span>PE = <var>mgh</var></span></div>
+                    <div class="stat"><b data-stat="ke">–</b><span>KE = ½<var>mv</var><sup>2</sup></span></div>
+                    <div class="stat"><b data-stat="total">–</b><span>KE + PE</span></div>
+                  </div>
+                  <div class="lab-actions">
+                    <button class="btn btn-sm btn-primary" type="button" data-action="play">Release ▶</button>
+                    <button class="btn btn-sm" type="button" data-action="reset">Reset</button>
+                  </div>
+                  <p class="lab-note" data-note aria-live="polite"></p>
+                </div>
+              </div>
+            </div>
+            <p class="muted">Try this: release from 5 m on each slide shape, and with different masses. The speed at the bottom is always 10 m s<sup>−1</sup> = √(2 × 10 × 5). Then make the surface rough. Now KE + PE falls, and the "heat" bar makes up the difference. The total energy is still conserved. The ball's motion is worked out from forces alone, so the constant total is a real result of the physics, not something we drew in.</p>
+
+            <figure class="clip">
+              <video controls preload="none" playsinline muted poster="/clips/energy-swap.jpg" aria-label="Animation: a falling ball's potential energy turning into kinetic energy">
+                <source src="/clips/energy-swap.mp4" type="video/mp4" />
+              </video>
+              <figcaption>Animation (17 s, no sound): a 2 kg ball falls 5 m. Potential energy drains into kinetic energy while the total stays at 100 J.</figcaption>
+            </figure>
+            <div class="key"><span class="key-title">Pendulum and real life</span><p>A pendulum bob swings back to almost the height it started from. At the ends it has only potential energy, and at the bottom only kinetic energy. In real life it slowly stops, because friction at the support and air resistance turn its energy into heat.</p></div>
+            <p class="mistake">Spotted a mistake? <a data-mistake="7.4 Mechanical energy" href="/about/#mistakes">Tell us</a></p>
+          </section>
+
+          <!-- ===================================================================== 7.5 POWER -->
+          <section class="topic" id="power">
+            <h2><span class="num">7.5</span> Power</h2>
+            <p>Running up the stairs and walking up them slowly need the <em>same work</em>, because your weight is raised through the same height. But running feels very different. Power describes how <em>fast</em> the work is done:</p>
+            <div class="formula">
+              <span class="eq"><var>P</var> = <var>W</var> / <var>t</var></span>
+              <span class="where">average power = work done ÷ time taken</span>
+            </div>
+            <ul>
+              <li><strong>SI unit:</strong> the <strong>watt (W)</strong>. 1 W = 1 J s<sup>−1</sup> (one joule of work every second).</li>
+              <li>More work in the same time, or the same work in less time, both need more power.</li>
+              <li>Car engines and pumps are often rated in horsepower: 1 hp = 746 W.</li>
+              <li>Careful: the symbol <var>W</var> means work, but the unit W means watt.</li>
+            </ul>
+            <div class="lab" data-lab="power">
+              <div class="lab-top"><span class="lab-title">Lab 3 · Stair race</span><span class="muted" style="font-size:.85rem">Same stairs, same work, different power</span></div>
+              <div class="lab-stage"><canvas role="img" aria-label="Two students climbing identical stairs, one walking and one running"></canvas></div>
+              <div class="lab-controls">
+                <div>
+                  <div class="ctrl"><label for="p-m">Mass of each student <var>m</var></label><output for="p-m"></output><input id="p-m" name="m" type="range" min="30" max="80" step="5" value="50" /></div>
+                  <div class="ctrl"><label for="p-h">Height of the stairs <var>h</var></label><output for="p-h"></output><input id="p-h" name="h" type="range" min="3" max="15" step="1" value="6" /></div>
+                  <div class="ctrl"><label for="p-tw">Time taken walking</label><output for="p-tw"></output><input id="p-tw" name="twalk" type="range" min="5" max="60" step="1" value="30" /></div>
+                  <div class="ctrl"><label for="p-tr">Time taken running</label><output for="p-tr"></output><input id="p-tr" name="trun" type="range" min="2" max="30" step="1" value="6" /></div>
+                </div>
+                <div>
+                  <div class="stats">
+                    <div class="stat"><b data-stat="w">–</b><span>work against gravity</span></div>
+                    <div class="stat"><b data-stat="ratio">–</b><span>runner's power ÷ walker's</span></div>
+                    <div class="stat"><b data-stat="pwalk">–</b><span>walker's power</span></div>
+                    <div class="stat"><b data-stat="prun">–</b><span>runner's power</span></div>
+                  </div>
+                  <div class="lab-actions"><button class="btn btn-sm btn-primary" type="button" data-action="play">Race ▶</button></div>
+                  <p class="lab-note" data-note aria-live="polite"></p>
+                </div>
+              </div>
+            </div>
+            <p class="mistake">Spotted a mistake? <a data-mistake="7.5 Power" href="/about/#mistakes">Tell us</a></p>
+          </section>
+
+          <!-- ===================================================================== 7.6 MACHINES -->
+          <section class="topic" id="machines">
+            <h2><span class="num">7.6</span> Simple machines</h2>
+            <p>The total work needed for a job can't be reduced. But a <strong>simple machine</strong> can make the job easier by changing the <em>size</em> or the <em>direction</em> of the force you have to apply. The force you apply is the <strong>effort</strong>. The force to be overcome is the <strong>load</strong>.</p>
+            <div class="formula">
+              <span class="eq">mechanical advantage = load / effort</span>
+              <span class="where">MA greater than 1 means the machine lets a small effort move a big load</span>
+            </div>
+            <h3>Pulley</h3>
+            <p>A <strong>fixed pulley</strong> is a grooved wheel that guides a rope. It does not reduce the force (effort = load, so MA = 1). It just lets you pull <em>down</em> to lift something <em>up</em>, which is easier. <em>Beyond the core:</em> movable pulleys and systems of pulleys can have MA greater than 1, as in cranes and lifts.</p>
+            <h3>Inclined plane</h3>
+            <p>To get a load of weight <var>mg</var> up a height <var>h</var>, you can push it along a smooth ramp of length <var>L</var> instead of lifting it. If you push it at a steady speed with effort <var>F</var>′, then ignoring friction the work you do equals the potential energy it gains:</p>
+            <div class="formula">
+              <span class="eq"><var>F</var>′ × <var>L</var> = <var>mgh</var> &nbsp;⇒&nbsp; MA = <var>mg</var> / <var>F</var>′ = <var>L</var> / <var>h</var></span>
+              <span class="where">a longer, gentler ramp needs less effort, but over a longer distance</span>
+            </div>
+            <h3>Lever</h3>
+            <p>A <strong>lever</strong> is a rigid bar that turns about a fixed point, the <strong>fulcrum</strong>. The distance from the fulcrum to the load is the <strong>load arm</strong>. The distance from the fulcrum to the effort is the <strong>effort arm</strong>. The effort end moves a larger distance <var>d</var><sub>1</sub> with a small force <var>F</var><sub>1</sub>. The load end moves a smaller distance <var>d</var><sub>2</sub> with a larger force <var>F</var><sub>2</sub>. The work in equals the work out, <var>F</var><sub>1</sub> × <var>d</var><sub>1</sub> = <var>F</var><sub>2</sub> × <var>d</var><sub>2</sub>, and the lever balances when:</p>
+            <div class="formula">
+              <span class="eq">effort × effort arm = load × load arm</span>
+              <span class="where">so MA = load / effort = effort arm / load arm</span>
+            </div>
+            <div class="lab" data-lab="machines">
+              <div class="lab-top"><span class="lab-title">Lab 4 · Machines</span>
+                <div class="seg" role="group" aria-label="Machine" style="margin:0">
+                  <button type="button" data-machine="incline" aria-pressed="true">Inclined plane</button>
+                  <button type="button" data-machine="lever" aria-pressed="false">Lever</button>
+                  <button type="button" data-machine="pulley" aria-pressed="false">Fixed pulley</button>
+                </div>
+              </div>
+              <div class="lab-stage"><canvas role="img" aria-label="A simple machine with its load, effort and mechanical advantage"></canvas></div>
+              <div class="lab-controls">
+                <div>
+                  <div data-for="incline">
+                    <div class="ctrl"><label for="m-im">Mass of the box <var>m</var></label><output for="m-im"></output><input id="m-im" name="im" type="range" min="5" max="100" step="5" value="40" /></div>
+                    <div class="ctrl"><label for="m-ih">Height <var>h</var></label><output for="m-ih"></output><input id="m-ih" name="ih" type="range" min="0.2" max="2" step="0.1" value="1" /></div>
+                    <div class="ctrl"><label for="m-iL">Ramp length <var>L</var></label><output for="m-iL"></output><input id="m-iL" name="iL" type="range" min="0.2" max="6" step="0.1" value="4" /></div>
+                  </div>
+                  <div data-for="lever" hidden>
+                    <div class="ctrl"><label for="m-lload">Load</label><output for="m-lload"></output><input id="m-lload" name="lload" type="range" min="50" max="600" step="10" value="400" /></div>
+                    <div class="ctrl"><label for="m-ld2">Load arm</label><output for="m-ld2"></output><input id="m-ld2" name="ld2" type="range" min="0.1" max="1.5" step="0.05" value="0.5" /></div>
+                    <div class="ctrl"><label for="m-ld1">Effort arm</label><output for="m-ld1"></output><input id="m-ld1" name="ld1" type="range" min="0.1" max="3" step="0.05" value="2" /></div>
+                    <div class="ctrl"><label for="m-leff">Effort you apply</label><output for="m-leff"></output><input id="m-leff" name="leff" type="range" min="0" max="600" step="5" value="60" /></div>
+                  </div>
+                  <div data-for="pulley" hidden>
+                    <div class="ctrl"><label for="m-pload">Load</label><output for="m-pload"></output><input id="m-pload" name="pload" type="range" min="10" max="300" step="10" value="100" /></div>
+                    <div class="ctrl"><label for="m-ppull">Pull the rope down by</label><output for="m-ppull"></output><input id="m-ppull" name="ppull" type="range" min="0" max="1.5" step="0.05" value="0.5" /></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="stats">
+                    <div class="stat"><b data-stat="a">–</b><span data-stat-label></span></div>
+                    <div class="stat"><b data-stat="b">–</b><span data-stat-label></span></div>
+                    <div class="stat"><b data-stat="c">–</b><span data-stat-label></span></div>
+                    <div class="stat"><b data-stat="d">–</b><span data-stat-label></span></div>
+                  </div>
+                  <div class="lab-actions"><button class="btn btn-sm" type="button" data-action="balance" hidden>Find the balancing effort</button></div>
+                  <p class="lab-note" data-note aria-live="polite"></p>
+                </div>
+              </div>
+            </div>
+            <figure class="clip">
+              <video controls preload="none" playsinline muted poster="/clips/same-work.jpg" aria-label="Animation: a ramp and a lever reduce the force but not the work">
+                <source src="/clips/same-work.mp4" type="video/mp4" />
+              </video>
+              <figcaption>Animation (26 s, no sound): lifting a 100 N box by 1 m takes 100 J, straight up or along a 4 m ramp. A lever with arms of 2 m and 0.5 m lets a 100 N effort lift a 400 N load, with the same work at both ends.</figcaption>
+            </figure>
+            <div class="key go"><span class="key-title">Beyond the core: classes of levers</span>
+              <p><strong>Class I</strong>: fulcrum in the middle (seesaw, scissors, crowbar, pliers, beam balance). <strong>Class II</strong>: load in the middle (wheelbarrow, bottle opener, lemon squeezer). <strong>Class III</strong>: effort in the middle (tweezers, broom, hammer, oar).</p>
+            </div>
+            <p>Machines don't create energy. Ignoring friction, the work you put in equals the useful work done on the load. That is why no "perpetual motion machine" can ever work.</p>
+            <p class="mistake">Spotted a mistake? <a data-mistake="7.6 Simple machines" href="/about/#mistakes">Tell us</a></p>
+          </section>
+
+          <!-- ===================================================================== WORKED EXAMPLES -->
+          <section class="topic" id="examples">
+            <h2>Worked examples, solved our way</h2>
+            <p>These are the numerical examples in the chapter (Examples 7.1–7.13), solved step by step. Each one ends with a <span class="check">second way</span> line: the same answer reached by a different route, so you can see it really is right.</p>
+
+            <details class="solve"><summary><span class="tag">Ex 7.1</span> Dumbbell lifted, then lowered slowly</summary><div class="inner">
+              <ol class="steps-list">
+                <li>Going up: the girl's upward force and the displacement are both upwards, so she does <strong>positive</strong> work.</li>
+                <li>Coming down slowly: she still pushes upwards, but the dumbbell moves down, opposite to her force, so she does <strong>negative</strong> work.</li>
+              </ol></div></details>
+
+            <details class="solve"><summary><span class="tag">Ex 7.2</span> Goalkeeper's hands move back 15 cm with a 200 N force</summary><div class="inner">
+              <ol class="steps-list">
+                <li>Convert: 15 cm = 0.15 m.</li>
+                <li>The ball moves <em>opposite</em> to her force, so its displacement along the force is −0.15 m.</li>
+                <li><var>W</var> = <var>F</var> × <var>s</var> = 200 N × (−0.15 m).</li>
+              </ol>
+              <span class="answer" data-check="ex7.2" data-value="-30">W = −30 J (negative work on the ball)</span>
+              <p class="check">the ball loses 30 J of kinetic energy while it is being stopped, which fits the work–energy theorem.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Ex 7.3</span> Carrom: striker → white coin → black coin</summary><div class="inner">
+              <p>The striker pushes the white coin along the white coin's displacement, so it does positive work on it and the white coin gains energy. By Newton's third law, the white coin pushes back on the striker, against the striker's motion, so it does negative work on the striker and the striker loses energy. The same happens between the white coin (positive work on the black coin) and the black coin (negative work on the white coin).</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Ex 7.4</span> Speed doubles: what happens to kinetic energy?</summary><div class="inner">
+              <ol class="steps-list">
+                <li>Before: <var>K</var> = ½<var>mv</var><sup>2</sup>.</li>
+                <li>After: ½<var>m</var>(2<var>v</var>)<sup>2</sup> = ½<var>m</var> × 4<var>v</var><sup>2</sup> = 4 × ½<var>mv</var><sup>2</sup>.</li>
+              </ol>
+              <span class="answer" data-check="ex7.4" data-value="4">4 times the original kinetic energy</span>
+              <p class="check">try numbers: 1 kg at 2 m s<sup>−1</sup> has 2 J, and at 4 m s<sup>−1</sup> it has 8 J. 8 ÷ 2 = 4.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Ex 7.5</span> Cricket ball, 0.2 kg at 154.8 km h<sup>−1</sup></summary><div class="inner">
+              <ol class="steps-list">
+                <li>Convert to SI: 154.8 km h<sup>−1</sup> = 154.8 × 1000 m ÷ 3600 s = 43 m s<sup>−1</sup>.</li>
+                <li><var>K</var> = ½ × 0.2 kg × (43 m s<sup>−1</sup>)<sup>2</sup> = 0.1 × 1849 J.</li>
+              </ol>
+              <span class="answer" data-check="ex7.5" data-value="184.9">K = 184.9 J</span>
+              <p class="check">dividing by 3.6 also converts km h<sup>−1</sup> to m s<sup>−1</sup>: 154.8 ÷ 3.6 = 43 ✓.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Ex 7.6</span> Jet (15000 kg) stopped by a wire: 367500 N over 100 m</summary><div class="inner">
+              <ol class="steps-list">
+                <li>The wire's force is backwards and the jet moves forwards, so the wire's work is negative: <var>W</var> = 367500 N × (−100 m) = −36750000 J.</li>
+                <li>Change in kinetic energy = final − initial = 0 − ½ × 15000 kg × <var>v</var><sup>2</sup>.</li>
+                <li>Work–energy theorem: −7500 <var>v</var><sup>2</sup> = −36750000, so <var>v</var><sup>2</sup> = 4900 m<sup>2</sup> s<sup>−2</sup>.</li>
+              </ol>
+              <span class="answer" data-check="ex7.6" data-value="70">v = 70 m s⁻¹ (= 252 km h⁻¹)</span>
+              <p class="check">with forces and motion: deceleration <var>a</var> = 367500 ÷ 15000 = 24.5 m s<sup>−2</sup>. Then <var>v</var><sup>2</sup> = 2<var>as</var> = 2 × 24.5 × 100 = 4900, so <var>v</var> = 70 m s<sup>−1</sup> ✓.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Ex 7.7</span> 200 g ball thrown 10 m up</summary><div class="inner">
+              <ol class="steps-list">
+                <li>Convert: 200 g = 0.2 kg.</li>
+                <li><var>U</var> = <var>mgh</var> = 0.2 kg × 10 m s<sup>−2</sup> × 10 m.</li>
+              </ol>
+              <span class="answer" data-check="ex7.7" data-value="20">U = 20 J</span>
+              <p class="check">to reach 10 m it must leave the hand at √(2<var>gh</var>) = √200 m s<sup>−1</sup>. That is a kinetic energy of ½ × 0.2 × 200 = 20 J ✓.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Ex 7.8</span> Speed at the bottom of a slide of height h</summary><div class="inner">
+              <ol class="steps-list">
+                <li>Top: potential energy <var>mgh</var>, kinetic energy 0 (starts from rest).</li>
+                <li>Bottom: potential energy 0, kinetic energy ½<var>mv</var><sup>2</sup>. With no friction, nothing is lost.</li>
+                <li>½<var>mv</var><sup>2</sup> = <var>mgh</var> ⇒ <var>v</var> = √(2<var>gh</var>).</li>
+              </ol>
+              <span class="answer">v = √(2gh): it doesn't depend on the child's mass or the slide's shape</span>
+              <p class="check">a free fall from the same height gives <var>v</var><sup>2</sup> = 2<var>gh</var> from the equations of motion, the same answer. Lab 2 shows it for four different shapes.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Ex 7.9</span> Truck (10000 kg, 72 km h<sup>−1</sup>) on a 30° sand ramp, 50000 N resistance</summary><div class="inner">
+              <ol class="steps-list">
+                <li>Speed: 72 km h<sup>−1</sup> = 20 m s<sup>−1</sup>. Kinetic energy = ½ × 10000 × 20<sup>2</sup> = 2000000 J.</li>
+                <li>Let the truck go a distance <var>d</var> up the ramp. On a 30° ramp it rises <var>d</var>/2, so it gains potential energy <var>mg</var> × <var>d</var>/2 = 10000 × 10 × <var>d</var>/2 = 50000<var>d</var> J.</li>
+                <li>The sand does work −50000<var>d</var> J (force opposite to the motion).</li>
+                <li>Work–energy theorem: −50000<var>d</var> = (0 + 50000<var>d</var>) − (2000000 + 0), so 100000<var>d</var> = 2000000.</li>
+              </ol>
+              <span class="answer" data-check="ex7.9" data-value="20">d = 20 m (the minimum ramp length)</span>
+              <p class="check">along the ramp, two things slow the truck: the sand (50000 N) and the part of gravity along the slope (<var>mg</var>/2 = 50000 N). The total is 100000 N, so 2000000 J ÷ 100000 N = 20 m ✓.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Ex 7.10</span> 75 kg lifted 2 m in 5 s</summary><div class="inner">
+              <ol class="steps-list">
+                <li>Work = <var>mgh</var> = 75 × 10 × 2 = 1500 J.</li>
+                <li><var>P</var> = <var>W</var> / <var>t</var> = 1500 J ÷ 5 s.</li>
+              </ol>
+              <span class="answer" data-check="ex7.10" data-value="300">P = 300 W</span>
+              <p class="check">force 750 N × average speed (2 m ÷ 5 s = 0.4 m s<sup>−1</sup>) = 300 W ✓.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Ex 7.11</span> Car (1000 kg) from rest to 72 km h<sup>−1</sup> in 10 s</summary><div class="inner">
+              <ol class="steps-list">
+                <li><var>v</var> = 72 km h<sup>−1</sup> = 20 m s<sup>−1</sup>, <var>u</var> = 0.</li>
+                <li>Work by the engine = gain in kinetic energy = ½ × 1000 × 20<sup>2</sup> − 0 = 200000 J.</li>
+                <li><var>P</var> = 200000 J ÷ 10 s.</li>
+              </ol>
+              <span class="answer" data-check="ex7.11" data-value="20000">P = 20000 W (20 kW)</span>
+              <p class="check">with steady acceleration: <var>a</var> = 20 ÷ 10 = 2 m s<sup>−2</sup>, <var>F</var> = <var>ma</var> = 2000 N, <var>s</var> = ½ × 2 × 10<sup>2</sup> = 100 m. Then <var>W</var> = 2000 × 100 = 200000 J ✓.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Ex 7.12</span> Ramp over a 30 cm step, 40 cm wide</summary><div class="inner">
+              <ol class="steps-list">
+                <li>The ramp is the long side of a right-angled triangle: <var>L</var> = √(30<sup>2</sup> + 40<sup>2</sup>) = √2500 = 50 cm.</li>
+                <li>MA = <var>L</var> / <var>h</var> = 50 cm ÷ 30 cm = 5/3.</li>
+              </ol>
+              <span class="answer" data-check="ex7.12" data-value="1.67">MA = 5/3 ≈ 1.67</span>
+              <p class="check">effort <var>F</var>′ = load × <var>h</var>/<var>L</var> = 0.6 × load, and load ÷ (0.6 × load) = 1.67 ✓.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Ex 7.13</span> Seesaw seats at 2 m and 1 m, children of 15 kg and 30 kg</summary><div class="inner">
+              <ol class="steps-list">
+                <li>Balance: (weight × distance) on one side = (weight × distance) on the other. Weight = <var>mg</var> and <var>g</var> cancels, so we can use the masses.</li>
+                <li>Lighter child on the 2 m seat: 15 × 2 = 30 × <var>L</var> ⇒ <var>L</var> = 1 m.</li>
+              </ol>
+              <span class="answer" data-check="ex7.13" data-value="1">15 kg child on an outer seat (2 m), 30 kg child on the inner seat on the other side (1 m)</span>
+              <p class="check">15 kg × 2 m = 30 kg·m = 30 kg × 1 m ✓. The lighter child must sit farther out. Putting them the other way round (15 kg at 1 m) would need the 30 kg child at 0.5 m, and there is no seat there.</p></div></details>
+            <p class="mistake">Spotted a mistake? <a data-mistake="Worked examples" href="/about/#mistakes">Tell us</a></p>
+          </section>
+
+          <!-- ===================================================================== PAUSE AND PONDER -->
+          <section class="topic" id="ponder">
+            <h2>Pause and Ponder: short answers</h2>
+            <p>Try each question in your book first, then check here (numbers 1–13 match the book).</p>
+            <details class="solve"><summary><span class="tag">1–3</span> Holding a barbell · friction on sliding coins · pedalling</summary><div class="inner">
+              <p><strong>1.</strong> No. Holding it steady means zero displacement, so no work is done on the barbell, even though she gets tired.</p>
+              <p><strong>2.</strong> Negative. Friction acts opposite to the coins' displacement.</p>
+              <p><strong>3.</strong> Chemical energy from food, through your muscles, becomes the kinetic energy of you and the bicycle. Some becomes heat (friction, air resistance) and a little becomes sound.</p></div></details>
+            <details class="solve"><summary><span class="tag">4–6</span> Same KE, different masses · constant velocity · moving sideways</summary><div class="inner">
+              <p><strong>4.</strong> ½<var>m</var><var>v</var><sub>A</sub><sup>2</sup> = ½(4<var>m</var>)<var>v</var><sub>B</sub><sup>2</sup> ⇒ <var>v</var><sub>A</sub><sup>2</sup> = 4<var>v</var><sub>B</sub><sup>2</sup> ⇒ <var>v</var><sub>A</sub> : <var>v</var><sub>B</sub> = <span data-check="pp4" data-value="2">2</span> : 1.</p>
+              <p><strong>5.</strong> No. <var>K</var> = ½<var>mv</var><sup>2</sup> depends only on mass and speed, not on where the object is.</p>
+              <p><strong>6.</strong> Moving horizontally, the height doesn't change, so the potential energy stays the same. Raised vertically, <var>h</var> increases, so <var>U</var> = <var>mgh</var> increases.</p></div></details>
+            <details class="solve"><summary><span class="tag">7–8</span> Just before hitting the ground · ball roller coaster</summary><div class="inner">
+              <p><strong>7.</strong> Just before landing, <var>h</var>′ = 0, so <var>U</var> = 0. Its speed satisfies <var>v</var><sup>2</sup> = 2<var>gh</var>, so <var>K</var> = ½<var>m</var>(2<var>gh</var>) = <var>mgh</var>. Mechanical energy = 0 + <var>mgh</var> = <var>mgh</var>.</p>
+              <p><strong>8.</strong> High points have more potential energy and less kinetic energy. Low points have more kinetic energy and less potential energy. Each later hump is lower because friction (and air resistance) turns some mechanical energy into heat, so the ball can't climb back as high. Yes, it's friction.</p></div></details>
+            <details class="solve"><summary><span class="tag">9–10</span> Winding hill roads · inclined ladder</summary><div class="inner">
+              <p><strong>9.</strong> A road that winds up gently is a long inclined plane. A longer path <var>L</var> for the same rise <var>h</var> means a bigger MA = <var>L</var>/<var>h</var>, so vehicles need a smaller force to climb, although they travel farther.</p>
+              <p><strong>10.</strong> An inclined ladder works like an inclined plane: you rise the same height over a longer path, so each step needs less effort than climbing straight up.</p></div></details>
+            <details class="solve"><summary><span class="tag">11–13</span> Spoon as a lid-opener · scissors · perpetual motion</summary><div class="inner">
+              <p><strong>11.</strong> The spoon is a lever. The rim of the can is the fulcrum, the short tip under the lid is the load arm, and the long handle is the effort arm. MA = effort arm ÷ load arm is large, so a small push gives a big force on the lid.</p>
+              <p><strong>12.</strong> Near the fulcrum the load arm is short, so for the same effort the blades press much harder on the object (MA = effort arm ÷ load arm grows).</p>
+              <p><strong>13.</strong> Friction and air resistance always do negative work on a moving machine and turn its mechanical energy into heat. A machine can't create energy, so with no fuel or electricity coming in, its energy runs out and it stops.</p></div></details>
+            <p class="mistake">Spotted a mistake? <a data-mistake="Pause and Ponder" href="/about/#mistakes">Tell us</a></p>
+          </section>
+
+          <!-- ===================================================================== EXERCISES -->
+          <section class="topic" id="exercises">
+            <h2>Exercises 1–15: step-by-step solutions</h2>
+            <p>The questions are in the "Revise, Reflect, Refine" section at the end of the chapter in your book. Read each question there first, try it yourself, then open our solution. <var>g</var> = 10 m s<sup>−2</sup> wherever the question says so.</p>
+
+            <details class="solve"><summary><span class="tag">Q1</span> True or false (i)–(v)</summary><div class="inner">
+              <p>(i) <span class="pill f">False</span> No displacement means no work. &nbsp;(ii) <span class="pill t">True</span> The lifting force and the displacement are both upwards. &nbsp;(iii) <span class="pill t">True</span> Both are measured in joules. &nbsp;(iv) <span class="pill f">False</span> It isn't moving, so its kinetic energy is zero. It has potential energy because of its stretched shape. &nbsp;(v) <span class="pill t">True</span></p></div></details>
+
+            <details class="solve"><summary><span class="tag">Q2</span> Fill in the blanks (i)–(v)</summary><div class="inner">
+              <p>(i) force × displacement &nbsp;(ii) 1 &nbsp;(iii) ½<var>mv</var><sup>2</sup> &nbsp;(iv) <var>mgh</var> &nbsp;(v) rate</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Q3</span> Ball at its highest point: which statements are correct?</summary><div class="inner">
+              <ol class="steps-list">
+                <li>(i) Wrong. Gravity (its weight <var>mg</var>) still acts on it at the top.</li>
+                <li>(ii) Wrong. Its acceleration is still <var>g</var>, downwards. Its <em>velocity</em> is zero for an instant, not its acceleration.</li>
+                <li>(iii) Correct. Thrown straight up, it stops for an instant at the top, so <var>K</var> = 0.</li>
+                <li>(iv) Correct. That is its greatest height, so <var>U</var> = <var>mgh</var> is greatest.</li>
+              </ol>
+              <span class="answer">(iii) and (iv)</span></div></details>
+
+            <details class="solve"><summary><span class="tag">Q4</span> Energy changes in nine situations</summary><div class="inner">
+              <div class="tbl-wrap"><table class="tbl"><tbody>
+                <tr><td>(i) truck moving uphill</td><td>chemical (fuel) → kinetic + potential energy (some heat and sound)</td></tr>
+                <tr><td>(ii) watch spring unwinding</td><td>potential energy of the wound spring → kinetic energy of the gears and hands</td></tr>
+                <tr><td>(iii) photosynthesis</td><td>light → chemical energy (in food made by the leaf)</td></tr>
+                <tr><td>(iv) water flowing from a dam</td><td>potential → kinetic energy (→ electrical, if it turns a turbine)</td></tr>
+                <tr><td>(v) burning matchstick</td><td>chemical → heat and light</td></tr>
+                <tr><td>(vi) fire cracker exploding</td><td>chemical → heat, light, sound and kinetic energy</td></tr>
+                <tr><td>(vii) speaking into a microphone</td><td>sound → electrical energy</td></tr>
+                <tr><td>(viii) glowing bulb</td><td>electrical → light and heat</td></tr>
+                <tr><td>(ix) solar panel</td><td>light → electrical energy</td></tr>
+              </tbody></table></div></div></details>
+
+            <details class="solve"><summary><span class="tag">Q5</span> Student (50 kg) to the top of a 72.5 m building: lift vs stairs</summary><div class="inner">
+              <ol class="steps-list">
+                <li>(i) Gain in potential energy = <var>mgh</var> = 50 × 10 × 72.5 J.</li>
+                <li>(ii) By the stairs, the start and end heights are the same, so the gain is the same.</li>
+                <li>(iii) Gravitational potential energy depends only on the height reached, not on the path taken.</li>
+              </ol>
+              <span class="answer" data-check="q5" data-value="36250">36250 J in both cases</span>
+              <p class="check">50 × 72.5 = 3625, and × 10 = 36250 ✓.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Q6</span> Crane: to the 10th floor in time t, then to the 20th floor in time 2t</summary><div class="inner">
+              <ol class="steps-list">
+                <li>Let each floor be <var>h</var><sub>0</sub> high. Lifting to the 10th floor: <var>W</var><sub>1</sub> = <var>mg</var> × 10<var>h</var><sub>0</sub>. To the 20th floor: <var>W</var><sub>2</sub> = <var>mg</var> × 20<var>h</var><sub>0</sub> = 2<var>W</var><sub>1</sub>.</li>
+                <li>Power: <var>P</var><sub>1</sub> = <var>W</var><sub>1</sub>/<var>t</var> and <var>P</var><sub>2</sub> = 2<var>W</var><sub>1</sub>/(2<var>t</var>) = <var>P</var><sub>1</sub>.</li>
+              </ol>
+              <span class="answer" data-check="q6" data-value="2">Twice the energy (W more), but the same power</span>
+              <p class="check">If you read the second trip as starting from the 10th floor instead, it lifts another 10 floors (energy <var>W</var><sub>1</sub>, the same as the first trip) in time 2<var>t</var>, so it needs half the power. Either way, the energy depends only on the height lifted.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Q7</span> Raising a flag with a pulley: what decides the energy, and does speed matter?</summary><div class="inner">
+              <ol class="steps-list">
+                <li>The energy needed is the work against gravity, <var>mgh</var>. It depends on the flag's mass (its weight) and the height of the pole (ignoring friction in the pulley).</li>
+                <li>Slow or quick, the flag ends at the same height and at rest, so the work done is the same.</li>
+                <li>Doubling the speed halves the time, so <var>P</var> = <var>W</var>/<var>t</var> doubles.</li>
+              </ol>
+              <span class="answer" data-check="q7" data-value="2">Work: the same · Power: doubles</span></div></details>
+
+            <details class="solve"><summary><span class="tag">Q8</span> Scooter: 160 kg on day 1, 200 kg on day 2, same speed</summary><div class="inner">
+              <ol class="steps-list">
+                <li>Day 1 mass: 60 + 100 = 160 kg. Day 2: 160 + 40 = 200 kg.</li>
+                <li>All the fuel's energy becomes kinetic energy ½<var>Mv</var><sup>2</sup>. With the same <var>v</var>, the fuel used is proportional to <var>M</var>.</li>
+                <li>Ratio = 160 : 200.</li>
+              </ol>
+              <span class="answer" data-check="q8" data-value="0.8">4 : 5</span>
+              <p class="check">½ × 160 × <var>v</var><sup>2</sup> = 80<var>v</var><sup>2</sup> and ½ × 200 × <var>v</var><sup>2</sup> = 100<var>v</var><sup>2</sup>. 80 : 100 = 4 : 5 ✓. The "same time" only matters for power, not for energy.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Q9</span> Seesaw: the adult weighs twice the child</summary><div class="inner">
+              <p>Balance needs child's weight × child's distance = adult's weight × adult's distance. If the child weighs <var>W</var> and the adult 2<var>W</var>: <var>W</var> × <var>d</var><sub>child</sub> = 2<var>W</var> × <var>d</var><sub>adult</sub>, so <strong>the child sits twice as far from the fulcrum as the adult</strong>.</p>
+              <svg class="fig" viewBox="0 0 520 170" role="img" aria-label="Seesaw: adult 1 m from the fulcrum, child 2 m from it on the other side">
+                <line x1="40" y1="100" x2="480" y2="100" stroke="#f2f4f8" stroke-width="6" stroke-linecap="round"/>
+                <polygon points="260,100 238,140 282,140" fill="#5a6270"/>
+                <text x="260" y="158" fill="#9aa3b2" font-size="13" text-anchor="middle">fulcrum</text>
+                <circle cx="370" cy="62" r="24" fill="#00b3ff"/><text x="370" y="67" fill="#001018" font-size="13" font-weight="700" text-anchor="middle">2W</text>
+                <text x="370" y="28" fill="#00b3ff" font-size="13" text-anchor="middle">adult</text>
+                <circle cx="70" cy="76" r="16" fill="#ff7a1a"/><text x="70" y="81" fill="#1a0a00" font-size="12" font-weight="700" text-anchor="middle">W</text>
+                <text x="70" y="50" fill="#ff7a1a" font-size="13" text-anchor="middle">child</text>
+                <line x1="70" y1="120" x2="258" y2="120" stroke="#ff7a1a" stroke-width="2"/><text x="164" y="135" fill="#ff7a1a" font-size="13" text-anchor="middle">2 m</text>
+                <line x1="262" y1="120" x2="370" y2="120" stroke="#00b3ff" stroke-width="2"/><text x="316" y="135" fill="#00b3ff" font-size="13" text-anchor="middle">1 m</text>
+              </svg>
+              <span class="answer" data-check="q9" data-value="2">child's distance = 2 × adult's distance (e.g. 2 m and 1 m)</span></div></details>
+
+            <details class="solve"><summary><span class="tag">Q10</span> 2 kg ball thrown up at 20 m s<sup>−1</sup>, reaches 19.4 m</summary><div class="inner">
+              <ol class="steps-list">
+                <li>(i) Going up, gravity (down) is opposite to the displacement (up), so its work is <strong>negative</strong>. Coming down, both point down, so its work is <strong>positive</strong>.</li>
+                <li>(ii) Start: <var>K</var> = ½ × 2 × 20<sup>2</sup> = 400 J, <var>U</var> = 0. At the top: <var>K</var> = 0, <var>U</var> = 2 × 10 × 19.4 = 388 J.</li>
+                <li>Mechanical energy fell from 400 J to 388 J. The only other force is air resistance, so its work = 388 − 400.</li>
+              </ol>
+              <span class="answer" data-check="q10" data-value="-12">Work done by air resistance = −12 J</span>
+              <p class="check">without air, the ball would rise to <var>u</var><sup>2</sup>/2<var>g</var> = 400/20 = 20 m. It only reached 19.4 m, and the 0.6 m it "lost" × <var>mg</var> (20 N) = 12 J ✓.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Q11</span> 10 kg block, variable force (graph), KE 180 J at 0 m</summary><div class="inner">
+              <p>Reading the graph in the book: the force rises steadily from 0 to 50 N between 0 and 1 m, stays at 50 N from 1 m to 3 m, then falls steadily back to 0 at 4 m.</p>
+              <ol class="steps-list">
+                <li>(i) At 0 m: ½ × 10 × <var>v</var><sup>2</sup> = 180 ⇒ <var>v</var><sup>2</sup> = 36.</li>
+                <li>Work from 0 to 4 m = area under the graph = triangle + rectangle + triangle = ½ × 1 × 50 + 2 × 50 + ½ × 1 × 50 = 25 + 100 + 25 = 150 J.</li>
+                <li>(ii) <var>K</var> at 4 m = 180 + 150 = 330 J ⇒ 5<var>v</var><sup>2</sup> = 330 ⇒ <var>v</var><sup>2</sup> = 66.</li>
+              </ol>
+              <span class="answer" data-check="q11a" data-value="6">speed at 0 m = 6 m s⁻¹</span>
+              <span class="answer" data-check="q11b" data-value="8.12">speed at 4 m = √66 ≈ 8.12 m s⁻¹</span>
+              <p><strong>Negative acceleration?</strong> No. The force always points along the motion, or is zero at the very ends, and friction is negligible. So the block never slows down. It speeds up all the way, fastest-changing between 1 m and 3 m, where <var>a</var> = 50/10 = 5 m s<sup>−2</sup>.</p>
+              <p class="check">trapezium area = ½ × (4 + 2) × 50 = 150 J ✓.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Q12</span> Ball thrown to 8 m on Earth: how high on the Moon?</summary><div class="inner">
+              <ol class="steps-list">
+                <li>Same throwing speed <var>u</var>, so the same starting kinetic energy ½<var>mu</var><sup>2</sup>.</li>
+                <li>At the top it is all potential energy: <var>mgh</var> = ½<var>mu</var><sup>2</sup> ⇒ <var>h</var> = <var>u</var><sup>2</sup>/2<var>g</var>. So <var>h</var> is proportional to 1/<var>g</var>.</li>
+                <li>On the Moon <var>g</var> is ⅙ as big, so <var>h</var> is 6 times as big: 6 × 8 m.</li>
+              </ol>
+              <span class="answer" data-check="q12" data-value="48">48 m</span>
+              <p class="check">on Earth, <var>u</var><sup>2</sup> = 2 × 10 × 8 = 160. On the Moon (<var>g</var> = 10/6), <var>h</var> = 160 ÷ (2 × 10/6) = 160 × 6/20 = 48 m ✓.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Q13</span> 1000 kg car braking (speed–time graph A → B → C)</summary><div class="inner">
+              <p>From the graph: A to B, the speed stays at 35 m s<sup>−1</sup> for 1 s. B to C, it falls steadily to 0 by 3 s.</p>
+              <ol class="steps-list">
+                <li>(i) A to B: uniform motion at 35 m s<sup>−1</sup>, covering 35 m. This is the driver's reaction time, before the brakes act.</li>
+                <li>(ii) <var>K</var> at A = ½ × 1000 × 35<sup>2</sup> = 500 × 1225 J.</li>
+                <li>(iii) The car ends at rest, so the brakes' work = change in <var>K</var> = 0 − 612500 J (negative, because the braking force is opposite to the motion).</li>
+                <li>(iv) Mostly into heat (thermal energy) in the brakes, tyres and road, plus a little sound.</li>
+              </ol>
+              <span class="answer" data-check="q13a" data-value="612500">K at A = 612500 J</span>
+              <span class="answer" data-check="q13b" data-value="-612500">work by brakes = −612500 J</span>
+              <p class="check">braking force = <var>ma</var> = 1000 × (35 ÷ 2) = 17500 N. Distance B to C = area of the triangle = ½ × 2 × 35 = 35 m. 17500 × 35 = 612500 J ✓.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Q14</span> 0.5 kg ball on a frictionless track: speed at P, Q and R</summary><div class="inner">
+              <p>From the graph: at O, <var>U</var> = 30 J and <var>v</var> = 0. At P, <var>U</var> = 20 J. At Q, <var>U</var> = 30 J. At R, <var>U</var> = 40 J.</p>
+              <ol class="steps-list">
+                <li>Total mechanical energy = <var>K</var> + <var>U</var> at O = 0 + 30 = 30 J. With no friction, it stays 30 J everywhere.</li>
+                <li>P: <var>K</var> = 30 − 20 = 10 J ⇒ ½ × 0.5 × <var>v</var><sup>2</sup> = 10 ⇒ <var>v</var><sup>2</sup> = 40.</li>
+                <li>Q: <var>K</var> = 30 − 30 = 0 ⇒ <var>v</var> = 0. The ball stops for an instant and rolls back.</li>
+                <li>R: it would need <var>U</var> = 40 J, more than the 30 J it has. So <strong>the ball never reaches R</strong>. It turns back at Q.</li>
+              </ol>
+              <span class="answer" data-check="q14p" data-value="6.32">P: √40 ≈ 6.32 m s⁻¹</span>
+              <span class="answer" data-check="q14q" data-value="0">Q: 0 m s⁻¹</span>
+              <span class="answer">R: not reached</span>
+              <p class="check">at P, ½ × 0.5 × 6.32<sup>2</sup> ≈ 0.25 × 40 = 10 J, and 10 + 20 = 30 J ✓. Try the "Valley" track in Lab 2 with no friction: the ball never climbs above its start height.</p></div></details>
+
+            <details class="solve"><summary><span class="tag">Q15</span> 1.5 kg coconut falls 10 m into sand (3000 N resistance)</summary><div class="inner">
+              <ol class="steps-list">
+                <li>(i) ½<var>mv</var><sup>2</sup> = <var>mgh</var> ⇒ <var>v</var> = √(2 × 10 × 10) = √200 m s<sup>−1</sup>.</li>
+                <li>(ii) Energy just before impact: ½ × 1.5 × 200 = 150 J (= <var>mgh</var> = 1.5 × 10 × 10 ✓).</li>
+                <li>The sand stops it, doing work −3000 N × <var>d</var>. All 150 J is used up: 3000 × <var>d</var> = 150 ⇒ <var>d</var> = 0.05 m.</li>
+              </ol>
+              <span class="answer" data-check="q15a" data-value="14.14">v = √200 ≈ 14.14 m s⁻¹</span>
+              <span class="answer" data-check="q15b" data-value="0.05">depth d = 0.05 m = 5 cm</span>
+              <div class="key"><span class="key-title">Teacher's note</span><p>As the coconut sinks, gravity does a little extra work, <var>mg</var> × <var>d</var> = 15 N × <var>d</var>. Including it gives (3000 − 15)<var>d</var> = 150, so <var>d</var> ≈ 0.0503 m. That is still 5 cm to the accuracy of the data. The question tells us to use only the coconut's energy at impact, so 5 cm is the expected answer.</p></div></div></details>
+            <p class="mistake">Spotted a mistake? <a data-mistake="Exercises 1–15" href="/about/#mistakes">Tell us</a></p>
+          </section>
+
+          <!-- ===================================================================== REVISION -->
+          <section class="topic" id="revise">
+            <h2>One-page revision</h2>
+            <div class="tbl-wrap"><table class="tbl">
+              <thead><tr><th>Quantity</th><th>Formula</th><th>SI unit</th></tr></thead>
+              <tbody>
+                <tr><td>Work (constant force)</td><td><var>W</var> = <var>F</var> × <var>s</var> &nbsp;(area under the <var>F</var>–<var>s</var> graph)</td><td>joule, J = N m</td></tr>
+                <tr><td>Work–energy theorem</td><td>work done on an object = change in its energy</td><td>J</td></tr>
+                <tr><td>Kinetic energy</td><td><var>K</var> = ½<var>mv</var><sup>2</sup></td><td>J</td></tr>
+                <tr><td>Gravitational potential energy</td><td><var>U</var> = <var>mgh</var> (near the Earth's surface)</td><td>J</td></tr>
+                <tr><td>Mechanical energy</td><td><var>K</var> + <var>U</var>, conserved if only gravity does work</td><td>J</td></tr>
+                <tr><td>Speed after a frictionless drop</td><td><var>v</var> = √(2<var>gh</var>)</td><td>m s<sup>−1</sup></td></tr>
+                <tr><td>Power</td><td><var>P</var> = <var>W</var> / <var>t</var></td><td>watt, W = J s<sup>−1</sup> (1 hp = 746 W)</td></tr>
+                <tr><td>Mechanical advantage</td><td>load / effort</td><td>no unit</td></tr>
+                <tr><td>Inclined plane</td><td><var>F</var>′<var>L</var> = <var>mgh</var>, MA = <var>L</var>/<var>h</var></td><td>—</td></tr>
+                <tr><td>Lever</td><td>effort × effort arm = load × load arm, MA = effort arm / load arm</td><td>—</td></tr>
+                <tr><td>Fixed pulley</td><td>effort = load, MA = 1 (changes the direction only)</td><td>—</td></tr>
+              </tbody>
+            </table></div>
+            <div class="key warn"><span class="key-title">Common slips</span>
+              <ul>
+                <li>Convert to SI first: grams → kg, cm → m, km h<sup>−1</sup> → m s<sup>−1</sup> (divide by 3.6).</li>
+                <li>Displacement opposite to the force means negative work, so keep the minus sign.</li>
+                <li>Square the speed in ½<var>mv</var><sup>2</sup>, but not the mass.</li>
+                <li>Machines reduce the force, not the work.</li>
+              </ul></div>
+            <p class="mistake">Spotted a mistake? <a data-mistake="Revision" href="/about/#mistakes">Tell us</a></p>
+          </section>
+        </article>
+      </div>
+    </main>
+    <!-- @include footer -->
+  </body>
+</html>

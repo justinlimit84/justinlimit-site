@@ -1,146 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JustinLimit AI - Chat with Anime Legends</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-    <!-- TRIVIA CHALLENGE POP-UP MODAL -->
-    <div id="trivia-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; display:none; justify-content:center; align-items:center;">
-        <div style="background:#1f2833; padding:30px; border-radius:12px; border:3px solid var(--neon-cyan); text-align:center; max-width:400px; width:90%; box-shadow: 0 0 25px var(--neon-cyan);">
-            <h3 id="trivia-character-title" style="color:#fff; margin-top:0; font-size:1.4rem;">💥 GOKU'S CHALLENGE!</h3>
-            <p id="trivia-question-text" style="color:#c5c6c7; font-size:1.1rem; margin-bottom:20px;">Question goes here?</p>
-            <div id="trivia-options-container" style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
-                <!-- Buttons dynamically spawned here -->
-            </div>
-            <div id="trivia-feedback" style="font-weight:bold; font-size:1.1rem; min-height:24px; margin-bottom:10px;"></div>
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>justinlimit — learn Class 9 Science by doing</title>
+    <meta name="description" content="Interactive labs, short animations and step-by-step solutions for NCERT Class 9 Science. No accounts, no ads, no tracking." />
+    <link rel="canonical" href="https://www.justinlimit.com/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#0d0e10" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="justinlimit" />
+    <meta property="og:title" content="justinlimit — learn Class 9 Science by doing" />
+    <meta property="og:description" content="Interactive labs, animations and worked solutions for NCERT Class 9 Science." />
+    <meta property="og:url" content="https://www.justinlimit.com/" />
+    <meta property="og:image" content="https://www.justinlimit.com/clips/energy-swap.jpg" />
+    <script type="module" src="/src/page-home.ts"></script>
+  </head>
+  <body data-section="home">
+    <!-- @include header -->
+    <main id="main">
+      <section class="hero" style="padding-bottom:40px">
+        <div class="wrap">
+          <span class="eyebrow">NCERT Class 9 Science · interactive</span>
+          <h1>Don't just read science.<br /><span class="accent">Play with it.</span></h1>
+          <p class="lead">Every chapter gets labs you can push, drop and balance, short animations, and worked solutions written step by step, with every number checked twice. Free, with no accounts, no ads and no tracking.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="/class-9/science/work-energy/">Start with Work &amp; Energy</a>
+            <a class="btn" href="/about/#how-we-check">How we check our work</a>
+          </div>
         </div>
-    </div>
-
-    <div id="landing-portal" class="portal-container">
-        <!-- Animated background energy orbs -->
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
-
-        <div class="portal-content">
-            <!-- Left Side: Vibrant Branding & Character Sneak Peek -->
-            <div class="portal-hero">
-                <div class="brand-badge">⚡ Next-Gen AI Experience</div>
-                <h1 class="portal-title">Unleash the Power of <span class="gradient-text">AI Anime Hub</span></h1>
-                <p class="portal-subtitle">Chat with legendary characters, test your lore knowledge in dynamic trivia battles, and level up your power points in real time.</p>
-                
-                <!-- Mini visual feature track -->
-                <div class="feature-pills">
-                    <span class="pill">🧠 Context-Aware AI</span>
-                    <span class="pill">⚔️ Dynamic Trivia</span>
-                    <span class="pill">🔥 Power Leaderboards</span>
-                </div>
+      </section>
+      <section id="class-9" style="padding-top:20px">
+        <div class="wrap">
+          <div class="section-head">
+            <h2>Class 9 Science</h2>
+            <p>Following the 2026 NCERT <em>Exploration</em> textbook. More chapters are on the way.</p>
+          </div>
+          <div class="grid grid-3">
+            <a class="card chapter-card" href="/class-9/science/work-energy/">
+              <span class="ch">Chapter 7 · ready</span>
+              <h3>Work, Energy and Simple Machines</h3>
+              <p>Work as an area, kinetic and potential energy, power, and ramps, levers and pulleys. 4 labs, 3 animations, all 15 exercises solved.</p>
+            </a>
+            <div class="card chapter-card soon" aria-disabled="true">
+              <span class="ch">Chapter 4 · coming</span>
+              <h3>Describing Motion Around Us</h3>
+              <p>Distance and displacement, speed and velocity, graphs and the equations of motion.</p>
             </div>
-
-            <!-- Right Side: Sophisticated Glassmorphic Access Terminal -->
-            <div class="portal-card">
-                <div class="card-header">
-                    <h2>Access Portal</h2>
-                    <p>Enter a unique Username to synchronize your training data</p>
-                </div>
-                
-                <div class="input-group">
-                    <label for="portal-username">Trainer Identity</label>
-                    <div class="input-wrapper">
-                        <input type="text" id="portal-username" placeholder="e.g., GokuFan99" autocomplete="off" />
-                    </div>
-                </div>
-
-                <button id="enter-hub-btn" class="prime-btn">
-                    <span>Enter The Hub</span>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </button>
+            <div class="card chapter-card soon" aria-disabled="true">
+              <span class="ch">Chapter 6 · coming</span>
+              <h3>How Forces Affect Motion</h3>
+              <p>Newton's laws, momentum and friction, with labs to push things around.</p>
             </div>
+          </div>
         </div>
-    </div>
-
-    <div id="leaderboard-panel" class="hidden">
-        <h3>Top Trainers</h3>
-        <div id="leaderboard-list"></div>
-        <button onclick="document.getElementById('leaderboard-panel').classList.add('hidden')">Close</button>
-    </div>
-
-    <header>
-        <h1>JUSTIN<span>LIMIT</span>.COM // AI ANIME HUB</h1>
-        
-        <div style="display:flex; gap:15px; align-items:center; position:absolute; right:20px;">
-            <button id="leaderboard-toggle" onclick="toggleLeaderboard()">🏆 Leaderboard</button>
-            <button id="music-toggle" onclick="toggleMusic()">🎵 Play Theme</button>
-            
-            <div class="power-gauge-wrapper">
-                <span class="power-label">Power: <span id="power-value">30</span>%</span>
-                <div class="power-bar">
-                    <div id="power-fill" class="power-fill"></div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <div class="main-container">
-        <div class="sidebar">
-            <h3>Select Character</h3>
-            <div id="card-Goku" class="char-card active" onclick="selectCharacter('Goku')">
-                <img src="images/Goku.jpg" alt="Goku" class="sidebar-avatar">
-                <div class="sidebar-info">
-                    <strong>Goku</strong>
-                    <p style="margin:2px 0 0; font-size:12px; color:#aaa;">The Legendary Saiyan</p>
-                </div>
-            </div>
-            <div id="card-Naruto" class="char-card" onclick="selectCharacter('Naruto')">
-                <img src="images/Naruto.jpg" alt="Naruto Uzumaki" class="sidebar-avatar">
-                <div class="sidebar-info">
-                    <strong>Naruto Uzumaki</strong>
-                    <p style="margin:2px 0 0; font-size:12px; color:#aaa;">The 7th Hokage</p>
-                </div>
-            </div>
-            <div id="card-Sasuke" class="char-card" onclick="selectCharacter('Sasuke')">
-                <img src="images/Sasuke.jpg" alt="Sasuke Uchiha" class="sidebar-avatar">
-                <div class="sidebar-info">
-                    <strong>Sasuke Uchiha</strong>
-                    <p style="margin:2px 0 0; font-size:12px; color:#aaa;">The Supporting Kage</p>
-                </div>
-            </div>
-            <div id="card-Sakura" class="char-card" onclick="selectCharacter('Sakura')">
-                <img src="images/Sakura-Haruno.jpg" alt="Sakura Haruno" class="sidebar-avatar">
-                <div class="sidebar-info">
-                    <strong>Sakura Haruno</strong>
-                    <p style="margin:2px 0 0; font-size:12px; color:#aaa;">Head Medical Ninja</p>
-                </div>
-            </div>
-            <div id="card-Sarada" class="char-card" onclick="selectCharacter('Sarada')">
-                <img src="images/Sarada-Uchiha.jpg" alt="Sarada Uchiha" class="sidebar-avatar">
-                <div class="sidebar-info">
-                    <strong>Sarada Uchiha</strong>
-                    <p style="margin:2px 0 0; font-size:12px; color:#aaa;">Next Gen Uchiha</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="chat-area">
-            <div class="chat-header">
-                <img id="chat-avatar" src="images/Goku.jpg" alt="Goku">
-                <h2 id="chat-char-name">Goku</h2>
-            </div>
-
-            <div class="chat-messages" id="chat-box">
-                <div class="msg bot">Yo! I'm Goku. Let's train together, or just talk! What's on your mind? 😁</div>
-            </div>
-            <div class="chat-input-wrapper">
-                <div class="chat-input-area">
-                    <input type="text" id="user-input" placeholder="Type message & press Enter..." onkeydown="if(event.key === 'Enter') sendMessage()">
-                    <button onclick="sendMessage()">Send</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script type="module" src="assets/js/main.js"></script>
-</body>
+      </section>
+    </main>
+    <!-- @include footer -->
+  </body>
 </html>
