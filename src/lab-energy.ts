@@ -59,7 +59,7 @@ export function startEnergyLab(root: HTMLElement) {
         note.textContent = `Work done against friction = f × distance = ${Fr.get()} N × ${fmt(st.path, 2)} m = ${fmt(e.heat, 0)} J, turned into heat. KE + PE + heat = ${fmt(e.K + e.U + e.heat, 0)} J.`
       }
     } else {
-      note.textContent = 'Potential energy is turning into kinetic energy…'
+      note.textContent = `Right now: PE ${fmt(e.U, 0)} J + KE ${fmt(e.K, 0)} J` + (f > 0 ? ` + heat ${fmt(e.heat, 0)} J` : '') + ` = ${fmt(e.K + e.U + e.heat, 0)} J. ` + (f > 0 ? "Friction turns some of the lost PE into heat, so KE rises by less, but PE + KE + heat stays at m g h." : "PE drops, KE rises by the same amount, so the total stays at m g h.")
     }
   }
 

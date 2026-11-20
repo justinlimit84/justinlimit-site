@@ -1,8 +1,8 @@
 // The labs must obey the textbook. These tests drive the same models the canvases draw from.
 import { describe, expect, it } from 'vitest'
-import { fixedPulley, incline, lever, stairRace, workOf, workProfile } from '../src/lab-models'
+import { climbAt, fixedPulley, incline, lever, stairRace, workOf, workProfile } from '../src/lab-models'
 import {
-  G, kineticEnergy, potentialEnergy, rideEnergy, speedAfterDrop, startRide, stepRide, trackAt, trackFor,
+  G, areaUpTo, kineticEnergy, potentialEnergy, rideEnergy, speedAfterDrop, startRide, stepRide, trackAt, trackFor,
   type TrackKind,
 } from '../src/physics'
 
@@ -129,5 +129,45 @@ describe('Lab 4: simple machines', () => {
     expect(r.ma).toBe(1)
     expect(r.rise).toBe(0.8)
     expect(r.work).toBeCloseTo(120, 12)
+  })
+})
+
+describe('live values are measured from the motion, never shown before they happen', () => {
+  it('Lab 1: work so far grows from 0 to the whole-push total, which equals the area formula', () => {
+    for (const [mode, dir, F, s] of [['constant', 'along', 20, 3], ['changing', 'against', 12, 3]] as const) {
+      const pts = workProfile(mode, dir, F, s)
+      expect(areaUpTo(pts, 0)).toBe(0)
+      const half = areaUpTo(pts, s / 2)
+      expect(Math.abs(half)).toBeGreaterThan(0)
+      expect(Math.abs(half)).toBeLessThan(Math.abs(workOf(mode, dir, F, s)))
+      expect(areaUpTo(pts, s)).toBeCloseTo(workOf(mode, dir, F, s), 12) // e.g. −28.8 J for 12 N against over 3 m
+    }
+    expect(workOf('changing', 'against', 12, 3)).toBeCloseTo(-28.8, 12)
+  })
+  it('Lab 3: work so far = m g × height reached; steady climb ⇒ power so far is constant; final = m g h and W/T', () => {
+    const m = 80, h = 6, T = 20
+    expect(climbAt(m, h, T, 0)).toMatchObject({ height: 0, work: 0, power: null, done: false })
+    const mid = climbAt(m, h, T, 5)
+    expect(mid.height).toBeCloseTo(1.5, 12)
+    expect(mid.work).toBeCloseTo(80 * G * 1.5, 9) // 1200 J so far
+    expect(mid.power).toBeCloseTo(1200 / 5, 9) // 240 W
+    const end = climbAt(m, h, T, 25) // after reaching the top the values freeze
+    expect(end).toMatchObject({ height: 6, work: 4800, power: 240, done: true })
+    expect(end.work).toBe(stairRace(m, h, T, 6).W)
+    expect(climbAt(m, h, 6, 6).power).toBe(stairRace(m, h, T, 6).pRun) // 800 W
+  })
+  it('Lab 2: KE + PE is recomputed every step from height and speed (and stays m g h without friction)', () => {
+    const tr = trackFor('curve', 5)
+    let st = startRide()
+    const totals: number[] = []
+    const kes: number[] = []
+    for (let i = 0; i < 60; i++) {
+      st = stepRide(tr, st, 40, 0, 1 / 60)
+      const e = rideEnergy(tr, st, 40, 0)
+      totals.push(e.K + e.U)
+      kes.push(e.K)
+    }
+    expect(kes[59]).toBeGreaterThan(kes[10]) // the parts really change…
+    for (const tot of totals) expect(tot).toBeCloseTo(2000, 0) // …but their sum stays at 40 × 10 × 5
   })
 })

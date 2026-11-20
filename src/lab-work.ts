@@ -1,6 +1,6 @@
 // Lab 1 — Work done by a force = area under the force–displacement graph (and its sign).
 import { C, arrow, roundRect, segmented, setupCanvas, slider, stat, text, type View } from './canvas'
-import { workOf, workProfile, type WorkDir, type WorkMode } from './lab-models'
+import { workProfile, type WorkDir, type WorkMode } from './lab-models'
 import { areaUpTo, fmt, forceAt } from './physics'
 
 export function startWorkLab(root: HTMLElement) {
@@ -36,11 +36,15 @@ export function startWorkLab(root: HTMLElement) {
     const fNow = forceAt(pts, Math.min(x, S.get()))
     out.f(`${fmt(fNow, 1)} N`)
     out.s(`${fmt(x, 2)} m`)
+    // every box is measured from the motion so far; the whole-push total appears only once the push is over
     const wNow = areaUpTo(pts, x)
     out.w(`${fmt(wNow, 1)} J`, wNow > 0 ? 'good' : wNow < 0 ? 'warn' : '')
-    const wf = workOf(mode.get(), dir.get(), F.get(), S.get())
-    out.wfinal(`${fmt(wf, 1)} J`, wf > 0 ? 'good' : wf < 0 ? 'warn' : '')
-    note.textContent = notes()
+    const done = x >= S.get()
+    if (done) out.wfinal(`${fmt(wNow, 1)} J`, wNow > 0 ? 'good' : wNow < 0 ? 'warn' : '')
+    else out.wfinal(x > 0 ? '…' : '?')
+    note.textContent = done
+      ? `Push finished: the total area under the graph is ${fmt(wNow, 1)} J. ${notes()}`
+      : x > 0 ? notes() : 'Predict the total work first, then press Push and watch the area add up.'
   }
 
   function reset() {

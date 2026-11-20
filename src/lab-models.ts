@@ -28,6 +28,19 @@ export function stairRace(m: number, h: number, tWalk: number, tRun: number, g =
   return { W, pWalk: power(W, tWalk), pRun: power(W, tRun), ratio: tWalk / tRun }
 }
 
+/**
+ * One student partway up the stairs at race time t, climbing at a steady rate to height h in time T.
+ * Everything is measured from the climb so far: height reached, work done so far (= gain in m g h),
+ * and average power so far (work so far ÷ time so far). Once at the top the student stops, so the
+ * values freeze at their final ones.
+ */
+export function climbAt(m: number, h: number, T: number, t: number, g = G) {
+  const time = Math.min(Math.max(t, 0), T)
+  const height = (h * time) / T
+  const work = potentialEnergy(m, height, g)
+  return { time, height, work, power: time > 0 ? power(work, time) : null, done: t >= T }
+}
+
 // ---------------------------------------------------------------- Lab 4: simple machines
 export function incline(m: number, h: number, L: number, g = G) {
   const load = m * g

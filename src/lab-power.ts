@@ -1,6 +1,6 @@
 // Lab 3 — Power: same work, different times. Two students carry themselves up the same stairs.
 import { C, setupCanvas, slider, stat, text, type View } from './canvas'
-import { stairRace } from './lab-models'
+import { climbAt } from './lab-models'
 import { HORSEPOWER, fmt } from './physics'
 
 const STEPS = 12
@@ -9,7 +9,7 @@ export function startPowerLab(root: HTMLElement) {
   const canvas = root.querySelector('canvas')!
   const note = root.querySelector<HTMLElement>('[data-note]')!
   const playBtn = root.querySelector<HTMLButtonElement>('[data-action="play"]')!
-  const out = { w: stat(root, 'w'), pw: stat(root, 'pwalk'), pr: stat(root, 'prun'), ratio: stat(root, 'ratio') }
+  const out = { ww: stat(root, 'wwalk'), wr: stat(root, 'wrun'), pw: stat(root, 'pwalk'), pr: stat(root, 'prun') }
 
   let t = 0 // race clock in real seconds
   let running = false
@@ -22,15 +22,26 @@ export function startPowerLab(root: HTMLElement) {
   const TR = slider(root, 'trun', () => reset(), (v) => `${v} s`)
   const view = setupCanvas(canvas, draw)
 
+  // every box is measured from the climb so far (race clock t); nothing is shown before it happens
   function report() {
-    const r = stairRace(M.get(), H.get(), TW.get(), TR.get())
-    out.w(`${fmt(r.W, 0)} J each`)
-    out.pw(`${fmt(r.pWalk, 0)} W`)
-    out.pr(`${fmt(r.pRun, 0)} W`, 'good')
-    out.ratio(`× ${fmt(r.ratio, 2)}`)
-    note.textContent = `Both do W = m g h = ${M.get()} × 10 × ${H.get()} = ${fmt(r.W, 0)} J. ` +
-      `Power = W ÷ t: walking ${fmt(r.W, 0)} ÷ ${TW.get()} = ${fmt(r.pWalk, 0)} W, running ${fmt(r.W, 0)} ÷ ${TR.get()} = ${fmt(r.pRun, 0)} W` +
-      ` (about ${fmt(r.pRun / HORSEPOWER, 2)} horsepower).`
+    const m = M.get(), h = H.get()
+    const walk = climbAt(m, h, TW.get(), t)
+    const run = climbAt(m, h, TR.get(), t)
+    out.ww(`${fmt(walk.work, 0)} J`, walk.done ? 'good' : '')
+    out.wr(`${fmt(run.work, 0)} J`, run.done ? 'good' : '')
+    out.pw(walk.power === null ? '—' : `${fmt(walk.power, 0)} W`)
+    out.pr(run.power === null ? '—' : `${fmt(run.power, 0)} W`)
+    if (t === 0) {
+      note.textContent = 'Press Race. Watch the work grow as each student climbs, and the power: work so far ÷ time so far.'
+    } else if (!walk.done) {
+      note.textContent = `t = ${fmt(t, 1)} s. ` + (run.done
+        ? `The runner is at the top: ${fmt(run.work, 0)} J in ${TR.get()} s. The walker is still climbing.`
+        : 'Both climb at a steady pace, so their work grows steadily and their power stays the same all the way up.')
+    } else {
+      note.textContent = `Both did W = m g h = ${m} × 10 × ${h} = ${fmt(walk.work, 0)} J. ` +
+        `Power = W ÷ t: walking ${fmt(walk.work, 0)} ÷ ${TW.get()} = ${fmt(walk.power!, 0)} W, running ${fmt(run.work, 0)} ÷ ${TR.get()} = ${fmt(run.power!, 0)} W ` +
+        `(× ${fmt(run.power! / walk.power!, 2)}, about ${fmt(run.power! / HORSEPOWER, 2)} horsepower).`
+    }
   }
 
   function reset() {
@@ -49,6 +60,7 @@ export function startPowerLab(root: HTMLElement) {
     const dt = Math.min(0.05, (now - last) / 1000)
     last = now
     t = Math.min(Math.max(TW.get(), TR.get()), t + dt * speedUp())
+    report()
     draw(view)
     if (t >= Math.max(TW.get(), TR.get())) { running = false; playBtn.textContent = 'Race again ▶'; return }
     if (running) raf = requestAnimationFrame(tick)
@@ -93,7 +105,8 @@ export function startPowerLab(root: HTMLElement) {
       ctx.fillRect(cx - 5, cy - 4, 10, 16)
       text(ctx, `${who}: ${T} s`, x0, 22, { size: 13, color: col, weight: 700 })
       const done = frac >= 1
-      text(ctx, done ? `at the top · P = ${fmt(stairRace(M.get(), H.get(), T, T).pWalk, 0)} W` : `height ${fmt(frac * H.get(), 1)} m`, x0, 40, { size: 12, color: done ? C.text : C.muted })
+      const c = climbAt(M.get(), H.get(), T, t)
+      text(ctx, `height ${fmt(c.height, 1)} m · work ${fmt(c.work, 0)} J${done ? " · at the top" : ""}`, x0, 40, { size: 12, color: done ? C.text : C.muted })
     })
     text(ctx, `t = ${fmt(t, 1)} s`, w - 12, h - 10, { align: 'right', size: 12, mono: true, color: C.muted })
     text(ctx, `stairs: h = ${H.get()} m`, 12, h - 10, { size: 12, color: C.dim })
