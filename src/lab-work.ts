@@ -1,5 +1,5 @@
 // Lab 1 — Work done by a force = area under the force–displacement graph (and its sign).
-import { C, arrow, roundRect, segmented, setupCanvas, slider, stat, text, type View } from './canvas'
+import { C, bringIntoView, arrow, roundRect, segmented, setupCanvas, slider, stat, text, type View } from './canvas'
 import { workProfile, type WorkDir, type WorkMode } from './lab-models'
 import { areaUpTo, fmt, forceAt } from './physics'
 
@@ -73,6 +73,7 @@ export function startWorkLab(root: HTMLElement) {
     playBtn.textContent = 'Pause ❚❚'
     last = performance.now()
     raf = requestAnimationFrame(tick)
+    bringIntoView(canvas.closest<HTMLElement>(".lab-stage") ?? canvas) // phones: show the motion, not the sliders
   })
   resetBtn.addEventListener('click', reset)
 

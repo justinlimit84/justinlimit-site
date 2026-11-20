@@ -118,3 +118,41 @@ export function stat(root: HTMLElement, name: string) {
 }
 
 export const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+/**
+ * How much of an element (top/bottom in viewport pixels) is visible between the sticky header and the
+ * bottom of the screen, as a fraction 0–1 of its height.
+ */
+export function visibleFraction(top: number, bottom: number, viewportH: number, headerH = 68) {
+  const h = bottom - top
+  if (h <= 0) return 0
+  const seen = Math.min(bottom, viewportH) - Math.max(top, headerH)
+  return Math.max(0, Math.min(1, seen / h))
+}
+
+/** Scroll so `el` is on screen, unless at least `enough` of it already is (so desktop users don't get a jump). */
+export function bringIntoView(el: HTMLElement, enough = 0.7) {
+  const r = el.getBoundingClientRect()
+  if (visibleFraction(r.top, r.bottom, window.innerHeight) >= enough) return
+  // scrollIntoView never moves keyboard focus, so the pressed Run/Pause button stays focused
+  el.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'center' })
+}
+
+/**
+ * On narrow screens the controls sit below the canvas. Adds a "Change values ↓" button under the
+ * canvas that jumps back to them (hidden by CSS on wide screens).
+ */
+export function addControlsLink(root: HTMLElement) {
+  const stage = root.querySelector<HTMLElement>('.lab-stage')
+  const controls = root.querySelector<HTMLElement>('.lab-controls')
+  if (!stage || !controls || root.querySelector('.to-controls')) return
+  const btn = document.createElement('button')
+  btn.type = 'button'
+  btn.className = 'to-controls'
+  btn.textContent = 'Change values ↓'
+  btn.addEventListener('click', () => {
+    controls.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' })
+    controls.querySelector<HTMLElement>('button, input')?.focus({ preventScroll: true })
+  })
+  stage.after(btn)
+}

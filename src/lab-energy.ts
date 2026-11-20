@@ -1,7 +1,7 @@
 // Lab 2 — Kinetic and potential energy on slides and in free fall (conservation of mechanical energy).
 // The motion comes from forces only (physics.stepRide); the energy bars are then computed from that motion,
 // so seeing KE + PE stay at m g h is a real result, not something drawn in.
-import { C, roundRect, segmented, setupCanvas, slider, stat, text, type View } from './canvas'
+import { C, bringIntoView, roundRect, segmented, setupCanvas, slider, stat, text, type View } from './canvas'
 import {
   G, fmt, potentialEnergy, rideEnergy, speedAfterDrop, startRide, stepRide, trackAt, trackFor,
   type RideState, type Track, type TrackKind,
@@ -91,6 +91,7 @@ export function startEnergyLab(root: HTMLElement) {
     playBtn.textContent = 'Pause ❚❚'
     last = performance.now()
     raf = requestAnimationFrame(tick)
+    bringIntoView(canvas.closest<HTMLElement>(".lab-stage") ?? canvas) // phones: show the motion, not the sliders
   })
   resetBtn.addEventListener('click', reset)
 

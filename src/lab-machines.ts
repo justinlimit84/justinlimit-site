@@ -1,6 +1,6 @@
 // Lab 4 — Simple machines: inclined plane, lever and fixed pulley.
 // Each panel shows the load, the effort, the mechanical advantage, and that the work stays the same.
-import { C, arrow, roundRect, segmented, setupCanvas, slider, stat, text, type View } from './canvas'
+import { C, bringIntoView, arrow, roundRect, segmented, setupCanvas, slider, stat, text, type View } from './canvas'
 import { fixedPulley, incline, lever } from './lab-models'
 import { G, fmt } from './physics'
 
@@ -34,6 +34,7 @@ export function startMachinesLab(root: HTMLElement) {
   balanceBtn.addEventListener('click', () => {
     const r = lever(Lload.get(), Ld2.get(), Ld1.get(), 0)
     Leff.set(Math.round(r.needed))
+    bringIntoView(canvas.closest<HTMLElement>(".lab-stage") ?? canvas)
     update()
   })
 

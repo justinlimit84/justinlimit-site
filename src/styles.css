@@ -346,3 +346,7 @@ svg.fig { width: 100%; height: auto; max-width: 560px; display: block; margin: 1
 
 [hidden] { display: none !important; }
 @media (max-width: 760px) { .lab-controls { grid-template-columns: 1fr; } .stats.three { grid-template-columns: repeat(3, 1fr); } .lab-top { padding: 12px 14px; } .lab-controls { padding: 14px; } }
+
+/* "Change values" link under each lab canvas: phones only */
+.to-controls { display: none; }
+@media (max-width: 760px) { .to-controls { display: block; width: 100%; padding: 10px 14px; border: 0; border-bottom: 1px solid var(--line); background: var(--bg-2); color: var(--mint); font: 650 0.9rem/1.2 var(--font); text-align: right; cursor: pointer; } .lab-controls { scroll-margin-top: 76px; } }

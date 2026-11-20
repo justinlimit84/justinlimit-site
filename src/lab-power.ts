@@ -1,5 +1,5 @@
 // Lab 3 — Power: same work, different times. Two students carry themselves up the same stairs.
-import { C, setupCanvas, slider, stat, text, type View } from './canvas'
+import { C, bringIntoView, setupCanvas, slider, stat, text, type View } from './canvas'
 import { climbAt } from './lab-models'
 import { HORSEPOWER, fmt } from './physics'
 
@@ -70,8 +70,10 @@ export function startPowerLab(root: HTMLElement) {
     if (running) return
     if (t > 0) t = 0
     running = true
+    playBtn.textContent = "Racing…"
     last = performance.now()
     raf = requestAnimationFrame(tick)
+    bringIntoView(canvas.closest<HTMLElement>(".lab-stage") ?? canvas) // phones: show the motion, not the sliders
   })
 
   function draw({ ctx, w, h }: View) {

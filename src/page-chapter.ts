@@ -1,4 +1,5 @@
 import { whenNear } from './main'
+import { addControlsLink } from './canvas'
 import { startEnergyLab } from './lab-energy'
 import { startMachinesLab } from './lab-machines'
 import { startPowerLab } from './lab-power'
@@ -13,5 +14,5 @@ const labs: Record<string, (el: HTMLElement) => void> = {
 
 document.querySelectorAll<HTMLElement>('[data-lab]').forEach((el) => {
   const start = labs[el.dataset.lab!]
-  if (start) whenNear(el, () => start(el))
+  if (start) whenNear(el, () => { addControlsLink(el); start(el) })
 })
